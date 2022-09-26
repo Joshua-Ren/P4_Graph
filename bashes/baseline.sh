@@ -22,4 +22,4 @@ source /home/mila/y/yi.ren/env_graph/bin/activate
 python /home/mila/y/yi.ren/P4_Graph/main_baseline.py \
 --drop_ratio 0.5 \
 --proj_name P4_SSL_Graph_new \
---run_name gcn_sem_baseline
+--run_name gcn_sem_baseline_dropout
