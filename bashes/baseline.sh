@@ -6,7 +6,7 @@
 #SBATCH --job-name=baseline
 #SBATCH --time=10:00:00                                   # The job will run for 3 hours
 #SBATCH --output=./logs/stage1.txt 
-. /etc/profile
+
 # 1. Load the required modules
 module --quiet load python/3.8
 module load cuda/10.1/cudnn/7.6
@@ -19,7 +19,6 @@ source /home/mila/y/yi.ren/env_graph/bin/activate
 
 # 4. Launch your job, tell it to save the model in $SLURM_TMPDIR
 #    and look for the dataset into $SLURM_TMPDIR
-
 
 python /home/mila/y/yi.ren/P4_Graph/main_baseline.py \
 --proj_name P4_SSL_Graph_new \
