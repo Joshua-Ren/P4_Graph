@@ -2,7 +2,7 @@
 To do list:
 
 1. Run experiments on server
-[] Baseline
+[O] Baseline
 [] Distill
 [] Interaction-BYOL
 [] Complete NIL flow

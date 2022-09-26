@@ -20,5 +20,6 @@ source /home/mila/y/yi.ren/env_graph/bin/activate
 #    and look for the dataset into $SLURM_TMPDIR
 
 python /home/mila/y/yi.ren/P4_Graph/main_baseline.py \
+--drop_ratio 0.5 \
 --proj_name P4_SSL_Graph_new \
 --run_name gcn_sem_baseline
