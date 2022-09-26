@@ -18,6 +18,8 @@ source $HOME/env_graph/bin/activate
 
 # 4. Launch your job, tell it to save the model in $SLURM_TMPDIR
 #    and look for the dataset into $SLURM_TMPDIR
+cd /home/mila/y/yi.ren/P4_Graph
+
 srun python main_baseline.py \
 --proj_name P4_SSL_Graph_new \
 --run_name gcn_sem_baseline
