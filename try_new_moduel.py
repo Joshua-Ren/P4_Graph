@@ -1,3 +1,11 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Sep 26 11:17:24 2022
+
+@author: YIREN
+"""
+
+
 from engine_phases import *
 from utils.datasets import *
 from utils.general import *
@@ -38,8 +46,6 @@ def get_args_parser():
                         help='learning rate for student')
     parser.add_argument('--ft_lr', type=float, default=1e-3,
                         help='learning rate for student')
-    parser.add_argument('--dis_lr', type=float, default=1e-3,
-                        help='learning rate for student')
     parser.add_argument('--byol_eta', type=float, default=0.99,
                         help='eta in EMA')  
     # ==== SEM settings ======
@@ -71,6 +77,12 @@ def get_args_parser():
               help='how the teacher generate the samples, ce_argmax, ce_sample, mse, kld')
     parser.add_argument('--dis_smp_tau', type=float, default=1.,
               help='temperature used when teacher generating sample, 0 is argmax')
+    parser.add_argument('--dis_optim_type', type=str, default='sgd',
+              help='optimizer used during distillation, sgd or adam')
+    parser.add_argument('--dis_lr', type=float, default=1e-3,
+                        help='learning rate for student')
+    parser.add_argument('--dis_wd', type=float, default=0.,
+                        help='weight decay used in distillation')
     # ===== SSL settings ======
     parser.add_argument('--inter_alpha', type=float, default=0,
                         help='balance between task loss and inter-loss, 0 is all inter')
@@ -83,37 +95,25 @@ def get_args_parser():
                         help='path of the pretrained checkpoint')    
     return parser
 
+args = get_args_parser()
+args = args.parse_args()
+args.device = torch.device("cuda:" + str(args.device)) if torch.cuda.is_available() else torch.device("cpu")
 
-def main(args, n_epoch=1):
-    # ========== Generate seed ==========
-    if args.seed==0:
-        args.seed = np.random.randint(1,10086)
-    rnd_seed(args.seed)
-    
-    # ========== Prepare save folder and wandb ==========
-    run_name = wandb_init(proj_name=args.proj_name, run_name=args.run_name, config_args=args)
-    args.save_path = os.path.join(args.save_dir, run_name)
-    #wandb.init()
-            # -------- save results in this folder
-    if not os.path.exists(args.save_path):
-        os.makedirs(args.save_path)    
-    
-    # ========== Prepare the loader, model and optimizer
-    loaders = build_dataset(args)
-    model = get_init_net(args)
-    optimizer_ft = optim.Adam(model.parameters(), lr=args.ft_lr)
-    scheduler_ft = optim.lr_scheduler.CosineAnnealingLR(optimizer_ft,T_max=n_epoch,eta_min=1e-6)
-    
-    # ========== Train the network and save PT checkpoint
-    for epoch in range(n_epoch):
-        train_task(args, model, loaders['train'], optimizer_ft, scheduler_ft)
-        train_roc, valid_roc, test_roc = eval_all(args, model,loaders, title='Stud_')
-    torch.save(model.state_dict(),'.results/GCN_baseline2.pth')
-    wandb.finish()
-    
-if __name__ == '__main__':
-    args = get_args_parser()
-    args = args.parse_args()
-    args.device = torch.device("cuda:" + str(args.device)) if torch.cuda.is_available() else torch.device("cpu")
-    main(args, n_epoch=100)
+loaders = build_dataset(args)
+tmp_model = get_init_net(args)
+
+for step, batch in enumerate(loaders['train']):
+     break
+transform1 = get_graph_drop_transform(0.1, 0.1)
+data1 = transform1(batch)
+
+
+
+
+
+
+
+
+
+
 

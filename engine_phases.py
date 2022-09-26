@@ -9,6 +9,8 @@ from utils.datasets import *
 from utils.general import *
 from utils.nil_related import *
 from ogb.graphproppred import Evaluator
+import torch.optim as optim
+from torch.nn.functional import cosine_similarity
 
 cls_criterion = torch.nn.BCEWithLogitsLoss()
 ce_criterion = torch.nn.CrossEntropyLoss()
@@ -99,7 +101,7 @@ def train_simclr(args, model, loader, optimizer):
             batch2.to(args.device)
             # Not ready yet
 
-def train_byol(args, online_model, target_model, loader, optimizer):
+def train_byol(args, online_model, target_model, loader,optimizer):
     # 1. X --> aug(X1) and aug(X2)
     # 2. onl_z = q(f(X1))
     #    tgt_z = f'(X2)
@@ -109,12 +111,14 @@ def train_byol(args, online_model, target_model, loader, optimizer):
     losses = AverageMeter()
     online_model.train()
     target_model.eval()
+    trans1 = get_graph_drop_transform(0.1, 0.1)
+    trans2 = get_graph_drop_transform(0.1, 0.1)
     for step, batch in enumerate(loader):
         tmp_batchsize = batch.y.shape[0]
         if batch.x.shape[0] == 1 or batch.batch[-1] == 0:
             pass
         else:
-            batch1, batch2 = get_batch_aug(args, batch, aug_type='node_gaussian')
+            batch1, batch2 = trans1(batch), trans2(batch)
             batch1.to(args.device)
             batch2.to(args.device)
             batch.to(args.device)
@@ -136,15 +140,13 @@ def train_byol(args, online_model, target_model, loader, optimizer):
         if args.byol_loss == 'mse':
             loss_byol = nn.MSELoss()(q_theta,z_theta)
         elif args.byol_loss == 'cosine':
-            tmp_dot = torch.diag(torch.mm(q_theta,z_theta.T))
-            tmp_norm = torch.linalg.norm(q_theta,dim=1)*torch.linalg.norm(z_theta,dim=1)
-            loss_byol = tmp_dot/tmp_norm
+            loss_byol = 2 - cosine_similarity(q_theta, z_theta.detach(), dim=-1).mean()
       
         loss = (1-args.inter_alpha)*loss_byol + args.inter_alpha*loss_task
         loss.backward()
         optimizer.step()
         losses.update(loss.data.item(), batch.x.size(0))
-        wandb.log({'interact_loss':losses.avg})
+        wandb.log({'byol_loss':losses.avg})
         EMA_update(target_model, online_model, eta=args.byol_eta)
 
 def train_bgrl(args, online_model, target_model, loader, optimizer):
@@ -208,7 +210,7 @@ def eval_probing(args, student, loaders, title='Distill_prob_', no_train=True):
   model.train()
   lp_optim = optim.Adam(model.task_head.parameters(),lr=args.lp_lr)
   for i in range(args.epochs_lp):
-    for step, batch in enumerate(args.train_loader):
+    for step, batch in enumerate(loaders['train']):
       batch = batch.to(args.device)
       if batch.x.shape[0] == 1 or batch.batch[-1] == 0:
         pass
@@ -217,7 +219,7 @@ def eval_probing(args, student, loaders, title='Distill_prob_', no_train=True):
         lp_optim.zero_grad()
         ## ignore nan targets (unlabeled) when computing training loss.
         is_labeled = batch.y == batch.y
-        if "classification" in args.dataset.task_type: 
+        if "classification" in args.task_type: 
           output, target = pred[is_labeled], batch.y.to(torch.float32)[is_labeled]
           loss = cls_criterion(output, target)
           #loss = torchvision.ops.sigmoid_focal_loss(output, target).sum()
@@ -236,6 +238,7 @@ def eval_svm(args, student, loaders, title='Distill_svm_', no_train=True):
   # ------ Fix the backbone and use SVM to measure task-performance
     pass
 
-
+def eval_topsim(args, student, loaders, title='Distill_topsim_'):
+    pass
 
 
