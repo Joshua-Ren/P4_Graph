@@ -92,11 +92,11 @@ def main(args, n_epoch=1):
     
     # ========== Prepare save folder and wandb ==========
     run_name = wandb_init(proj_name=args.proj_name, run_name=args.run_name, config_args=args)
-    args.save_path = os.path.join(args.save_dir, run_name)
+    #args.save_path = os.path.join(args.save_dir, run_name)
     #wandb.init()
             # -------- save results in this folder
-    if not os.path.exists(args.save_path):
-        os.makedirs(args.save_path)    
+    #if not os.path.exists(args.save_path):
+    #    os.makedirs(args.save_path)    
     
     # ========== Prepare the loader, model and optimizer
     loaders = build_dataset(args)
