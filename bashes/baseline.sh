@@ -9,7 +9,6 @@
 
 # 1. Load the required modules
 module load python/3.8
-module load cuda/11.1/cudnn/8.0
 
 # 2. Load your environment
 source /home/mila/y/yi.ren/env_graph/bin/activate
