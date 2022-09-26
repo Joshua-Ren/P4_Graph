@@ -12,13 +12,14 @@ module --quiet load python/3.8
 module load cuda/10.1/cudnn/7.6
 
 # 2. Load your environment
-source $HOME/env_graph/bin/activate
+source env_graph/bin/activate
 
 # 3. Copy your dataset on the compute node
 #cp /network/datasets/<dataset> $SLURM_TMPDIR
 
 # 4. Launch your job, tell it to save the model in $SLURM_TMPDIR
 #    and look for the dataset into $SLURM_TMPDIR
+
 cd /home/mila/y/yi.ren/P4_Graph/
 
 srun python main_baseline.py \
