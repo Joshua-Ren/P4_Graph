@@ -12,7 +12,7 @@ module --quiet load python/3.8
 module load cuda/10.1/cudnn/7.6
 
 # 2. Load your environment
-source env_graph/bin/activate
+source /home/mila/y/yi.ren/env_graph/bin/activate
 
 # 3. Copy your dataset on the compute node
 #cp /network/datasets/<dataset> $SLURM_TMPDIR
@@ -22,6 +22,6 @@ source env_graph/bin/activate
 
 cd /home/mila/y/yi.ren/P4_Graph/
 
-srun python main_baseline.py \
+python main_baseline.py \
 --proj_name P4_SSL_Graph_new \
 --run_name gcn_sem_baseline
