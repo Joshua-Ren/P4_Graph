@@ -8,8 +8,7 @@
 #SBATCH --output=./logs/stage1.txt 
 
 # 1. Load the required modules
-module --quiet load python/3.8
-module load cuda/10.1/cudnn/7.6
+module load python/3.8 cuda/11.0 cudnn/8.0_cuda-11.1
 
 # 2. Load your environment
 source /home/mila/y/yi.ren/env_graph/bin/activate
