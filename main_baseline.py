@@ -108,7 +108,7 @@ def main(args, n_epoch=1):
     for epoch in range(n_epoch):
         train_task(args, model, loaders['train'], optimizer_ft, scheduler_ft)
         train_roc, valid_roc, test_roc = eval_all(args, model, loaders, title='Stud_')
-    torch.save(model.state_dict(),'.results/GCN_baseline2.pth')
+    torch.save(model.state_dict(),'.results/GCN_baseline.pth')
     wandb.finish()
     
 if __name__ == '__main__':
