@@ -25,25 +25,25 @@ def train_task(args, model, loader, optimizer, scheduler=None):
     model.train()
     for step, batch in enumerate(loader):
         batch = batch.to(args.device)
-    if batch.x.shape[0] == 1 or batch.batch[-1] == 0:
-        pass
-    else:
-        pred = model.task_forward(batch, args.ft_tau)
-        optimizer.zero_grad()
-        ## ignore nan targets (unlabeled) when computing training loss.
-        is_labeled = batch.y == batch.y
-        if "classification" in args.task_type: 
-            output, target = pred[is_labeled], batch.y.to(torch.float32)[is_labeled]
-            loss = cls_criterion(output, target)
-            #loss = torchvision.ops.sigmoid_focal_loss(output, target).sum()
+        if batch.x.shape[0] == 1 or batch.batch[-1] == 0:
+            pass
         else:
-            loss = reg_criterion(pred.to(torch.float32)[is_labeled], batch.y.to(torch.float32)[is_labeled])
-        loss.backward()
-        optimizer.step()
-        losses.update(loss.data.item(), batch.x.size(0))
-        wandb.log({'ft_task_loss':losses.avg})
-    if scheduler is not None:
-        scheduler.step()
+            pred = model.task_forward(batch, args.ft_tau)
+            optimizer.zero_grad()
+            ## ignore nan targets (unlabeled) when computing training loss.
+            is_labeled = batch.y == batch.y
+            if "classification" in args.task_type: 
+                output, target = pred[is_labeled], batch.y.to(torch.float32)[is_labeled]
+                loss = cls_criterion(output, target)
+                #loss = torchvision.ops.sigmoid_focal_loss(output, target).sum()
+            else:
+                loss = reg_criterion(pred.to(torch.float32)[is_labeled], batch.y.to(torch.float32)[is_labeled])
+            loss.backward()
+            optimizer.step()
+            losses.update(loss.data.item(), batch.x.size(0))
+            wandb.log({'ft_task_loss':losses.avg})
+        if scheduler is not None:
+            scheduler.step()
     
 def train_distill(args, student, teacher, loader, optimizer):
     # ------------ Train the student using the teacher's prediction (argmax, sample, mse)

@@ -101,12 +101,10 @@ args.device = torch.device("cuda:" + str(args.device)) if torch.cuda.is_availabl
 
 loaders = build_dataset(args)
 tmp_model = get_init_net(args)
-
-for step, batch in enumerate(loaders['train']):
-     break
-transform1 = get_graph_drop_transform(0.1, 0.1)
-data1 = transform1(batch)
-
+load_path = os.path.join('results','GCN_baseline.pth')
+tmp_model.load_state_dict(torch.load(load_path),strict=True)
+wandb.init()
+train_roc, valid_roc, test_roc = eval_all(args, tmp_model, loaders, title='Stud_')
 
 
 
