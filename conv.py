@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Aug 31 20:35:22 2022
-
-@author: YIREN
-"""
-
 import torch
 from torch_geometric.nn import MessagePassing
 import torch.nn.functional as F
@@ -81,6 +74,7 @@ class GNN_node(torch.nn.Module):
         '''
             emb_dim (int): node embedding dimensionality
             num_layer (int): number of GNN message passing layers
+
         '''
 
         super(GNN_node, self).__init__()
