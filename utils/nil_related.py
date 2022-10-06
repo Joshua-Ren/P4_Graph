@@ -3,6 +3,9 @@ import copy
 import numpy as np
 from torch_geometric.utils.dropout import dropout_adj
 from torch_geometric.transforms import Compose
+from scipy import stats
+from torch.distributions import Categorical
+import torch.nn.functional as F
 # ========== Message and its evaluations ===============
 def cal_msg_distance_model(args, student, teacher, batch):
   with torch.no_grad():
@@ -14,10 +17,30 @@ def cal_msg_distance_model(args, student, teacher, batch):
     return dist
 
 def cal_msg_distance_logits(logits1, logits2):
+# The shape of logits should be [NB, L, V]
   with torch.no_grad():
     dist = (logits1.argmax(-1)==logits2.argmax(-1)).sum()/(logits1.shape[0]*logits1.shape[1])
-    return dist
+    return dist.cpu()
 
+def cal_topsim(logits, batch):
+    # Calculate the topological similarity between message and labels
+    with torch.no_grad():
+        msg = logits.argmax(-1)
+        msg_dists = []
+        y_dists = []
+        for i in range(msg.shape[0]):
+            for j in range(i):
+                msg_dists.append((msg[i] == msg[j]).sum().cpu())
+                y_dists.append((batch.y[i] == batch.y[j]).sum().cpu())
+        corr,p = stats.spearmanr(msg_dists,y_dists)  
+        return corr, p
+
+def cal_att_entropy(logits):
+    with torch.no_grad():
+        # Calculate the mean entropy of the batched logits 
+        probs = F.softmax(logits,-1)
+        V = probs.shape[-1]
+        return Categorical(probs = probs.reshape(-1,V)).entropy().mean().cpu()
 # ============= Graph data augmentation =============
     # ------- Copy from BGRL: https://github.com/nerdslab/bgrl/blob/main/bgrl/transforms.py
 class DropFeatures:
@@ -58,7 +81,7 @@ class DropEdges:
         return '{}(p={}, force_undirected={})'.format(self.__class__.__name__, self.p, self.force_undirected)
 
 
-def get_graph_drop_transform(drop_edge_p, drop_feat_p):
+def get_graph_drop_transform(drop_node_p, drop_edge_p):
     transforms = list()
 
     # make copy of graph
@@ -68,9 +91,9 @@ def get_graph_drop_transform(drop_edge_p, drop_feat_p):
     if drop_edge_p > 0.:
         transforms.append(DropEdges(drop_edge_p))
 
-    # drop features
-    if drop_feat_p > 0.:
-        transforms.append(DropFeatures(drop_feat_p))
+    # drop node features
+    if drop_node_p > 0.:
+        transforms.append(DropFeatures(drop_node_p))
     return Compose(transforms)
 
 
@@ -86,6 +109,7 @@ class EMA():
     return old * self.eta + (1 - self.eta) * new
     
 def EMA_update(online_model, target_model, eta=0.99):
+# Remember this EMA will update everything in the model (including task head)
   ema = EMA(eta)
   with torch.no_grad():
     for online_params, target_params in zip(online_model.parameters(),target_model.parameters()):

@@ -54,7 +54,7 @@ def get_args_parser():
                         help='No. word in SEM')
     parser.add_argument('--V', type=int, default=20,
                         help='word size in SEM')
-    parser.add_argument('--ssl_tau', type=float, default=1.,
+    parser.add_argument('--pool_tau', type=float, default=1.,
                         help='temperature in SEM')
     parser.add_argument('--dis_sem_tau', type=float, default=1.,
                         help='temperature in SEM')

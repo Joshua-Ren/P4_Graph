@@ -18,44 +18,39 @@ def get_args_parser():
                         help='which gpu to use if any (default: 0)')
     parser.add_argument('--drop_ratio', type=float, default=0,
                         help='dropout ratio (default: 0.5)')
+    parser.add_argument('--batch_size', type=int, default=64,
+                        help='input batch size for training (default: 32)')
+    parser.add_argument('--num_workers', type=int, default=2,
+                        help='number of workers (default: 0)')
+    parser.add_argument('--dataset_name', type=str, default="ogbg-moltox21",
+                        help='dataset name (default: ogbg-molhiv/moltox21/molpcba)')
+    parser.add_argument('--feature', type=str, default="full",
+                        help='full feature or simple feature')
+
+    # ==== Model settings ======
+    #===========================
+    parser.add_argument('--backbone_type', type=str, default='gcn',
+                        help='backbone type, can be gcn, gin, gcn_virtual, gin_virtual')
+    parser.add_argument('--bottle_type', type=str, default='upsample',
+                        help='bottleneck type, can be pool, upsample, ...')
     parser.add_argument('--num_layer', type=int, default=5,
                         help='number of GNN message passing layers (default: 5)')
     parser.add_argument('--emb_dim', type=int, default=300,
-                        help='dimensionality of hidden units in GNNs (default: 300)')
-    parser.add_argument('--batch_size', type=int, default=64,
-                        help='input batch size for training (default: 32)')
-    parser.add_argument('--epochs', type=int, default=200,
-                        help='number of epochs to train (default: 100)')
-    parser.add_argument('--num_workers', type=int, default=0,
-                        help='number of workers (default: 0)')
-    parser.add_argument('--dataset_name', type=str, default="ogbg-molhiv",
-                        help='dataset name (default: ogbg-molhiv)')
-    parser.add_argument('--feature', type=str, default="full",
-                        help='full feature or simple feature')
-    parser.add_argument('--ssl_lr', type=float, default=1e-3,
-                        help='learning rate for student')
-    parser.add_argument('--lp_lr', type=float, default=1e-3,
-                        help='learning rate for student')
-    parser.add_argument('--ft_lr', type=float, default=1e-3,
-                        help='learning rate for student')
-    parser.add_argument('--dis_lr', type=float, default=1e-3,
-                        help='learning rate for student')
-    parser.add_argument('--byol_eta', type=float, default=0.99,
-                        help='eta in EMA')  
-    # ==== SEM settings ======
-    parser.add_argument('--model_type', type=str, default='gcn',
-                        help='gcn, gin, gcn-virtual, gin-virtual')  
+                        help='dimensionality of hidden units in GNNs (default: 300)')    
+        # ---- SEM settings ----
     parser.add_argument('--L', type=int, default=200,
                         help='No. word in SEM')
     parser.add_argument('--V', type=int, default=20,
                         help='word size in SEM')
-    parser.add_argument('--ssl_tau', type=float, default=1.,
+    parser.add_argument('--pool_tau', type=float, default=1.,
                         help='temperature in SEM')
     parser.add_argument('--dis_sem_tau', type=float, default=1.,
                         help='temperature in SEM')
     parser.add_argument('--ft_tau', type=float, default=1.,
                         help='temperature in SEM')
+    
     # ===== NIL settings ======
+    # =========================
     parser.add_argument('--epochs_lp', type=int, default=1,
                         help='for lp probing epochs')  
     parser.add_argument('--epochs_ssl', type=int, default=0,
@@ -66,19 +61,35 @@ def get_args_parser():
                         help='distillation')
     parser.add_argument('--generations', type=int, default=2,
                         help='number of generations')
-    # ===== Distillation settings ======
+    
+        # ===== Finetune or evaluation settings ======
+    parser.add_argument('--ft_lr', type=float, default=1e-3,
+                        help='learning rate for student on task')
+    parser.add_argument('--lp_lr', type=float, default=1e-3,
+                        help='learning rate for student when LP-eval')
+        # ===== Distillation settings ======
+    parser.add_argument('--dis_lr', type=float, default=1e-3,
+                        help='learning rate for student')    
     parser.add_argument('--dis_loss', type=str, default='ce_argmax',
               help='how the teacher generate the samples, ce_argmax, ce_sample, mse, kld')
     parser.add_argument('--dis_smp_tau', type=float, default=1.,
               help='temperature used when teacher generating sample, 0 is argmax')
-    # ===== SSL settings ======
+    
+        # ===== SSL settings ======
+            # ---- Common
     parser.add_argument('--inter_alpha', type=float, default=0,
                         help='balance between task loss and inter-loss, 0 is all inter')
+    parser.add_argument('--ssl_lr', type=float, default=1e-3,
+                        help='learning rate for student')                      
+            # ---- BYOL
     parser.add_argument('--byol_loss', type=str, default='mse',
                         help='loss type used in byol, mse or cosine')
+    parser.add_argument('--byol_eta', type=float, default=0.99,
+                        help='eta in EMA')  
+    
     # ===== Wandb and saving results ====
     parser.add_argument('--run_name',default='test',type=str)
-    parser.add_argument('--proj_name',default='P4_SSL_Graph_new', type=str)
+    parser.add_argument('--proj_name',default='P4_phase_observe', type=str)
     parser.add_argument('--save_dir', default=None,
                         help='path of the pretrained checkpoint')    
     return parser
@@ -92,23 +103,29 @@ def main(args, n_epoch=1):
     
     # ========== Prepare save folder and wandb ==========
     run_name = wandb_init(proj_name=args.proj_name, run_name=args.run_name, config_args=args)
-    #args.save_path = os.path.join(args.save_dir, run_name)
-    #wandb.init()
+    model_name = args.backbone_type+'_'+args.bottle_type
+    args.save_path = os.path.join('results',model_name,args.dataset_name)
             # -------- save results in this folder
-    #if not os.path.exists(args.save_path):
-    #    os.makedirs(args.save_path)    
+    if not os.path.exists(args.save_path):
+        os.makedirs(args.save_path)    
     
     # ========== Prepare the loader, model and optimizer
     loaders = build_dataset(args)
     model = get_init_net(args)
+    model0 = copy.deepcopy(model)       # Use this to track the change of message
     optimizer_ft = optim.Adam(model.parameters(), lr=args.ft_lr)
     scheduler_ft = optim.lr_scheduler.CosineAnnealingLR(optimizer_ft,T_max=n_epoch,eta_min=1e-6)
-    
+    best_vacc = 0
     # ========== Train the network and save PT checkpoint
     for epoch in range(n_epoch):
-        train_task(args, model, loaders['train'], optimizer_ft, scheduler_ft)
+        train_task(args, model, loaders['train'], optimizer_ft, scheduler_ft, model0)
         train_roc, valid_roc, test_roc = eval_all(args, model, loaders, title='Stud_')
-    torch.save(model.state_dict(),'.results/GCN_baseline.pth')
+        if valid_roc > best_vacc:
+            best_vacc = valid_roc
+            ckp_save_path = os.path.join(args.save_path,model_name+'_'+args.dataset_name+'_best.pth')
+            torch.save(model.state_dict(),ckp_save_path)        
+    ckp_save_path = os.path.join(args.save_path,model_name+'_'+args.dataset_name+'_last.pth')
+    torch.save(model.state_dict(),ckp_save_path)
     wandb.finish()
     
 if __name__ == '__main__':

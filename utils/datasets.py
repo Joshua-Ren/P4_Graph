@@ -1,6 +1,12 @@
 from ogb.graphproppred import PygGraphPropPredDataset
 from torch_geometric.loader import DataLoader
 
+
+# possible datasets: (size,batch.num_nodes,y.shape)
+# molpcba(10949-763-128), molhiv(1029-852-1), molbace (38-1103-1), 
+# molbbbp(51-781-1), molclintox(37-858-2), molmuv(2328-764-17), molsider(36-1502-27), moltox21(196-431-12), 
+# moltoxcast(215-455-617), molesol(29-417-1), molfreesolv(17-257-1), mollipo(105-783-1)
+
 def build_dataset(args):
     dataset = PygGraphPropPredDataset(name = args.dataset_name)
     if args.feature == 'full':

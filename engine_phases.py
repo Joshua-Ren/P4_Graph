@@ -17,18 +17,34 @@ ce_criterion = torch.nn.CrossEntropyLoss()
 reg_criterion = torch.nn.MSELoss()
 
 # ================== Different training stages =======================
-def train_task(args, model, loader, optimizer, scheduler=None):
+def train_task(args, model, loader, optimizer, scheduler=None, model0=None,):
     # --------- Update the whole network under the task-supervision
     # Can be used in generating the baseline, or as a phase in NIL
     # Wandb records: 
     losses = AverageMeter()
+    msg_dists = AverageMeter()
+    msg_topsim = AverageMeter()
+    msg_entropy = AverageMeter()
     model.train()
     for step, batch in enumerate(loader):
         batch = batch.to(args.device)
         if batch.x.shape[0] == 1 or batch.batch[-1] == 0:
             pass
         else:
-            pred = model.task_forward(batch, args.ft_tau)
+            logits, pred = model.task_forward(batch, args.ft_tau)
+            if model0 is not None:
+                # ----- Then we should report the message distance
+                logits0, _ = model0.task_forward(batch, args.ft_tau)
+                msg_dist = cal_msg_distance_logits(logits,logits0)
+                msg_dists.update(msg_dist.item())
+                wandb.log({'msg_drift':msg_dists.avg})
+            if True:    # Whether to calcualte the topsim
+                corr, p = cal_topsim(logits, batch)
+                entropy = cal_att_entropy(logits)
+                msg_entropy.update(entropy)
+                msg_topsim.update(corr)
+                wandb.log({'msg_entropy':msg_entropy.avg})
+                wandb.log({'topsim':msg_topsim.avg})                    
             optimizer.zero_grad()
             ## ignore nan targets (unlabeled) when computing training loss.
             is_labeled = batch.y == batch.y
@@ -41,9 +57,9 @@ def train_task(args, model, loader, optimizer, scheduler=None):
             loss.backward()
             optimizer.step()
             losses.update(loss.data.item(), batch.x.size(0))
-            wandb.log({'ft_task_loss':losses.avg})
-        if scheduler is not None:
-            scheduler.step()
+            wandb.log({'ft_task_loss':losses.avg})           
+            if scheduler is not None:
+                scheduler.step()
     
 def train_distill(args, student, teacher, loader, optimizer):
     # ------------ Train the student using the teacher's prediction (argmax, sample, mse)
@@ -174,7 +190,7 @@ def eval(args, model, loader):
       pass
     else:
       with torch.no_grad():
-        pred = model.task_forward(batch)
+        _, pred = model.task_forward(batch)
       y_true.append(batch.y.view(pred.shape).detach().cpu())
       y_pred.append(pred.detach().cpu())
   y_true = torch.cat(y_true, dim = 0).numpy()
@@ -215,7 +231,7 @@ def eval_probing(args, student, loaders, title='Distill_prob_', no_train=True):
       if batch.x.shape[0] == 1 or batch.batch[-1] == 0:
         pass
       else:
-        pred = model.task_forward(batch, args.ft_tau)
+        _, pred = model.task_forward(batch, args.ft_tau)
         lp_optim.zero_grad()
         ## ignore nan targets (unlabeled) when computing training loss.
         is_labeled = batch.y == batch.y

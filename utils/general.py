@@ -21,29 +21,40 @@ def wandb_init(proj_name='test', run_name=None, config_args=None):
     else:
         return wandb.run.name
 
-def get_init_net(args, force_type=None):
-    if force_type is None:
-        net_type = args.model_type
+def get_init_net(args, backbone_type=None, bottle_type=None):
+    if backbone_type is None:
+        backbone_type = args.backbone_type
     else:
-        net_type = force_type
-    
-    if net_type=='gcn':
+        backbone_type = backbone_type
+    if bottle_type is None:
+        bot_type = args.bottle_type
+    else:
+        bot_type = bottle_type
+    # ===== backbone type
+    if backbone_type=='gcn':
         V_node = False
         G_type = 'gcn'
-    elif net_type=='gin':
+    elif backbone_type=='gin':
         V_node = False
         G_type = 'gin'
-    elif net_type=='gcn-virtual':
+    elif backbone_type=='gcn_virtual':
         V_node = True
         G_type = 'gcn'
-    elif net_type=='gin-virtual':
+    elif backbone_type=='gin_virtual':
         V_node = True
         G_type = 'gin'
 
-    model = GNN_SEM_BYOL(gnn_type=G_type,num_tasks=args.num_tasks, 
-               num_layer=args.num_layer,emb_dim=args.emb_dim,
-               drop_ratio=args.drop_ratio,virtual_node=V_node,
-               L=args.L, V=args.V).to(args.device)
+    # ===== bottleneck type
+    if bot_type == 'pool':
+        model = GNN_SEM_POOL(gnn_type=G_type,num_tasks=args.num_tasks, 
+                   num_layer=args.num_layer,emb_dim=args.emb_dim,
+                   drop_ratio=args.drop_ratio,virtual_node=V_node,
+                   L=args.L, V=args.V, tau=args.pool_tau).to(args.device)
+    elif bot_type == 'upsample':
+        model = GNN_SEM_UPSAMPLE(gnn_type=G_type,num_tasks=args.num_tasks, 
+                   num_layer=args.num_layer,emb_dim=args.emb_dim,
+                   drop_ratio=args.drop_ratio,virtual_node=V_node,
+                   L=args.L, V=args.V).to(args.device)        
     return model
 
 # ============== General functions =======================

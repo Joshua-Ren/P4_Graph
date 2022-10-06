@@ -12,13 +12,12 @@ Created on Wed Aug 31 20:35:45 2022
 
 import torch
 import torch.nn as nn
+from torch_geometric import nn as gnn
 from torch_geometric.nn import MessagePassing
 from torch_geometric.nn import global_add_pool, global_mean_pool, global_max_pool, GlobalAttention, Set2Set
 import torch.nn.functional as F
 from torch_geometric.nn.inits import uniform
-
 from models.conv import GNN_node, GNN_node_Virtualnode
-
 from torch_scatter import scatter_mean
 
 class GNN(torch.nn.Module):
@@ -92,24 +91,59 @@ class GNN(torch.nn.Module):
         h_graph = self.pool(h_node, batched_data.batch)   
         return h_graph
 
-
-
-class GNN_SEM_BYOL(GNN):
+class GNN_SEM_POOL(GNN):
     '''
-        This is for another design, let's try BYOL first
+        For design 1, the message matrix has shape L*V
+        The pool used here are different
+        Task head is L*V->L, then L->Ntask
+        For distillation, output long L*V vector
+        For SSL, need more Wq and Wg
     '''
-    def __init__(self, L=200, V=20, **kwargs):
-        super(GNN_SEM_BYOL, self).__init__(**kwargs)
+    def __init__(self, L=200, V=20, tau=1., **kwargs):
+        super(GNN_SEM_POOL, self).__init__(**kwargs)
+        self.L = L
+        self.V = V
+        self.tau=tau
+        self.Wq = nn.Linear(self.L*self.V, self.L*self.V)
+        self.task_head = nn.Sequential(
+                            nn.Linear(self.L*self.V, self.L, bias=False),
+                            nn.ReLU(),
+                            nn.Linear(self.L, self.num_tasks)
+                            )       
+        self.sem_pool = SEMPool(self.emb_dim, self.L, self.V, self.tau)
+
+    def task_forward(self, batched_data, sem_tau=1.):
+        # downstream task forward
+        h_node = self.gnn_node(batched_data)
+        logits, p_theta = self.sem_pool(h_node, batched_data.batch)  
+        output = self.task_head(p_theta)
+        return logits, output
+
+    def distill_forward(self, batched_data, sem_tau=1.):
+        # for distill, both use logits
+        h_node = self.gnn_node(batched_data)
+        logits, p_theta = self.sem_pool(h_node, batched_data.batch) 
+        return logits, p_theta   
+        
+
+class GNN_SEM_UPSAMPLE(GNN):
+    '''
+        For design 2, the message matrix has shape L*V
+        Task head is L*V->L, then L->Ntask
+        For distillation, output long L*V vector
+        For SSL, need more Wq and Wg
+    '''
+    def __init__(self, L=200, V=20, tau=1., **kwargs):
+        super(GNN_SEM_UPSAMPLE, self).__init__(**kwargs)
         self.L = L
         self.V = V
         self.Wup = nn.Linear(self.emb_dim, self.L*self.V)
-        self.Wg = nn.Linear(self.L*self.V, self.emb_dim)
-        self.Wq = nn.Linear(self.emb_dim, self.emb_dim)
+        self.Wq = nn.Linear(self.L*self.V, self.L*self.V)
         self.task_head = nn.Sequential(
-                            nn.Linear(self.L*self.V, self.emb_dim),
+                            nn.Linear(self.L*self.V, self.L, bias=False),
                             nn.ReLU(),
-                            nn.Linear(self.emb_dim, self.num_tasks)
-                            )   
+                            nn.Linear(self.L, self.num_tasks)
+                            )
         
     def SEM(self, in_vector, tau=1.):
         '''
@@ -121,32 +155,24 @@ class GNN_SEM_BYOL(GNN):
         w_invector = self.Wup(in_vector)    # N*300 --> N*4000
         w_invector = w_invector/tau
         logits = w_invector.reshape(b_size, self.L, self.V)
-        y_theta = torch.nn.Softmax(-1)(logits).reshape(b_size, -1)   # N*4000
-        z_theta = self.Wg(y_theta)
-        q_theta = self.Wq(z_theta)
-        return logits, y_theta, z_theta, q_theta
+        p_theta = torch.nn.Softmax(-1)(logits).reshape(b_size, -1)   # reshaped prob-logits
+        q_theta = self.Wq(p_theta)  # q only for BYOL
+        return logits, p_theta, q_theta
           
-    def task_forward(self, batched_data, tau=1.):
+    def task_forward(self, batched_data, sem_tau=1.):
         # downstream task forward
         h_node = self.gnn_node(batched_data)
         h_graph = self.pool(h_node, batched_data.batch)
-        _, y_theta, _, _ = self.SEM(h_graph, tau)    
-        output = self.task_head(y_theta)
-        return output
-    
-    def ssl_forward(self, batched_data, tau=1.):
-        # for BYOL, online use q_theta, target use z_theta
-        h_node = self.gnn_node(batched_data)
-        h_graph = self.pool(h_node, batched_data.batch) 
-        _, _, z_theta, q_theta = self.SEM(h_graph, tau)
-        return z_theta, q_theta
+        logits, p_theta, _ = self.SEM(h_graph, sem_tau)    
+        output = self.task_head(p_theta)
+        return logits, output
 
-    def distill_forward(self, batched_data, tau=1.):
+    def distill_forward(self, batched_data, sem_tau=1.):
         # for distill, both use logits
         h_node = self.gnn_node(batched_data)
         h_graph = self.pool(h_node, batched_data.batch) 
-        logits, _, _, _ = self.SEM(h_graph, tau)
-        return logits        
+        logits, p_theta, _ = self.SEM(h_graph, sem_tau)
+        return logits, p_theta   
         
     def backbone_forward(self, batched_data):
         # output original N*300 vector
@@ -154,64 +180,43 @@ class GNN_SEM_BYOL(GNN):
         h_graph = self.pool(h_node, batched_data.batch)
         return h_graph
 
-class GNN_SEM(GNN):
-    '''
-        This is for another design, let's try BYOL first
-    '''
-    def __init__(self, mlp_hidden=128, tau=1.,gum_tau=1., L=10, V=30, **kwargs):
-        super(GNN_SEM, self).__init__(**kwargs)
-        self.mlp_hidden = mlp_hidden
+    def refgame_forward(self,batched_data, tau=1.):
+    # Not ready yet
+        h_node = self.gnn_node(batched_data)
+        z_out = self.pool(h_node, batched_data.batch) 
+        _, _, q_out = self.SEM(z_out, tau)
+        return z_out, q_out
+    
+    def bgrl_forward(self,batched_data):
+    # Not ready yet
+        h_node = self.gnn_node(batched_data)
+        hq_node = self.Wq(h_node)
+        return h_node, hq_node
+    
+    def byol_forward(self, batched_data, tau=1.):
+    # Not ready yet
+        h_node = self.gnn_node(batched_data)
+        h_graph = self.pool(h_node, batched_data.batch) 
+        _, p_theta, q_theta = self.SEM(h_graph, tau)
+        return p_theta, q_theta
+
+class SEMPool(nn.Module):
+    def __init__(self, emb_dim, L, V, tau):
+        super(SEMPool, self).__init__()
+        self.linear = nn.Linear(emb_dim, L*V, bias=False)
         self.tau = tau
-        self.gum_tau = gum_tau
         self.L = L
         self.V = V
-        self.pre_SEM = torch.nn.Linear(self.emb_dim, self.L*self.V)
-        self.word_sel = torch.nn.Linear(self.V,3)
-        self.after_SEM = torch.nn.Linear(3*self.L, self.emb_dim)
-        self.SEM_after = torch.nn.Linear(self.L*self.V, self.L*self.V)
-        
-    def SEM(self, in_vector):
-        '''
-            Piecewise softmax on a long 1*(L*V) vector
-            Use tau to control the softmax temperature
-            e.g., embd_size=300, L=30, V=10, as we have 30 words, each with 10 possible choices
-        '''
-        b_size, emb_dim = in_vector.shape[0], in_vector.shape[1]
-        #w_invector = self.SEM_lin(in_vector)
-        w_invector = in_vector
-        w_invector = w_invector/self.tau
-        logits = w_invector.reshape(b_size, self.L, self.V)
-        msg_oht = torch.nn.functional.gumbel_softmax(logits,tau=self.gum_tau, hard=True,dim=-1)
-        msg = self.word_sel(msg_oht)  # Shape is N*L
-        dis_hidden = self.after_SEM(msg.reshape(b_size,-1))   # Use for task
-        #tmp_softmax = torch.nn.Softmax(2)(w_invector)
-        #out_vector = tmp_softmax.reshape(b_size, -1)
-        return dis_hidden, logits
-          
-    def forward(self, batched_data):
-        h_node = self.gnn_node(batched_data)
-        h_graph = self.pool(h_node, batched_data.batch)
-        dis_hidden, logits = self.SEM(h_graph)    
-        output = self.graph_pred_linear(dis_hidden)
-        return output
-    
-    def backbone_forward(self, batched_data):
-        h_node = self.gnn_node(batched_data)
-        h_graph = self.pool(h_node, batched_data.batch)
-        return h_graph
- 
-    def msg_foward(self, batched_data):
-        h_node = self.gnn_node(batched_data)
-        h_graph = self.pool(h_node, batched_data.batch)   
-        dis_hidden, logits = self.SEM(h_graph)  # N*(L*V)
-        return dis_hidden, logits
-        
-    def dis_foward(self, batched_data):
-        # Similar to msg_forward, only for the old code
-        h_node = self.gnn_node(batched_data)
-        h_graph = self.pool(h_node, batched_data.batch)   
-        dis_h_graph = self.SEM(h_graph)
-        return dis_h_graph
+
+    def forward(self, h, batch_id):
+        outs = []
+        o = self.linear(h) #[1243, L*V]
+        o = gnn.global_add_pool(o, batch_id)
+        logits = o.view(-1, self.L, self.V)  #[64, L,V]
+        logits = logits/self.tau
+        p = F.softmax(logits, -1)
+        p = p.view(-1, self.L*self.V)
+        return logits, p
 
 if __name__ == '__main__':
     GNN(num_tasks = 10)
