@@ -22,5 +22,5 @@ source /home/mila/y/yi.ren/env_graph/bin/activate
 python /home/mila/y/yi.ren/P4_Graph/main_baseline.py \
 --drop_ratio 0 \
 --proj_name P4_phase_observe --dataset_name ogbg-molhiv \
---backbone_type gcn --bottle_type upsample \
---run_name base_hiv_gcn_up
+--backbone_type gcn --bottle_type pool \
+--run_name base_hiv_gcn_pool
