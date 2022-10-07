@@ -55,11 +55,11 @@ def get_args_parser():
                         help='for lp probing epochs')  
     parser.add_argument('--epochs_ssl', type=int, default=0,
                         help='byol between two models')
-    parser.add_argument('--epochs_ft', type=int, default=0,
+    parser.add_argument('--epochs_ft', type=int, default=20,
                         help='student training on real label')
-    parser.add_argument('--epochs_dis', type=int, default=100,
+    parser.add_argument('--epochs_dis', type=int, default=20,
                         help='distillation')
-    parser.add_argument('--generations', type=int, default=2,
+    parser.add_argument('--generations', type=int, default=5,
                         help='number of generations')
     
         # ===== Finetune or evaluation settings ======
