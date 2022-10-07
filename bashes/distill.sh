@@ -3,7 +3,7 @@
 #SBATCH --cpus-per-task=2                                # Ask for 2 CPUs
 #SBATCH --gres=gpu:1                                     # Ask for 1 GPU
 #SBATCH --mem=10G                                        # Ask for 10 GB of RAM
-#SBATCH --job-name=baseline
+#SBATCH --job-name=distill
 #SBATCH --time=40:00:00                                   # The job will run for 3 hours
 #SBATCH --output=./logs/stage1.txt 
 
@@ -21,7 +21,7 @@ source /home/mila/y/yi.ren/env_graph/bin/activate
 
 cd /home/mila/y/yi.ren/P4_Graph/
 
-srun python /home/mila/y/yi.ren/P4_Graph/main_baseline.py \
+srun python /home/mila/y/yi.ren/P4_Graph/main_distill.py \
 --drop_ratio 0 \
 --proj_name P4_phase_observe --dataset_name ogbg-molpcba \
 --backbone_type gcn --bottle_type pool \

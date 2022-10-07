@@ -92,6 +92,7 @@ def get_args_parser():
     # ===== Wandb and saving results ====
     parser.add_argument('--run_name',default='test',type=str)
     parser.add_argument('--proj_name',default='P4_phase_observe', type=str)
+    parser.add_argument('--ckp_name',default='_best', type=str)
     return parser
  
 def main(args):
@@ -111,7 +112,7 @@ def main(args):
     student = get_init_net(args)
     teacher = get_init_net(args)
         # ------ Here we load the checkpoint when analyzing each stage
-    ckp_name = ''
+    ckp_name = args.ckp_name
     ckp_load_path = os.path.join(args.save_path,model_name+'_'+args.dataset_name+ckp_name+'.pth')
     teacher.load_state_dict(torch.load(ckp_load_path),strict=True)
     
