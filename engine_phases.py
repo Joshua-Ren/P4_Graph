@@ -107,6 +107,12 @@ def train_distill(args, student, teacher, loader, optimizer):
                 sampler = torch.distributions.categorical.Categorical(nn.Softmax(-1)(teach_logits/args.dis_smp_tau))
                 teach_label = sampler.sample().long()
                 loss = ce_criterion(stud_logits.reshape(-1,args.V),teach_label.reshape(-1,))
+            elif args.dis_losss == 'noisy_ce_sample':
+                epsilon = torch.randn_like(teach_logits)
+                dist = F.softmax((teach_logits + epsilon)/args.dis_smp_tau), -1)
+                sampler = torch.distributions.categorical.Categorical(dist)
+                teach_label = sampler.sample().long()
+                loss = ce_criterion(stud_logits.reshape(-1,args.V),teach_label.reshape(-1,))
             elif args.dis_loss == 'mse':
                 loss = nn.MSELoss(reduction='mean')(stud_logits, teach_logits)
             elif args.dis_loss == 'kld':   # Seems always giving nan, see what's the problem
