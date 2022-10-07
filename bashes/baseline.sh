@@ -23,6 +23,6 @@ cd /home/mila/y/yi.ren/P4_Graph/
 
 srun python /home/mila/y/yi.ren/P4_Graph/main_baseline.py \
 --drop_ratio 0 \
---proj_name P4_phase_observe --dataset_name ogbg-molpcba \
---backbone_type gcn --bottle_type pool \
---run_name base_pcba_gcn_pool
+--proj_name P4_phase_observe --dataset_name ogbg-moltox21 \
+--backbone_type gcn --bottle_type upsample \
+--run_name base_tox_gcn_up_linhead
