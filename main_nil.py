@@ -76,6 +76,8 @@ def get_args_parser():
         # ===== Distillation settings ======
     parser.add_argument('--dis_lr', type=float, default=1e-3,
                         help='learning rate for student')    
+    parser.add_argument('--scheduler', type=eval, default=True,
+                        help='Whether to use cosine scheduler')    
     parser.add_argument('--dis_loss', type=str, default='ce_argmax',
               help='how the teacher generate the samples, ce_argmax, ce_sample, mse, kld')
     parser.add_argument('--dis_optim_type', type=str, default='adam',
@@ -138,7 +140,8 @@ def main(args):
         student = get_init_net(args)
         optimizer_dis = optim.Adam(student.parameters(), lr=args.dis_lr)
         optimizer_ft = optim.Adam(student.parameters(), lr=args.ft_lr)
-        scheduler_ft = optim.lr_scheduler.CosineAnnealingLR(optimizer_ft,T_max=args.epochs_ft,eta_min=1e-6)
+        if args.scheduler:
+            scheduler_ft = optim.lr_scheduler.CosineAnnealingLR(optimizer_ft,T_max=args.epochs_ft,eta_min=1e-6)
         
         # =========== Step1: distillation, skip in first gen
         if gen>0:
