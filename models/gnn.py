@@ -140,10 +140,10 @@ class GNN_SEM_UPSAMPLE(GNN):
         self.Wup = nn.Linear(self.emb_dim, self.L*self.V)
         self.Wq = nn.Linear(self.L*self.V, self.L*self.V)
         self.task_head = nn.Sequential(
-                            nn.Linear(self.L*self.V, self.num_tasks),
-                            #nn.Linear(self.L*self.V, self.L, bias=False),
-                            #nn.ReLU(),
-                            #nn.Linear(self.L, self.num_tasks)
+                            #nn.Linear(self.L*self.V, self.num_tasks),
+                            nn.Linear(self.L*self.V, self.L, bias=False),
+                            nn.ReLU(),
+                            nn.Linear(self.L, self.num_tasks)
                             )
         
     def SEM(self, in_vector, tau=1.):

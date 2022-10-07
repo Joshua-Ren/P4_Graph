@@ -27,4 +27,4 @@ srun python /home/mila/y/yi.ren/P4_Graph/main_nil.py \
 --backbone_type gcn --bottle_type upsample \
 --epochs_dis 20 --epochs_ft 20 --generations 5 \
 --dis_loss noisy_ce_sample \
---run_name nil_tox_gcn_up
+--run_name nil_tox_gcn_up_2lhead
