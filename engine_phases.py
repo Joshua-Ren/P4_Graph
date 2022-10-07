@@ -21,11 +21,15 @@ def train_task(args, model, loader, optimizer, scheduler=None, model0=None,):
     # --------- Update the whole network under the task-supervision
     # Can be used in generating the baseline, or as a phase in NIL
     # Wandb records: 
-    losses = AverageMeter()
-    msg_dists = AverageMeter()
-    msg_topsim = AverageMeter()
-    msg_entropy = AverageMeter()
+    
+    ft_losses = AverageMeter()
+    ft_msg_dists = AverageMeter()
+    ft_msg_topsim = AverageMeter()
+    ft_msg_entropy = AverageMeter()
+    ft_train_roc = AverageMeter()
     model.train()
+    evaluator = Evaluator(args.dataset_name)
+    y_true, y_pred = [], []
     for step, batch in enumerate(loader):
         batch = batch.to(args.device)
         if batch.x.shape[0] == 1 or batch.batch[-1] == 0:
@@ -36,15 +40,15 @@ def train_task(args, model, loader, optimizer, scheduler=None, model0=None,):
                 # ----- Then we should report the message distance
                 logits0, _ = model0.task_forward(batch, args.ft_tau)
                 msg_dist = cal_msg_distance_logits(logits,logits0)
-                msg_dists.update(msg_dist.item())
-                wandb.log({'msg_drift':msg_dists.avg})
+                ft_msg_dists.update(msg_dist.item())
+                wandb.log({'ft_msg_drift':ft_msg_dists.avg})
             if True:    # Whether to calcualte the topsim
                 corr, p = cal_topsim(logits, batch)
                 entropy = cal_att_entropy(logits)
-                msg_entropy.update(entropy)
-                msg_topsim.update(corr)
-                wandb.log({'msg_entropy':msg_entropy.avg})
-                wandb.log({'topsim':msg_topsim.avg})                    
+                ft_msg_entropy.update(entropy)
+                ft_msg_topsim.update(corr)
+                wandb.log({'ft_msg_entropy':ft_msg_entropy.avg})
+                wandb.log({'ft_topsim':ft_msg_topsim.avg})                    
             optimizer.zero_grad()
             ## ignore nan targets (unlabeled) when computing training loss.
             is_labeled = batch.y == batch.y
@@ -56,17 +60,27 @@ def train_task(args, model, loader, optimizer, scheduler=None, model0=None,):
                 loss = reg_criterion(pred.to(torch.float32)[is_labeled], batch.y.to(torch.float32)[is_labeled])
             loss.backward()
             optimizer.step()
-            losses.update(loss.data.item(), batch.x.size(0))
-            wandb.log({'ft_task_loss':losses.avg})           
+            ft_losses.update(loss.data.item(), batch.x.size(0))
+            wandb.log({'ft_task_loss':ft_losses.avg})           
+            # ------ Update train acc each batch
+            y_true = batch.y.view(pred.shape).detach().cpu().numpy()
+            y_pred = pred.detach().cpu().numpy()
+            input_dict = {"y_true": y_true, "y_pred": y_pred}
+            eval_result = evaluator.eval(input_dict)
+            ft_train_roc.update(eval_result[args.eval_metric])
+            wandb.log({'task_train_roc':ft_train_roc.avg})
             if scheduler is not None:
                 scheduler.step()
+
     
 def train_distill(args, student, teacher, loader, optimizer):
     # ------------ Train the student using the teacher's prediction (argmax, sample, mse)
     # Wandb record: distill_loss
     #               msg_overlap, the overlap ratio of messages between teacher and student
-    losses = AverageMeter()
-    msg_dists = AverageMeter()
+    dis_losses = AverageMeter()
+    dis_msg_dists = AverageMeter()
+    dis_msg_topsim = AverageMeter()
+    dis_msg_entropy = AverageMeter()
     teacher.eval()
     student.train()
     for step, batch in enumerate(loader):
@@ -75,28 +89,36 @@ def train_distill(args, student, teacher, loader, optimizer):
         if batch.x.shape[0] == 1 or batch.batch[-1] == 0:
             pass
         else:
-            teach_logits = teacher.distill_forward(batch, args.dis_sem_tau)
-            stud_logits = student.distill_forward(batch, args.dis_sem_tau)
-      
-        if args.dis_loss == 'ce_argmax':
-            teach_label = teach_logits.argmax(-1)
-            loss = ce_criterion(stud_logits.reshape(-1,args.V),teach_label.reshape(-1,))
-        elif args.dis_loss == 'ce_sample':
-            sampler = torch.distributions.categorical.Categorical(nn.Softmax(-1)(teach_logits/args.dis_smp_tau))
-            teach_label = sampler.sample().long()
-            loss = ce_criterion(stud_logits.reshape(-1,args.V),teach_label.reshape(-1,))
-        elif args.dis_loss == 'mse':
-            loss = nn.MSELoss(reduction='mean')(stud_logits, teach_logits)
-        elif args.dis_loss == 'kld':   # Seems always giving nan, see what's the problem
-            loss = nn.KLDivLoss(reduction='batchmean')(torch.log(stud_logits.reshape(-1,args.V)),nn.Softmax(-1)(teach_logits))
-        optimizer.zero_grad()
-        loss.backward()
-        optimizer.step()
-        losses.update(loss.data.item(), batch.x.size(0))
-        wandb.log({'distill_loss':losses.avg})
-        msg_dist = cal_msg_distance_logits(stud_logits,teach_logits)
-        msg_dists.update(msg_dist.item())
-        wandb.log({'msg_overlap':msg_dists.avg})
+            teach_logits, tech_p = teacher.distill_forward(batch, args.dis_sem_tau)
+            stud_logits, stud_p = student.distill_forward(batch, args.dis_sem_tau)
+            
+            if True:    # Whether to calcualte the topsim
+                corr, p = cal_topsim(stud_logits, batch)
+                entropy = cal_att_entropy(stud_logits)
+                dis_msg_entropy.update(entropy)
+                dis_msg_topsim.update(corr)
+                wandb.log({'Dis_msg_entropy':dis_msg_entropy.avg})
+                wandb.log({'Dis_topsim':dis_msg_topsim.avg})           
+            
+            if args.dis_loss == 'ce_argmax':
+                teach_label = teach_logits.argmax(-1)
+                loss = ce_criterion(stud_logits.reshape(-1,args.V),teach_label.reshape(-1,))
+            elif args.dis_loss == 'ce_sample':
+                sampler = torch.distributions.categorical.Categorical(nn.Softmax(-1)(teach_logits/args.dis_smp_tau))
+                teach_label = sampler.sample().long()
+                loss = ce_criterion(stud_logits.reshape(-1,args.V),teach_label.reshape(-1,))
+            elif args.dis_loss == 'mse':
+                loss = nn.MSELoss(reduction='mean')(stud_logits, teach_logits)
+            elif args.dis_loss == 'kld':   # Seems always giving nan, see what's the problem
+                loss = nn.KLDivLoss(reduction='batchmean')(torch.log(stud_logits.reshape(-1,args.V)),nn.Softmax(-1)(teach_logits))
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+            dis_losses.update(loss.data.item(), batch.x.size(0))
+            wandb.log({'distill_loss':dis_losses.avg})
+            msg_dist = cal_msg_distance_logits(stud_logits,teach_logits)
+            dis_msg_dists.update(msg_dist.item())
+            wandb.log({'Dis_msg_overlap':dis_msg_dists.avg})
 
 def train_simclr(args, model, loader, optimizer):
     # 1. X --> aug(X1) and aug(X2)

@@ -18,42 +18,39 @@ def get_args_parser():
                         help='which gpu to use if any (default: 0)')
     parser.add_argument('--drop_ratio', type=float, default=0,
                         help='dropout ratio (default: 0.5)')
+    parser.add_argument('--batch_size', type=int, default=64,
+                        help='input batch size for training (default: 32)')
+    parser.add_argument('--num_workers', type=int, default=2,
+                        help='number of workers (default: 0)')
+    parser.add_argument('--dataset_name', type=str, default="ogbg-moltox21",
+                        help='dataset name (default: ogbg-molhiv/moltox21/molpcba)')
+    parser.add_argument('--feature', type=str, default="full",
+                        help='full feature or simple feature')
+
+    # ==== Model settings ======
+    #===========================
+    parser.add_argument('--backbone_type', type=str, default='gcn',
+                        help='backbone type, can be gcn, gin, gcn_virtual, gin_virtual')
+    parser.add_argument('--bottle_type', type=str, default='upsample',
+                        help='bottleneck type, can be pool, upsample, ...')
     parser.add_argument('--num_layer', type=int, default=5,
                         help='number of GNN message passing layers (default: 5)')
     parser.add_argument('--emb_dim', type=int, default=300,
-                        help='dimensionality of hidden units in GNNs (default: 300)')
-    parser.add_argument('--batch_size', type=int, default=64,
-                        help='input batch size for training (default: 32)')
-    parser.add_argument('--epochs', type=int, default=200,
-                        help='number of epochs to train (default: 100)')
-    parser.add_argument('--num_workers', type=int, default=0,
-                        help='number of workers (default: 0)')
-    parser.add_argument('--dataset_name', type=str, default="ogbg-molhiv",
-                        help='dataset name (default: ogbg-molhiv)')
-    parser.add_argument('--feature', type=str, default="full",
-                        help='full feature or simple feature')
-    parser.add_argument('--ssl_lr', type=float, default=1e-3,
-                        help='learning rate for student')
-    parser.add_argument('--lp_lr', type=float, default=1e-3,
-                        help='learning rate for student')
-    parser.add_argument('--ft_lr', type=float, default=1e-3,
-                        help='learning rate for student')
-    parser.add_argument('--byol_eta', type=float, default=0.99,
-                        help='eta in EMA')  
-    # ==== SEM settings ======
-    parser.add_argument('--model_type', type=str, default='gcn',
-                        help='gcn, gin, gcn-virtual, gin-virtual')  
+                        help='dimensionality of hidden units in GNNs (default: 300)')    
+        # ---- SEM settings ----
     parser.add_argument('--L', type=int, default=200,
                         help='No. word in SEM')
     parser.add_argument('--V', type=int, default=20,
                         help='word size in SEM')
-    parser.add_argument('--ssl_tau', type=float, default=1.,
+    parser.add_argument('--pool_tau', type=float, default=1.,
                         help='temperature in SEM')
     parser.add_argument('--dis_sem_tau', type=float, default=1.,
                         help='temperature in SEM')
     parser.add_argument('--ft_tau', type=float, default=1.,
                         help='temperature in SEM')
+    
     # ===== NIL settings ======
+    # =========================
     parser.add_argument('--epochs_lp', type=int, default=1,
                         help='for lp probing epochs')  
     parser.add_argument('--epochs_ssl', type=int, default=0,
@@ -64,29 +61,39 @@ def get_args_parser():
                         help='distillation')
     parser.add_argument('--generations', type=int, default=2,
                         help='number of generations')
-    # ===== Distillation settings ======
+    
+        # ===== Finetune or evaluation settings ======
+    parser.add_argument('--ft_lr', type=float, default=1e-3,
+                        help='learning rate for student on task')
+    parser.add_argument('--lp_lr', type=float, default=2e-4,
+                        help='learning rate for student when LP-eval')
+        # ===== Distillation settings ======
+    parser.add_argument('--dis_lr', type=float, default=1e-3,
+                        help='learning rate for student')    
     parser.add_argument('--dis_loss', type=str, default='ce_argmax',
               help='how the teacher generate the samples, ce_argmax, ce_sample, mse, kld')
+    parser.add_argument('--dis_optim_type', type=str, default='adam',
+              help='optimizer used in distillation, sgd or adam')
     parser.add_argument('--dis_smp_tau', type=float, default=1.,
               help='temperature used when teacher generating sample, 0 is argmax')
-    parser.add_argument('--dis_optim_type', type=str, default='sgd',
-              help='optimizer used during distillation, sgd or adam')
-    parser.add_argument('--dis_lr', type=float, default=1e-3,
-                        help='learning rate for student')
-    parser.add_argument('--dis_wd', type=float, default=0.,
-                        help='weight decay used in distillation')
-    # ===== SSL settings ======
+  
+        # ===== SSL settings ======
+            # ---- Common
     parser.add_argument('--inter_alpha', type=float, default=0,
                         help='balance between task loss and inter-loss, 0 is all inter')
+    parser.add_argument('--ssl_lr', type=float, default=1e-3,
+                        help='learning rate for student')                      
+            # ---- BYOL
     parser.add_argument('--byol_loss', type=str, default='mse',
                         help='loss type used in byol, mse or cosine')
+    parser.add_argument('--byol_eta', type=float, default=0.99,
+                        help='eta in EMA')  
+    
     # ===== Wandb and saving results ====
     parser.add_argument('--run_name',default='test',type=str)
-    parser.add_argument('--proj_name',default='P4_SSL_Graph_new', type=str)
-    parser.add_argument('--save_dir', default=None,
-                        help='path of the pretrained checkpoint')    
+    parser.add_argument('--proj_name',default='P4_phase_observe', type=str)
     return parser
-
+ 
 def main(args):
     # Only analyze the detailed behaviors during distillation
     # ========== Generate seed ==========
@@ -95,31 +102,30 @@ def main(args):
     rnd_seed(args.seed)
     
     # ========== Prepare save folder and wandb ==========
-    #run_name = wandb_init(proj_name=args.proj_name, run_name=args.run_name, config_args=args)
-    #args.save_path = os.path.join(args.save_dir, run_name)
-    wandb.init()
+    run_name = wandb_init(proj_name=args.proj_name, run_name=args.run_name, config_args=args)
+    model_name = args.backbone_type+'_'+args.bottle_type
+    args.save_path = os.path.join('results',model_name,args.dataset_name)
             # -------- save results in this folder
-    #if not os.path.exists(args.save_path):
-    #    os.makedirs(args.save_path)    
     # ========== Prepare the loader, model and optimizer
     loaders = build_dataset(args)    
     student = get_init_net(args)
     teacher = get_init_net(args)
         # ------ Here we load the checkpoint when analyzing each stage
-    load_path = os.path.join('results','GCN_baseline.pth')
-    teacher.load_state_dict(torch.load(load_path),strict=True)
+    ckp_name = ''
+    ckp_load_path = os.path.join(args.save_path,model_name+'_'+args.dataset_name+ckp_name+'.pth')
+    teacher.load_state_dict(torch.load(ckp_load_path),strict=True)
     
     if args.dis_optim_type == 'sgd':
         optimizer_dis = optim.SGD(student.parameters(), momentum=0.9, weight_decay=args.dis_wd, lr=args.dis_lr)
     elif args.dis_optim_type == 'adam':
         optimizer_dis = optim.Adam(student.parameters(), lr=args.dis_lr)
     # ===== Distill
-    eval_probing(args, teacher, loaders, title='Distill_prob_', no_train=False)
-    eval_probing(args, student, loaders, title='Distill_prob_', no_train=False)
+    eval_probing(args, teacher, loaders, title='Teach_', no_train=True)
+    eval_probing(args, student, loaders, title='Stud_prob_', no_train=True)
     for epoch in range(args.epochs_dis):
         print(epoch,end='-')
         train_distill(args, student, teacher, loaders['train'], optimizer_dis)
-        eval_probing(args, student, loaders, title='Distill_prob_', no_train=False)
+        eval_probing(args, student, loaders, title='Stud_prob_', no_train=True)
     wandb.finish()
 
 if __name__ == '__main__':
