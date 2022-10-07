@@ -23,6 +23,6 @@ cd /home/mila/y/yi.ren/P4_Graph/
 
 srun python /home/mila/y/yi.ren/P4_Graph/main_distill.py \
 --drop_ratio 0 \
---proj_name P4_phase_observe --dataset_name ogbg-moltox21 --dis_loss mse \
+--proj_name P4_phase_observe --dataset_name ogbg-moltox21 --dis_loss ce_sample \
 --backbone_type gcn --bottle_type upsample --ckp_name _best \
---run_name disbest_tox_gcn_upsample_msedis
+--run_name disbest_tox_gcn_upsample_cesmpedis
