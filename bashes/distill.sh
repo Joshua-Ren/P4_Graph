@@ -24,5 +24,5 @@ cd /home/mila/y/yi.ren/P4_Graph/
 srun python /home/mila/y/yi.ren/P4_Graph/main_distill.py \
 --drop_ratio 0 \
 --proj_name P4_phase_observe --dataset_name ogbg-molpcba \
---backbone_type gcn --bottle_type pool \
---run_name base_pcba_gcn_pool
+--backbone_type gcn --bottle_type upsample --ckp_name _best \
+--run_name disbest_pcba_gcn_upsample
