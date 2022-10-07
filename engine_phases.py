@@ -109,7 +109,7 @@ def train_distill(args, student, teacher, loader, optimizer):
                 loss = ce_criterion(stud_logits.reshape(-1,args.V),teach_label.reshape(-1,))
             elif args.dis_losss == 'noisy_ce_sample':
                 epsilon = torch.randn_like(teach_logits)
-                dist = F.softmax((teach_logits + epsilon)/args.dis_smp_tau), -1)
+                dist = F.softmax((teach_logits + epsilon)/args.dis_smp_tau, -1)
                 sampler = torch.distributions.categorical.Categorical(dist)
                 teach_label = sampler.sample().long()
                 loss = ce_criterion(stud_logits.reshape(-1,args.V),teach_label.reshape(-1,))
