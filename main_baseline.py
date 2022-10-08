@@ -1,4 +1,4 @@
-from engine_phases import train_distill, eval_probing, train_task
+from engine_phases import train_distill, eval_probing, train_task, eval_all
 from utils.datasets import build_dataset
 from utils.general import wandb_init, get_init_net, rnd_seed, AverageMeter
 from utils.nil_related import *
@@ -8,6 +8,7 @@ import argparse
 import numpy as np
 import random
 import os
+import wandb
 
 def get_args_parser():
     # Training settings
