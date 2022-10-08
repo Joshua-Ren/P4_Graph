@@ -80,7 +80,7 @@ def get_args_parser():
     parser.add_argument('--scheduler', type=eval, default=True,
                         help='Whether to use cosine scheduler')    
     parser.add_argument('--dis_loss', type=str, default='ce_argmax',
-              help='how the teacher generate the samples, ce_argmax, ce_sample, mse, kld')
+              help='how the teacher generate the samples, ce_argmax, ce_sample, noisy_ce_sample, mse, kld')
     parser.add_argument('--dis_optim_type', type=str, default='adam',
               help='optimizer used in distillation, sgd or adam')
     parser.add_argument('--dis_smp_tau', type=float, default=1.,
