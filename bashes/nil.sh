@@ -26,5 +26,5 @@ srun python /home/mila/y/yi.ren/P4_Graph/main_nil.py \
 --proj_name P4_phase_observe --dataset_name ogbg-moltox21 \
 --backbone_type gcn --bottle_type upsample \
 --epochs_dis 20 --epochs_ft 50 --generations 10 \
---dis_loss noisy_ce_sample --teach_last_best last --dis_optim_type sgd \
---run_name nil_tox_gcn_up_linhead_sgd_rndsmpdis_last
+--dis_loss mse --teach_last_best last --dis_optim_type sgd \
+--run_name nil_tox_gcn_up_linhead_sgd_msedis_last
