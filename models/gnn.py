@@ -66,20 +66,12 @@ class GNN(torch.nn.Module):
             #self.graph_pred_linear = nn.Linear(2*self.emb_dim, self.num_tasks)
             self.graph_pred_linear = nn.Sequential(
                                             nn.Linear(2*self.emb_dim, self.num_tasks),
-                                            #nn.ReLU(),
-                                            #nn.Linear(128, 128),
-                                            #nn.ReLU(),
-                                            #nn.Linear(128, self.num_tasks)
                                             )
                                             
         else:
             #self.graph_pred_linear = nn.Linear(self.emb_dim, self.num_tasks)
             self.graph_pred_linear = nn.Sequential(
                                             nn.Linear(self.emb_dim, self.num_tasks),
-                                            #nn.ReLU(),
-                                            #nn.Linear(128, 128),
-                                            #nn.ReLU(),                                      
-                                            #nn.Linear(128, self.num_tasks)
                                             )
     def forward(self, batched_data):
         h_node = self.gnn_node(batched_data)
