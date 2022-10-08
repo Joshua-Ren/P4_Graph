@@ -139,8 +139,12 @@ def main(args):
     for gen in range(args.generations):
         # =========== Step0: new agent
         student = get_init_net(args)
-        optimizer_dis = optim.Adam(student.parameters(), lr=args.dis_lr)
-        optimizer_ft = optim.Adam(student.parameters(), lr=args.ft_lr)
+        if args.dis_optim_type=='adam':
+            optimizer_dis = optim.Adam(student.parameters(), lr=args.dis_lr)
+        elif args.dis_optim_type=='sgd':
+            optimizer_dis = optim.SGD(student.parameters(), momentum=0.9, lr=args.dis_lr)
+        optimizer_ft = optim.Adam(student.parameters(), lr=args.ft_lr)      
+        #optimizer_ft = optim.Adam(student.parameters(), lr=args.ft_lr)
         if args.scheduler:
             scheduler_ft = optim.lr_scheduler.CosineAnnealingLR(optimizer_ft,T_max=args.epochs_ft,eta_min=1e-6)
         
