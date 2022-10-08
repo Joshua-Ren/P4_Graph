@@ -56,6 +56,8 @@ def get_args_parser():
     
     # ===== NIL settings ======
     # =========================
+    parser.add_argument('--teach_last_best', type=str, default='best',
+                        help='use the best or last epoch teacher in distillation')
     parser.add_argument('--epochs_lp', type=int, default=1,
                         help='for lp probing epochs')  
     parser.add_argument('--epochs_ssl', type=int, default=0,
@@ -159,8 +161,11 @@ def main(args):
                 best_vacc = valid_roc
                 best_testacc = test_roc
                 best_vacc_ep = epoch
-                teacher = copy.deepcopy(student)
-            wandb.log({'best_val_epoch':best_vacc_ep})
+                if args.teach_last_best=='best':
+                    teacher = copy.deepcopy(student)
+                wandb.log({'best_val_epoch':best_vacc_ep})
+        if args.teach_last_best=='last':
+            teacher = copy.deepcopy(student)
         wandb.log({'End_gen_valid_roc':valid_roc})
         wandb.log({'End_gen_test_roc':test_roc})
         wandb.log({'Best_gen_valid_roc':best_vacc})
