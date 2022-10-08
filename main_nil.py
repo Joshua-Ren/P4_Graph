@@ -14,7 +14,7 @@ import argparse
 import numpy as np
 import random
 import os
-
+import wandb
 def get_args_parser():
     # Training settings
     parser = argparse.ArgumentParser(description='GNN baselines on ogbgmol* data with Pytorch Geometrics')
