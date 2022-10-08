@@ -4,7 +4,7 @@ Created on Thu Oct  6 16:34:13 2022
 
 @author: YIREN
 """
-from engine_phases import train_distill, eval_probing, train_task
+from engine_phases import train_distill, eval_probing, train_task, eval_all
 from utils.datasets import build_dataset
 from utils.general import wandb_init, get_init_net, rnd_seed, AverageMeter
 from utils.nil_related import *
