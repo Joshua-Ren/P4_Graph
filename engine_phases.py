@@ -5,8 +5,8 @@ import torch.nn.functional as F
 import torch.nn as nn
 import torchvision
 from tqdm import tqdm
-from utils.datasets import *
-from utils.general import *
+from utils.datasets import build_dataset
+from utils.general import wandb_init, get_init_net, rnd_seed, AverageMeter
 from utils.nil_related import *
 from ogb.graphproppred import Evaluator
 import torch.optim as optim
