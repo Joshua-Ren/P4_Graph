@@ -63,15 +63,18 @@ def train_task(args, model, loader, optimizer, scheduler=None, model0=None,):
             ft_losses.update(loss.data.item(), batch.x.size(0))
             wandb.log({'ft_task_loss':ft_losses.avg})           
             # ------ Update train acc each batch
-            y_true = batch.y.view(pred.shape).detach().cpu().numpy()
-            y_pred = pred.detach().cpu().numpy()
-            input_dict = {"y_true": y_true, "y_pred": y_pred}
-            eval_result = evaluator.eval(input_dict)
-            ft_train_roc.update(eval_result[args.eval_metric])
-            wandb.log({'task_train_roc':ft_train_roc.avg})
+            #y_true = batch.y.view(pred.shape).detach().cpu().numpy()
+            #y_pred = pred.detach().cpu().numpy()
+            y_true.append(batch.y.view(pred.shape).detach().cpu())
+            y_pred.append(pred.detach().cpu())
             if scheduler is not None:
                 scheduler.step()
-
+    y_true = torch.cat(y_true, dim = 0).numpy()
+    y_pred = torch.cat(y_pred, dim = 0).numpy()
+    input_dict = {"y_true": y_true, "y_pred": y_pred}
+    eval_result = evaluator.eval(input_dict)
+    ft_train_roc.update(eval_result[args.eval_metric])
+    wandb.log({'task_train_roc':ft_train_roc.avg})
     
 def train_distill(args, student, teacher, loader, optimizer):
     # ------------ Train the student using the teacher's prediction (argmax, sample, mse)
