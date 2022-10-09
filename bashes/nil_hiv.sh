@@ -26,5 +26,5 @@ srun python /home/mila/y/yi.ren/P4_Graph/main_nil.py \
 --proj_name P4_phase_observe --dataset_name ogbg-molhiv \
 --backbone_type gcn --bottle_type upsample --drop_ratio 0 \
 --epochs_dis 20 --epochs_ft 50 --generations 20 \
---dis_loss noisy_ce_sample --teach_last_best best --dis_optim_type adam --dis_lr 0.0001 \
---run_name nil_hiv_gcn_up_linhead_adam1e4_rndsmpdis_best
+--dis_loss ce_sample --dis_smp_tau 4 --teach_last_best best --dis_optim_type adam --dis_lr 0.0001 \
+--run_name nil_hiv_gcn_up_linhead_adam1e4_tau4smpdis_best
