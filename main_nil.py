@@ -43,7 +43,7 @@ def get_args_parser():
     parser.add_argument('--emb_dim', type=int, default=300,
                         help='dimensionality of hidden units in GNNs (default: 300)')    
         # ---- SEM settings ----
-    parser.add_argument('--L', type=int, default=200,
+    parser.add_argument('--L', type=int, default=15,
                         help='No. word in SEM')
     parser.add_argument('--V', type=int, default=20,
                         help='word size in SEM')
