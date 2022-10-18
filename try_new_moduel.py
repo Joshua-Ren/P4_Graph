@@ -109,14 +109,18 @@ args = args.parse_args()
 args.device = torch.device("cuda:" + str(args.device)) if torch.cuda.is_available() else torch.device("cpu")
 
 loaders = build_dataset(args)
-online = get_init_net(args)
-target = get_init_net(args)
+teacher = get_init_net(args)
+student = get_init_net(args)
 for step, batch in enumerate(loaders['train']):
     break
 
-logits0, p_theta = online.distill_forward(batch.cuda())
+logits0, p_theta = teacher.distill_forward(batch.cuda())
+teach_logits, tech_p = teacher.distill_forward(batch.cuda())
+stud_logits, stud_p = student.distill_forward(batch.cuda())
 
 
+optimizer_dis = optim.SGD(student.parameters(), momentum=0.9, lr=args.dis_lr)
+train_distill(args, student, teacher, loaders['train'], optimizer_dis)
 
 '''
 exp_name = args.backbone_type+'_'+args.bottle_type

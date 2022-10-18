@@ -297,7 +297,6 @@ class GNN_SEM_LSTM(GNN):
         b_size = in_vector.shape[0]
         z_pre = in_vector
         msg, logits = self.ENC.forward(z_pre, z_pre,mode=mode)
-        logits = logits.reshape(b_size, self.L*self.V)
         p_theta = self.DEC.forward(msg)
         p_theta = p_theta.reshape(b_size,-1)        # [NB, embd]
         q_theta = self.Wq(p_theta)
