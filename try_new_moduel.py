@@ -32,7 +32,7 @@ def get_args_parser():
                         help='input batch size for training (default: 32)')
     parser.add_argument('--num_workers', type=int, default=0,
                         help='number of workers (default: 0)')
-    parser.add_argument('--dataset_name', type=str, default="ogbg-molhiv",
+    parser.add_argument('--dataset_name', type=str, default="ogbg-moltox21",
                         help='dataset name (default: ogbg-molhiv/moltox21/molpcba)')
     parser.add_argument('--feature', type=str, default="full",
                         help='full feature or simple feature')
@@ -41,8 +41,8 @@ def get_args_parser():
     #===========================
     parser.add_argument('--backbone_type', type=str, default='gcn',
                         help='backbone type, can be gcn, gin, gcn_virtual, gin_virtual')
-    parser.add_argument('--bottle_type', type=str, default='pool',
-                        help='bottleneck type, can be pool, upsample, ...')
+    parser.add_argument('--bottle_type', type=str, default='lstm',
+                        help='bottleneck type, can be pool, upsample, updown, lstm, ...')
     parser.add_argument('--num_layer', type=int, default=5,
                         help='number of GNN message passing layers (default: 5)')
     parser.add_argument('--emb_dim', type=int, default=300,
@@ -114,6 +114,11 @@ target = get_init_net(args)
 for step, batch in enumerate(loaders['train']):
     break
 
+logits0, p_theta = online.distill_forward(batch.cuda())
+
+
+
+'''
 exp_name = args.backbone_type+'_'+args.bottle_type
 load_path = os.path.join('results',exp_name,args.dataset_name,exp_name+'_'+args.dataset_name+'.pth')
 online.load_state_dict(torch.load(load_path),strict=True)
@@ -124,7 +129,7 @@ entropy = cal_att_entropy(logits0)
 
 
 
-'''
+
 msg_dists = []
 y_dists = []
 for i in range(msg0.shape[0]):
