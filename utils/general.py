@@ -55,6 +55,11 @@ def get_init_net(args, backbone_type=None, bottle_type=None):
                    num_layer=args.num_layer,emb_dim=args.emb_dim,
                    drop_ratio=args.drop_ratio,virtual_node=V_node,
                    L=args.L, V=args.V).to(args.device)        
+    elif bot_type == 'updown':
+        model = GNN_SEM_UPDOWN(gnn_type=G_type,num_tasks=args.num_tasks, 
+                   num_layer=args.num_layer,emb_dim=args.emb_dim,
+                   drop_ratio=args.drop_ratio,virtual_node=V_node,
+                   L=args.L, V=args.V).to(args.device)  
     return model
 
 # ============== General functions =======================
