@@ -27,4 +27,4 @@ srun python /home/mila/y/yi.ren/P4_Graph/main_nil.py \
 --backbone_type gcn --bottle_type lstm --drop_ratio 0 \
 --epochs_dis 20 --epochs_ft 50 --generations 20 \
 --dis_loss noisy_ce_sample --dis_smp_tau 1 --teach_last_best best --dis_optim_type adam --dis_lr 0.001 \
---run_name nil_tox_gcn_lstm_2lhead
+--run_name nil_tox_gcn_lstm_2lhead_dynamtau
