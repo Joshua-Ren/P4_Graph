@@ -61,7 +61,7 @@ class MsgGenLSTM(nn.Module):
         self.lstm = nn.LSTMCell(self.input_size, self.hidden_size)
         self.out = nn.Linear(self.hidden_size, self.output_size)
         
-    def forward(self, h_0, c_0, mode='gumbel'):
+    def forward(self, h_0, c_0, tau=1., mode='gumbel'):
         '''
             The size of h_0 and c_0 is [N_B, 1, hidden], we should firstly convert 
             them to [N_B, hidden]
@@ -83,9 +83,9 @@ class MsgGenLSTM(nn.Module):
             probs = F.softmax(logit, dim=1)
             
             if self.training:
-                predict = cat_softmax(probs, mode=mode, tau=self.tau, hard=True, dim=1)
+                predict = cat_softmax(probs, mode=mode, tau=tau, hard=True, dim=1)
             else:
-                predict = cat_softmax(probs, mode='argmax', tau=self.tau, hard=True, dim=1)
+                predict = cat_softmax(probs, mode='argmax', tau=tau, hard=True, dim=1)
             #_mask = _mask * (1 - predict[:, -1])        # The last position is EOS
             
             message.append(predict)
