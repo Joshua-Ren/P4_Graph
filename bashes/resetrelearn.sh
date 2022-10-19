@@ -22,7 +22,7 @@ source /home/mila/y/yi.ren/env_graph/bin/activate
 cd /home/mila/y/yi.ren/P4_Graph/
 
 srun python /home/mila/y/yi.ren/P4_Graph/main_resethead.py \
---drop_ratio 0 --L 30 --V 20 \
+--drop_ratio 0 --L 200 --V 20 \
 --proj_name P4_phase_observe --dataset_name ogbg-moltox21 \
 --backbone_type gcn --bottle_type upsample --drop_ratio 0 \
 --epochs_dis 20 --epochs_ft 50 --generations 20 \
