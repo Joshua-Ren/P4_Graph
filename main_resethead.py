@@ -43,7 +43,7 @@ def get_args_parser():
     #===========================
     parser.add_argument('--backbone_type', type=str, default='gcn',
                         help='backbone type, can be gcn, gin, gcn_virtual, gin_virtual')
-    parser.add_argument('--bottle_type', type=str, default='lstm',
+    parser.add_argument('--bottle_type', type=str, default='upsample',
                         help='bottleneck type, can be pool, upsample, updown, lstm, ...')
     parser.add_argument('--num_layer', type=int, default=5,
                         help='number of GNN message passing layers (default: 5)')
@@ -69,7 +69,7 @@ def get_args_parser():
                         help='for lp probing epochs')  
     parser.add_argument('--epochs_ssl', type=int, default=0,
                         help='byol between two models')
-    parser.add_argument('--epochs_ft', type=int, default=5,
+    parser.add_argument('--epochs_ft', type=int, default=1,
                         help='student training on real label')
     parser.add_argument('--epochs_dis', type=int, default=2,
                         help='distillation')
@@ -110,6 +110,12 @@ def get_args_parser():
     parser.add_argument('--proj_name',default='P4_phase_observe', type=str)
     return parser
 
+def init_weights(m):
+    import torch.nn as nn
+    if isinstance(m, nn.Linear):
+        torch.nn.init.xavier_uniform(m.weight)
+        m.bias.data.fill_(0.01)
+
 def main(args):
     # Model and optimizers are build in
     # In each generation:
@@ -133,7 +139,6 @@ def main(args):
     if args.seed==0:
         args.seed = np.random.randint(1,10086)
     rnd_seed(args.seed)
-    
     # ========== Prepare save folder and wandb ==========
     run_name = wandb_init(proj_name=args.proj_name, run_name=args.run_name, config_args=args)
     model_name = args.backbone_type+'_'+args.bottle_type
@@ -142,7 +147,7 @@ def main(args):
     loaders = build_dataset(args)    
     #results = {'End_gen_train_roc':[],'End_gen_valid_roc':[],'End_gen_test_roc':[],
     #           'best_val_epoch':0,'best_val_roc':0,'best_test_roc':0}
-    
+    student = get_init_net(args)
     for gen in range(args.generations):
         # =========== Step0: new agent
         if args.dis_optim_type=='adam':
@@ -166,6 +171,7 @@ def main(args):
                 best_vacc_ep = epoch
                 wandb.log({'best_val_epoch':best_vacc_ep})
         student.task_head.apply(init_weights)
+        args.ft_lr = args.ft_lr/2
         wandb.log({'End_gen_valid_roc':valid_roc})
         wandb.log({'End_gen_test_roc':test_roc})
         wandb.log({'Best_gen_valid_roc':best_vacc})
