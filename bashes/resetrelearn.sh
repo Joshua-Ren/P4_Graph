@@ -24,6 +24,6 @@ cd /home/mila/y/yi.ren/P4_Graph/
 srun python /home/mila/y/yi.ren/P4_Graph/main_resethead.py \
 --drop_ratio 0.5 --L 200 --V 20 \
 --proj_name P4_phase_observe --dataset_name ogbg-moltox21 \
---backbone_type gcn --bottle_type updown --drop_ratio 0 \
+--backbone_type gcn --bottle_type updown \
 --epochs_dis 20 --epochs_ft 50 --generations 20 \
 --run_name reset_tox_gcn_updown_2lhead_dp05
