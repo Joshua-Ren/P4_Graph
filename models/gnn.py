@@ -306,7 +306,7 @@ class GNN_SEM_LSTM(GNN):
         # downstream task forward
         h_node = self.gnn_node(batched_data)
         h_graph = self.pool(h_node, batched_data.batch)
-        logits, p_theta, _ = self.SEM(h_graph, sem_tau, mode=mode)    
+        logits, p_theta, _ = self.SEM(h_graph, sem_tau, mode=mode)   
         output = self.task_head(p_theta)
         return logits, output
 
@@ -330,8 +330,8 @@ class GNN_SEM_GUMBEL(GNN):
         self.L = L
         self.V = V
         self.Wup = nn.Linear(self.emb_dim, self.L*self.V)
-        self.Wdown = nn.Linear(self.L*self.V, self.emb_dim)
         self.word_sel = torch.nn.Linear(self.V,3)
+        self.Wdown = nn.Linear(3*self.L, self.emb_dim)       
         self.Wq = nn.Linear(self.emb_dim, self.emb_dim)
         #self.task_head = nn.Linear(self.emb_dim, self.num_tasks)
         self.task_head = nn.Sequential(
@@ -350,9 +350,9 @@ class GNN_SEM_GUMBEL(GNN):
         w_invector = self.Wup(in_vector)    # N*300 --> N*4000
         #w_invector = w_invector/tau
         logits = w_invector.reshape(b_size, self.L, self.V)
-        msg_oht = torch.nn.functional.gumbel_softmax(logits,tau=self.tau, hard=True,dim=-1)
+        msg_oht = torch.nn.functional.gumbel_softmax(logits,tau=tau, hard=True,dim=-1)
         msg = self.word_sel(msg_oht)  # Shape is N*L
-        p_theta = self.Wdown(msg.reshape(b_size,-1)
+        p_theta = self.Wdown(msg.reshape(b_size,-1))
         q_theta = self.Wq(p_theta)  # q only for BYOL
         return logits, p_theta, q_theta
           

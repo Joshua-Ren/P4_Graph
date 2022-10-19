@@ -31,7 +31,7 @@ def get_args_parser():
     #===========================
     parser.add_argument('--backbone_type', type=str, default='gcn',
                         help='backbone type, can be gcn, gin, gcn_virtual, gin_virtual')
-    parser.add_argument('--bottle_type', type=str, default='upsample',
+    parser.add_argument('--bottle_type', type=str, default='gumbel',
                         help='bottleneck type, can be pool, upsample, gumbel ...')
     parser.add_argument('--num_layer', type=int, default=5,
                         help='number of GNN message passing layers (default: 5)')
@@ -122,10 +122,10 @@ def main(args, n_epoch=1):
         train_roc, valid_roc, test_roc = eval_all(args, model, loaders, title='Stud_', no_train=True)
         if valid_roc > best_vacc:
             best_vacc = valid_roc
-            ckp_save_path = os.path.join(args.save_path,model_name+'_'+args.dataset_name+'_best.pth')
-            torch.save(model.state_dict(),ckp_save_path)        
-    ckp_save_path = os.path.join(args.save_path,model_name+'_'+args.dataset_name+'_last.pth')
-    torch.save(model.state_dict(),ckp_save_path)
+            #ckp_save_path = os.path.join(args.save_path,model_name+'_'+args.dataset_name+'_best.pth')
+            #torch.save(model.state_dict(),ckp_save_path)        
+    #ckp_save_path = os.path.join(args.save_path,model_name+'_'+args.dataset_name+'_last.pth')
+    #torch.save(model.state_dict(),ckp_save_path)
     wandb.finish()
     
 if __name__ == '__main__':
