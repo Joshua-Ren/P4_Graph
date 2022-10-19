@@ -8,6 +8,12 @@ import numpy as np
 import torch.backends.cudnn as cudnn
 sys.path.append("..")
 from models.gnn import *
+
+def init_weights(m):
+    if isinstance(m, nn.Linear):
+        torch.nn.init.xavier_uniform(m.weight)
+        m.bias.data.fill_(0.01)
+
 # ============== Wandb =======================
 def wandb_init(proj_name='test', run_name=None, config_args=None):
     wandb.init(

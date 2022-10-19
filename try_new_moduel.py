@@ -41,7 +41,7 @@ def get_args_parser():
     #===========================
     parser.add_argument('--backbone_type', type=str, default='gcn',
                         help='backbone type, can be gcn, gin, gcn_virtual, gin_virtual')
-    parser.add_argument('--bottle_type', type=str, default='lstm',
+    parser.add_argument('--bottle_type', type=str, default='upsample',
                         help='bottleneck type, can be pool, upsample, updown, lstm, ...')
     parser.add_argument('--num_layer', type=int, default=5,
                         help='number of GNN message passing layers (default: 5)')
@@ -110,17 +110,23 @@ args.device = torch.device("cuda:" + str(args.device)) if torch.cuda.is_availabl
 
 loaders = build_dataset(args)
 teacher = get_init_net(args)
-student = get_init_net(args)
+student = copy.deepcopy(teacher)
 for step, batch in enumerate(loaders['train']):
     break
 
-logits0, p_theta = teacher.distill_forward(batch.cuda())
-teach_logits, tech_p = teacher.distill_forward(batch.cuda())
-stud_logits, stud_p = student.distill_forward(batch.cuda())
 
+for n,p1 in teacher.task_head.named_parameters():
+    break
+for n,p2 in student.task_head.named_parameters():
+    break
+p1==p2
+def init_weights(m):
+    if isinstance(m, nn.Linear):
+        torch.nn.init.xavier_uniform(m.weight)
+        m.bias.data.fill_(0.01)
 
-optimizer_dis = optim.SGD(student.parameters(), momentum=0.9, lr=args.dis_lr)
-train_distill(args, student, teacher, loaders['train'], optimizer_dis)
+teacher.task_head.apply(init_weights)
+
 
 '''
 exp_name = args.backbone_type+'_'+args.bottle_type
