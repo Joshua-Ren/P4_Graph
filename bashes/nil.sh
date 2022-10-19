@@ -24,7 +24,7 @@ cd /home/mila/y/yi.ren/P4_Graph/
 srun python /home/mila/y/yi.ren/P4_Graph/main_nil.py \
 --drop_ratio 0 --L 20 --V 50 \
 --proj_name P4_phase_observe --dataset_name ogbg-moltox21 \
---backbone_type gcn --bottle_type lstm --drop_ratio 0 \
+--backbone_type gcn --bottle_type gumbel --drop_ratio 0 \
 --epochs_dis 20 --epochs_ft 50 --generations 20 \
 --dis_loss noisy_ce_sample --dis_smp_tau 1 --teach_last_best best --dis_optim_type adam --dis_lr 0.001 \
---run_name nil_tox_gcn_lstm_2lhead_dynamtau
+--run_name nil_tox_gcn_gumbel_2lhead_dynamtau
