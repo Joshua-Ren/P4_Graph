@@ -121,7 +121,7 @@ class GNN_STD_ATT(GNN):
                             nn.Linear(self.emb_dim, self.num_tasks),
                             )      
         #self.pool = GlobalAttention(gate_nn = 
-        self.pool = nn.aggr.AttentionalAggregation(gate_nn = 
+        self.pool = gnn.aggr.AttentionalAggregation(gate_nn = 
                 nn.Sequential(torch.nn.Linear(self.emb_dim, 2*self.emb_dim), 
                         nn.BatchNorm1d(2*self.emb_dim),
                         nn.ReLU(),
