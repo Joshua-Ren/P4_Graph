@@ -56,7 +56,7 @@ def get_args_parser():
                         help='for lp probing epochs')  
     parser.add_argument('--epochs_ssl', type=int, default=0,
                         help='byol between two models')
-    parser.add_argument('--epochs_ft', type=int, default=0,
+    parser.add_argument('--epochs_ft', type=int, default=100,
                         help='student training on real label')
     parser.add_argument('--epochs_dis', type=int, default=100,
                         help='distillation')
@@ -133,8 +133,6 @@ def main(args, n_epoch=1):
 if __name__ == '__main__':
     args = get_args_parser()
     args = args.parse_args()
-    args.drop_ratio = 0.5
-    args.track_all = False
     args.device = torch.device("cuda:" + str(args.device)) if torch.cuda.is_available() else torch.device("cpu")
-    main(args, n_epoch=100)
+    main(args, n_epoch=args.epochs_ft)
 

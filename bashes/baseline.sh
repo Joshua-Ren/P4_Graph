@@ -23,6 +23,6 @@ cd /home/mila/y/yi.ren/P4_Graph/
 
 srun python /home/mila/y/yi.ren/P4_Graph/main_baseline.py \
 --drop_ratio 0.5 \
---proj_name P4_phase_observe --dataset_name ogbg-molmuv \
+--proj_name P4_phase_observe --dataset_name ogbg-molpcba \
 --backbone_type gcn --bottle_type standard \
---run_name base_muv_gcn_std_2lhead_dp05
+--run_name base_pcba_gcn_std_2lhead_dp05
