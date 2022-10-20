@@ -111,7 +111,7 @@ class GNN_STD(GNN):
 
 class GNN_STD_ATT(GNN):
     '''
-        Standard GNN, no SEM or bottleneck
+        Server cannot run this
     '''
     def __init__(self, L=200, V=20, tau=1., **kwargs):
         super(GNN_STD_ATT, self).__init__(**kwargs)

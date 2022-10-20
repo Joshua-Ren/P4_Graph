@@ -133,6 +133,7 @@ def main(args, n_epoch=1):
 if __name__ == '__main__':
     args = get_args_parser()
     args = args.parse_args()
+    args.drop_ratio = 0.5
     args.track_all = False
     args.device = torch.device("cuda:" + str(args.device)) if torch.cuda.is_available() else torch.device("cpu")
     main(args, n_epoch=100)
