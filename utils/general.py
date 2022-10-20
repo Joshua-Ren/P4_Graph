@@ -53,6 +53,11 @@ def get_init_net(args, backbone_type=None, bottle_type=None):
                    num_layer=args.num_layer,emb_dim=args.emb_dim,
                    drop_ratio=args.drop_ratio,virtual_node=V_node,
                    L=args.L, V=args.V, tau=args.pool_tau).to(args.device)        
+    elif bot_type == 'std_att':
+        model = GNN_STD_ATT(gnn_type=G_type,num_tasks=args.num_tasks, 
+                   num_layer=args.num_layer,emb_dim=args.emb_dim,
+                   drop_ratio=args.drop_ratio,virtual_node=V_node,
+                   L=args.L, V=args.V, tau=args.pool_tau).to(args.device)  
     elif bot_type == 'pool':
         model = GNN_SEM_POOL(gnn_type=G_type,num_tasks=args.num_tasks, 
                    num_layer=args.num_layer,emb_dim=args.emb_dim,

@@ -3,7 +3,7 @@
 #SBATCH --cpus-per-task=2                                # Ask for 2 CPUs
 #SBATCH --gres=gpu:1                                     # Ask for 1 GPU
 #SBATCH --mem=10G                                        # Ask for 10 GB of RAM
-#SBATCH --job-name=nil
+#SBATCH --job-name=reset
 #SBATCH --time=40:00:00                                   # The job will run for 3 hours
 #SBATCH --output=./logs/stage1.txt 
 
