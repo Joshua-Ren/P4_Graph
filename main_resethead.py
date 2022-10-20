@@ -77,9 +77,9 @@ def get_args_parser():
                         help='number of generations')
     
         # ===== Finetune or evaluation settings ======
-    parser.add_argument('--ft_lr', type=float, default=2e-4,
+    parser.add_argument('--ft_lr', type=float, default=1e-3,
                         help='learning rate for student on task')
-    parser.add_argument('--lp_lr', type=float, default=2e-4,
+    parser.add_argument('--lp_lr', type=float, default=1e-3,
                         help='learning rate for student when LP-eval')
         # ===== Distillation settings ======
     parser.add_argument('--dis_lr', type=float, default=1e-3,
