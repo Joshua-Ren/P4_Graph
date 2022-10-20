@@ -24,5 +24,5 @@ cd /home/mila/y/yi.ren/P4_Graph/
 srun python /home/mila/y/yi.ren/P4_Graph/main_baseline.py \
 --drop_ratio 0.5 \
 --proj_name P4_phase_observe --dataset_name ogbg-moltox21 \
---backbone_type gcn --bottle_type gumbel \
---run_name base_tox_gcn_gumbel_2lhead_dp05
+--backbone_type gcn --bottle_type standard \
+--run_name base_tox_gcn_stand_2lhead_dp05

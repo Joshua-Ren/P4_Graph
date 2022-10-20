@@ -36,7 +36,8 @@ def get_args_parser():
                         help='dataset name (default: ogbg-molhiv/moltox21/molpcba)')
     parser.add_argument('--feature', type=str, default="full",
                         help='full feature or simple feature')
-
+    parser.add_argument('--track_all', action='store_false',
+                        help='whether track topsim and msg entropy') 
     # ==== Model settings ======
     #===========================
     parser.add_argument('--backbone_type', type=str, default='gcn',
@@ -58,7 +59,7 @@ def get_args_parser():
                         help='temperature in SEM')
     parser.add_argument('--ft_tau', type=float, default=1.,
                         help='temperature in SEM')
-    
+   
     # ===== NIL settings ======
     # =========================
     parser.add_argument('--epochs_lp', type=int, default=1,
@@ -107,7 +108,7 @@ def get_args_parser():
 args = get_args_parser()
 args = args.parse_args()
 args.device = torch.device("cuda:" + str(args.device)) if torch.cuda.is_available() else torch.device("cpu")
-
+'''
 loaders = build_dataset(args)
 teacher = get_init_net(args)
 student = copy.deepcopy(teacher)
@@ -128,7 +129,7 @@ def init_weights(m):
 teacher.task_head.apply(init_weights)
 
 
-'''
+
 exp_name = args.backbone_type+'_'+args.bottle_type
 load_path = os.path.join('results',exp_name,args.dataset_name,exp_name+'_'+args.dataset_name+'.pth')
 online.load_state_dict(torch.load(load_path),strict=True)

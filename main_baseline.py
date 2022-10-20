@@ -22,16 +22,17 @@ def get_args_parser():
                         help='input batch size for training (default: 32)')
     parser.add_argument('--num_workers', type=int, default=2,
                         help='number of workers (default: 0)')
-    parser.add_argument('--dataset_name', type=str, default="ogbg-molhiv",
+    parser.add_argument('--dataset_name', type=str, default="ogbg-moltox21",
                         help='dataset name (default: ogbg-molhiv/moltox21/molpcba)')
     parser.add_argument('--feature', type=str, default="full",
                         help='full feature or simple feature')
-
+    parser.add_argument('--track_all', action='store_false',
+                        help='whether track topsim and msg entropy') 
     # ==== Model settings ======
     #===========================
     parser.add_argument('--backbone_type', type=str, default='gcn',
                         help='backbone type, can be gcn, gin, gcn_virtual, gin_virtual')
-    parser.add_argument('--bottle_type', type=str, default='gumbel',
+    parser.add_argument('--bottle_type', type=str, default='standard',
                         help='bottleneck type, can be pool, upsample, gumbel ...')
     parser.add_argument('--num_layer', type=int, default=5,
                         help='number of GNN message passing layers (default: 5)')
@@ -112,14 +113,15 @@ def main(args, n_epoch=1):
     # ========== Prepare the loader, model and optimizer
     loaders = build_dataset(args)
     model = get_init_net(args)
-    model0 = copy.deepcopy(model)       # Use this to track the change of message
+    #model0 = copy.deepcopy(model)       # Use this to track the change of message
     optimizer_ft = optim.Adam(model.parameters(), lr=args.ft_lr)
     scheduler_ft = optim.lr_scheduler.CosineAnnealingLR(optimizer_ft,T_max=n_epoch,eta_min=1e-6)
     best_vacc = 0
     # ========== Train the network and save PT checkpoint
     for epoch in range(n_epoch):
-        train_task(args, model, loaders['train'], optimizer_ft, scheduler_ft, model0)
-        train_roc, valid_roc, test_roc = eval_all(args, model, loaders, title='Stud_', no_train=True)
+        print(epoch)
+        train_task(args, model, loaders['train'], optimizer_ft, scheduler_ft, model0=None)
+        train_roc, valid_roc, test_roc = eval_all(args, model, loaders, title='ft_', no_train=True)
         if valid_roc > best_vacc:
             best_vacc = valid_roc
             #ckp_save_path = os.path.join(args.save_path,model_name+'_'+args.dataset_name+'_best.pth')
@@ -131,6 +133,7 @@ def main(args, n_epoch=1):
 if __name__ == '__main__':
     args = get_args_parser()
     args = args.parse_args()
+    args.track_all = False
     args.device = torch.device("cuda:" + str(args.device)) if torch.cuda.is_available() else torch.device("cpu")
     main(args, n_epoch=100)
 
