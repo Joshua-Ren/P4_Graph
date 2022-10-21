@@ -24,5 +24,5 @@ cd /home/mila/y/yi.ren/P4_Graph/
 srun python /home/mila/y/yi.ren/P4_Graph/main_baseline.py \
 --drop_ratio 0.5 \
 --proj_name P4_phase_observe --dataset_name ogbg-molpcba \
---backbone_type gin_virtual --bottle_type standard \
+--backbone_type gin_virtual --bottle_type standard --ft_lr 0.005 \
 --run_name base_pcba_ginv_std_2lhead_dp05
