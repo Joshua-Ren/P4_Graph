@@ -229,12 +229,12 @@ class GNN_SEM_UPDOWN(GNN):
         self.Wup = nn.Linear(self.emb_dim, self.L*self.V)
         self.Wdown = nn.Linear(self.L*self.V, self.emb_dim)
         self.Wq = nn.Linear(self.emb_dim, self.emb_dim)
-        #self.task_head = nn.Linear(self.emb_dim, self.num_tasks)
-        self.task_head = nn.Sequential(
-                            nn.Linear(self.emb_dim, self.emb_dim),
-                            nn.ReLU(),
-                            nn.Linear(self.emb_dim, self.num_tasks),
-                            )
+        self.task_head = nn.Linear(self.emb_dim, self.num_tasks)
+        #self.task_head = nn.Sequential(
+        #                    nn.Linear(self.emb_dim, self.emb_dim),
+        #                    nn.ReLU(),
+        #                    nn.Linear(self.emb_dim, self.num_tasks),
+        #                    )
         
     def SEM(self, in_vector, tau=1.):
         '''
