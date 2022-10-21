@@ -43,6 +43,7 @@ def train_task(args, model, loader, optimizer, scheduler=None, model0=None,):
                 ft_msg_dists.update(msg_dist.item())
                 wandb.log({'ft_msg_drift':ft_msg_dists.avg})
             if args.track_all:    # Whether to calcualte the topsim
+                print('track')
                 corr, p = cal_topsim(logits, batch)
                 entropy = cal_att_entropy(logits)
                 ft_msg_entropy.update(entropy)

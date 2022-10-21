@@ -31,7 +31,7 @@ def get_args_parser():
                         help='dataset name (default: ogbg-molhiv/moltox21/molpcba)')
     parser.add_argument('--feature', type=str, default="full",
                         help='full feature or simple feature')
-    parser.add_argument('--track_all', action='store_false',
+    parser.add_argument('--track_all', action='store_true',
                         help='whether track topsim and msg entropy') 
     # ==== Model settings ======
     #===========================
