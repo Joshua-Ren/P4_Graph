@@ -66,6 +66,8 @@ def get_args_parser():
         # ===== Finetune or evaluation settings ======
     parser.add_argument('--ft_lr', type=float, default=1e-3,
                         help='learning rate for student on task')
+    parser.add_argument('--ft_wd', type=float, default=0,
+                        help='weight decay for student on task')
     parser.add_argument('--lp_lr', type=float, default=1e-3,
                         help='learning rate for student when LP-eval')
         # ===== Distillation settings ======
@@ -114,7 +116,7 @@ def main(args, n_epoch=1):
     loaders = build_dataset(args)
     model = get_init_net(args)
     #model0 = copy.deepcopy(model)       # Use this to track the change of message
-    optimizer_ft = optim.Adam(model.parameters(), lr=args.ft_lr)
+    optimizer_ft = optim.Adam(model.parameters(), lr=args.ft_lr, weight_decay=args.ft_wd)
     scheduler_ft = optim.lr_scheduler.CosineAnnealingLR(optimizer_ft,T_max=n_epoch,eta_min=1e-6)
     best_vacc = 0
     # ========== Train the network and save PT checkpoint
