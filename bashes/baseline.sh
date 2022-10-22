@@ -22,7 +22,7 @@ source /home/mila/y/yi.ren/env_graph/bin/activate
 cd /home/mila/y/yi.ren/P4_Graph/
 
 srun python /home/mila/y/yi.ren/P4_Graph/main_baseline.py \
---drop_ratio 0.5 \
+--drop_ratio 0.5 --L 400 --V 100 \
 --proj_name P4_phase_observe --dataset_name ogbg-molpcba \
---backbone_type gin_virtual --bottle_type upsample --ft_lr 0.005 --epochs_ft 200 --ft_tau 4 \
---run_name base_pcba_ginv_up_linhead_dp05_tau4
+--backbone_type gin_virtual --bottle_type upsample --ft_lr 0.005 --epochs_ft 200 \
+--run_name base_pcba_ginv_up_linhead_dp05_L400V100
