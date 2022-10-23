@@ -128,8 +128,8 @@ def main(args, n_epoch=1):
             best_vacc = valid_roc
             #ckp_save_path = os.path.join(args.save_path,model_name+'_'+args.dataset_name+'_best.pth')
             #torch.save(model.state_dict(),ckp_save_path)        
-    #ckp_save_path = os.path.join(args.save_path,model_name+'_'+args.dataset_name+'_last.pth')
-    #torch.save(model.state_dict(),ckp_save_path)
+    ckp_save_path = os.path.join(args.save_path,model_name+'_'+args.dataset_name+'_last.pth')
+    torch.save(model.state_dict(),ckp_save_path)
     wandb.finish()
     
 if __name__ == '__main__':
