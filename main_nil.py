@@ -154,7 +154,8 @@ def main(args):
             else:
                 tmax = args.epochs_ft
             scheduler_ft = optim.lr_scheduler.CosineAnnealingLR(optimizer_ft,T_max=tmax,eta_min=1e-6)
-        
+        else:
+            scheduler_ft = optim.lr_scheduler.CosineAnnealingLR(optimizer_ft,T_max=100,eta_min=args.ft_lr)
         # =========== Step1: distillation, skip in first gen
         if gen>0:
             for epoch in range(args.epochs_dis):
