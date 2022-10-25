@@ -149,7 +149,11 @@ def main(args):
         optimizer_ft = optim.Adam(student.parameters(), lr=args.ft_lr)      
         #optimizer_ft = optim.Adam(student.parameters(), lr=args.ft_lr)
         if args.scheduler:
-            scheduler_ft = optim.lr_scheduler.CosineAnnealingLR(optimizer_ft,T_max=args.epochs_ft,eta_min=1e-6)
+            if args.epochs_ft>1000:
+                tmax = 100
+            else:
+                tmax = args.epochs_ft
+            scheduler_ft = optim.lr_scheduler.CosineAnnealingLR(optimizer_ft,T_max=tmax,eta_min=1e-6)
         
         # =========== Step1: distillation, skip in first gen
         if gen>0:
