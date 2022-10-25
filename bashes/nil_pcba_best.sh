@@ -26,5 +26,5 @@ srun python /home/mila/y/yi.ren/P4_Graph/main_nil.py \
 --backbone_type gcn --bottle_type upsample --L 123 --V 30 \
 --drop_ratio 0 --scheduler False --dis_loss ce_argmax \
 --dis_lr=0.0007 --dis_sem_tau 1 --dis_smp_tau 2 --epochs_dis 4 --teach_last_best best --dis_loss ce_argmax \
---epochs_ft -4 --ft_lr 0.0001 --ft_tau 0.8 \
+--epochs_ft 1000 --es_epochs 3 --ft_lr 0.0001 --ft_tau 0.8 \
 --run_name nil_pcba_dp0_cemax_earlystp

@@ -64,7 +64,9 @@ def get_args_parser():
     parser.add_argument('--epochs_ssl', type=int, default=0,
                         help='byol between two models')
     parser.add_argument('--epochs_ft', type=int, default=5,
-                        help='student training on real label, negative is early stopping')
+                        help='student training on real label, >500 is early stopping')
+    parser.add_argument('--es_epochs', type=int, default=3,
+                        help='consecutive how many epochs non-increase')
     parser.add_argument('--epochs_dis', type=int, default=2,
                         help='distillation')
     parser.add_argument('--generations', type=int, default=10,
@@ -172,7 +174,7 @@ def main(args):
                     teacher = copy.deepcopy(student)
                 wandb.log({'best_val_epoch':best_vacc_ep})
             # ------- Early stop the FT if 3 non-increasing epochs
-            if args.epochs_ft<0 and early_stop_meets(vacc_list, best_vacc, how_many=-args.epochs_ft):
+            if args.epochs_ft>500 and early_stop_meets(vacc_list, best_vacc, how_many=args.es_epochs):
                 break
         if args.teach_last_best=='last':
             teacher = copy.deepcopy(student)     
