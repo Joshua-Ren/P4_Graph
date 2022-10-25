@@ -22,7 +22,7 @@ source /home/mila/y/yi.ren/env_graph/bin/activate
 cd /home/mila/y/yi.ren/P4_Graph/
 
 srun python /home/mila/y/yi.ren/P4_Graph/main_nil.py \
---proj_name P4_phase_observe --dataset_name ogbg-moltox21 --batch_size 128 \
+--proj_name P4_phase_observe --dataset_name ogbg-molpcba --batch_size 128 \
 --backbone_type gcn --bottle_type upsample --L 123 --V 30 \
 --drop_ratio 0 --scheduler False --dis_loss ce_argmax \
 --dis_lr=0.0007 --dis_sem_tau 1 --dis_smp_tau 2 --epochs_dis 4 --teach_last_best best --dis_loss ce_argmax \

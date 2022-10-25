@@ -6,7 +6,7 @@ Created on Thu Oct  6 16:34:13 2022
 """
 from engine_phases import train_distill, eval_probing, train_task, eval_all
 from utils.datasets import build_dataset
-from utils.general import wandb_init, get_init_net, rnd_seed, AverageMeter
+from utils.general import wandb_init, get_init_net, rnd_seed, AverageMeter, early_stop_meets
 from utils.nil_related import *
 import torch.optim as optim
 import torch
@@ -188,6 +188,7 @@ def main(args):
 if __name__ == '__main__':
     args = get_args_parser()
     args = args.parse_args()
+    args.epochs_ft = 1000
     args.device = torch.device("cuda:" + str(args.device)) if torch.cuda.is_available() else torch.device("cpu")
     main(args)
 
