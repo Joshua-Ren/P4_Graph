@@ -161,7 +161,7 @@ def main(args):
             for epoch in range(args.epochs_dis):
                 print(epoch,end='-')
                 train_distill(args, student, teacher, loaders['train'], optimizer_dis)
-                eval_probing(args, student, loaders, title='Stud_prob_', no_train=True)
+                #eval_probing(args, student, loaders, title='Stud_prob_', no_train=True)
         
         # =========== Step2: solve task, track best valid acc
         student0 = copy.deepcopy(student)       # Use this to track the change of message
