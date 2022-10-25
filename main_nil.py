@@ -37,7 +37,7 @@ def get_args_parser():
     #===========================
     parser.add_argument('--backbone_type', type=str, default='gcn',
                         help='backbone type, can be gcn, gin, gcn_virtual, gin_virtual')
-    parser.add_argument('--bottle_type', type=str, default='lstm',
+    parser.add_argument('--bottle_type', type=str, default='upsample',
                         help='bottleneck type, can be pool, upsample, updown, lstm, ...')
     parser.add_argument('--num_layer', type=int, default=5,
                         help='number of GNN message passing layers (default: 5)')
@@ -64,10 +64,10 @@ def get_args_parser():
     parser.add_argument('--epochs_ssl', type=int, default=0,
                         help='byol between two models')
     parser.add_argument('--epochs_ft', type=int, default=5,
-                        help='student training on real label')
+                        help='student training on real label, negative is early stopping')
     parser.add_argument('--epochs_dis', type=int, default=2,
                         help='distillation')
-    parser.add_argument('--generations', type=int, default=2,
+    parser.add_argument('--generations', type=int, default=10,
                         help='number of generations')
   
         # ===== Finetune or evaluation settings ======
@@ -158,11 +158,12 @@ def main(args):
         
         # =========== Step2: solve task, track best valid acc
         student0 = copy.deepcopy(student)       # Use this to track the change of message
-        best_vacc, best_vacc_ep, best_testacc = 0, 0, 0
+        best_vacc, best_vacc_ep, best_testacc, vacc_list = 0, 0, 0, []
         for epoch in range(args.epochs_ft):
             args.ft_tau = 4/(epoch+1)
             train_task(args, student, loaders['train'], optimizer_ft, scheduler_ft, student0)
             train_roc, valid_roc, test_roc = eval_all(args, student, loaders, title='ft_', no_train=True)
+            vacc_list.append(valid_roc)
             if valid_roc > best_vacc:
                 best_vacc = valid_roc
                 best_testacc = test_roc
@@ -170,8 +171,11 @@ def main(args):
                 if args.teach_last_best=='best':
                     teacher = copy.deepcopy(student)
                 wandb.log({'best_val_epoch':best_vacc_ep})
+            # ------- Early stop the FT if 3 non-increasing epochs
+            if args.epochs_ft<0 and early_stop_meets(vacc_list, best_vacc, how_many=-args.epochs_ft):
+                break
         if args.teach_last_best=='last':
-            teacher = copy.deepcopy(student)
+            teacher = copy.deepcopy(student)     
         wandb.log({'End_gen_valid_roc':valid_roc})
         wandb.log({'End_gen_test_roc':test_roc})
         wandb.log({'Best_gen_valid_roc':best_vacc})

@@ -106,6 +106,16 @@ def load_checkpoint(args, model, ckp_path, which_part='all'):
     '''
     pass
 
+def early_stop_meets(acc_list, best_acc, how_many=4):
+    if len(acc_list) < how_many:
+        return False
+    elif np.all(np.array(acc_list[-how_many:])<best_acc):
+        return True
+    else:
+        return False
+
+        
+
 class AverageMeter(object):
     """Computes and stores the average and current value"""
     def __init__(self):
