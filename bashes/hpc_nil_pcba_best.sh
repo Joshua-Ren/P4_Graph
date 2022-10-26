@@ -20,7 +20,7 @@ module load rhel8/default-amp
 module load python/3.8 cuda/11.0 cudnn/8.0_cuda-11.1
 
 # 2. Load your environment
-source /home/sg955/graph-env/bin/activate
+source /home/sg955/glm-env/bin/activate
 
 # 3. Copy your dataset on the compute node
 #cp /network/datasets/<dataset> $SLURM_TMPDIR
