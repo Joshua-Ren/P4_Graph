@@ -13,6 +13,8 @@ from models.gnn import *
 
 # ============== Wandb =======================
 def wandb_init(proj_name='test', run_name=None, config_args=None, entity="joshuaren"):
+    if config_args is not None:
+        entity = config_args.WD_ID
     wandb.init(
         project=proj_name,
         config={}, entity=entity,reinit=True)
