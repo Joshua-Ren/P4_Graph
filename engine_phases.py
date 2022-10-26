@@ -96,7 +96,7 @@ def train_distill(args, student, teacher, loader, optimizer):
             teach_logits, tech_p = teacher.distill_forward(batch, args.dis_sem_tau)
             stud_logits, stud_p = student.distill_forward(batch, args.dis_sem_tau)
             
-            if True:    # Whether to calcualte the topsim
+            if args.track_all:    # Whether to calcualte the topsim
                 corr, p = cal_topsim(stud_logits, batch)
                 entropy = cal_att_entropy(stud_logits)
                 dis_msg_entropy.update(entropy)

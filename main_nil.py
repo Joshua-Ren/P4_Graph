@@ -166,7 +166,10 @@ def main(args):
                 #eval_probing(args, student, loaders, title='Stud_prob_', no_train=True)
         
         # =========== Step2: solve task, track best valid acc
-        student0 = copy.deepcopy(student)       # Use this to track the change of message
+        if args.track_all:
+            student0 = copy.deepcopy(student)       # Use this to track the change of message
+        else:
+            student0 = None
         best_vacc, best_vacc_ep, best_testacc, vacc_list = 0, 0, 0, []
         for epoch in range(args.epochs_ft):
             args.ft_tau = 4/(epoch+1)
