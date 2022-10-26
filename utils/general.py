@@ -12,10 +12,10 @@ from models.gnn import *
 
 
 # ============== Wandb =======================
-def wandb_init(proj_name='test', run_name=None, config_args=None):
+def wandb_init(proj_name='test', run_name=None, config_args=None, entity="joshuaren"):
     wandb.init(
         project=proj_name,
-        config={}, entity="joshuaren",reinit=True)
+        config={}, entity=entity,reinit=True)
     if config_args is not None:
         wandb.config.update(config_args)
     if run_name is not None:

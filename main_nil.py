@@ -19,6 +19,8 @@ def get_args_parser():
     # Training settings
     parser = argparse.ArgumentParser(description='GNN baselines on ogbgmol* data with Pytorch Geometrics')
     parser.add_argument('--seed', default=0, type=int)
+    parser.add_argument('--WD_ID',default='joshuaren', type=str,
+                        help='W&D ID, joshuaren or joshua_shawn')
     parser.add_argument('--device', type=int, default=0,
                         help='which gpu to use if any (default: 0)')
     parser.add_argument('--drop_ratio', type=float, default=0,
