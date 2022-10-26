@@ -182,7 +182,7 @@ def main(args):
                 best_vacc_ep = epoch
                 if args.teach_last_best=='best':
                     teacher = copy.deepcopy(student)
-                wandb.log({'best_val_epoch':best_vacc_ep})
+            wandb.log({'best_val_epoch':best_vacc_ep})
             # ------- Early stop the FT if 3 non-increasing epochs
             if args.epochs_ft>500 and early_stop_meets(vacc_list, best_vacc, how_many=args.es_epochs):
                 break
