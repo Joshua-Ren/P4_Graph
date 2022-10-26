@@ -181,6 +181,8 @@ def main(args):
             # ------- Early stop the FT if 3 non-increasing epochs
             if args.epochs_ft>500 and early_stop_meets(vacc_list, best_vacc, how_many=args.es_epochs):
                 break
+            if epoch>100:
+                break
         if args.teach_last_best=='last':
             teacher = copy.deepcopy(student)     
         wandb.log({'End_gen_valid_roc':valid_roc})
