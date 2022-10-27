@@ -172,7 +172,7 @@ def main(args):
             student0 = None
         best_vacc, best_vacc_ep, best_testacc, vacc_list = 0, 0, 0, []
         for epoch in range(args.epochs_ft):
-            args.ft_tau = 4/(epoch+1)
+            #args.ft_tau = 4/(epoch+1)
             train_task(args, student, loaders['train'], optimizer_ft, scheduler_ft, student0)
             train_roc, valid_roc, test_roc = eval_all(args, student, loaders, title='ft_', no_train=True)
             vacc_list.append(valid_roc)
