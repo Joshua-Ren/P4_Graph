@@ -13,7 +13,7 @@ Created on Thu Oct  6 16:34:13 2022
 """
 from engine_phases import train_distill, eval_probing, train_task, eval_all
 from utils.datasets import build_dataset
-from utils.general import wandb_init, get_init_net, rnd_seed, AverageMeter
+from utils.general import wandb_init, get_init_net, rnd_seed, AverageMeter,early_stop_meets
 from utils.nil_related import *
 import torch.optim as optim
 import torch
@@ -26,6 +26,8 @@ def get_args_parser():
     # Training settings
     parser = argparse.ArgumentParser(description='GNN baselines on ogbgmol* data with Pytorch Geometrics')
     parser.add_argument('--seed', default=0, type=int)
+    parser.add_argument('--WD_ID',default='joshuaren', type=str,
+                        help='W&D ID, joshuaren or joshua_shawn')
     parser.add_argument('--device', type=int, default=0,
                         help='which gpu to use if any (default: 0)')
     parser.add_argument('--drop_ratio', type=float, default=0,
@@ -70,13 +72,15 @@ def get_args_parser():
                         help='for lp probing epochs')  
     parser.add_argument('--epochs_ssl', type=int, default=0,
                         help='byol between two models')
-    parser.add_argument('--epochs_ft', type=int, default=1,
-                        help='student training on real label')
+    parser.add_argument('--epochs_ft', type=int, default=5,
+                        help='student training on real label, >500 is early stopping')
+    parser.add_argument('--es_epochs', type=int, default=3,
+                        help='consecutive how many epochs non-increase')
     parser.add_argument('--epochs_dis', type=int, default=2,
                         help='distillation')
-    parser.add_argument('--generations', type=int, default=2,
+    parser.add_argument('--generations', type=int, default=20,
                         help='number of generations')
-    
+  
         # ===== Finetune or evaluation settings ======
     parser.add_argument('--ft_lr', type=float, default=1e-3,
                         help='learning rate for student on task')
@@ -162,7 +166,7 @@ def main(args):
         
         # =========== Step1: solve task, track best valid acc
         student0 = copy.deepcopy(student)       # Use this to track the change of message
-        best_vacc, best_vacc_ep, best_testacc = 0, 0, 0
+        best_vacc, best_vacc_ep, best_testacc, vacc_list = 0, 0, 0, []
         for epoch in range(args.epochs_ft):
             train_task(args, student, loaders['train'], optimizer_ft, scheduler_ft, student0)
             train_roc, valid_roc, test_roc = eval_all(args, student, loaders, title='ft_', no_train=True)
@@ -171,6 +175,11 @@ def main(args):
                 best_testacc = test_roc
                 best_vacc_ep = epoch
                 wandb.log({'best_val_epoch':best_vacc_ep})
+            # ------- Early stop the FT if 3 non-increasing epochs
+            if args.epochs_ft>500 and early_stop_meets(vacc_list, best_vacc, how_many=args.es_epochs):
+                break
+            if epoch>100:
+                break        
         student.task_head.apply(init_weights)
         args.ft_lr = args.ft_lr/2
         wandb.log({'End_gen_valid_roc':valid_roc})

@@ -71,7 +71,7 @@ def get_args_parser():
                         help='consecutive how many epochs non-increase')
     parser.add_argument('--epochs_dis', type=int, default=2,
                         help='distillation')
-    parser.add_argument('--generations', type=int, default=40,
+    parser.add_argument('--generations', type=int, default=20,
                         help='number of generations')
   
         # ===== Finetune or evaluation settings ======
