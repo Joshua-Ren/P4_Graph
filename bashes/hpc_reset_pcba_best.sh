@@ -31,8 +31,8 @@ source /home/sg955/glm-env/bin/activate
 cd /home/sg955/GitWS/P4_Graph/
 
 srun python main_resethead.py --WD_ID joshua_shawn \
---proj_name P4_phase_observe --dataset_name ogbg-molpcba --batch_size 107 \
---backbone_type gin --bottle_type upsample --L 120 --V 30 \
+--proj_name P4_phase_observe --dataset_name ogbg-molpcba --batch_size 128 \
+--backbone_type gcn --bottle_type upsample --L 120 --V 30 \
 --drop_ratio 0 --scheduler False \
 --epochs_ft 1000 --es_epochs 4 --ft_lr 0.0001 --ft_tau 0.8 \
---run_name reset_gin_pcba_dp0
+--run_name reset_gcn_pcba_dp0
