@@ -162,8 +162,13 @@ def main(args):
         optimizer_ft = optim.Adam(student.parameters(), lr=args.ft_lr)      
         #optimizer_ft = optim.Adam(student.parameters(), lr=args.ft_lr)
         if args.scheduler:
-            scheduler_ft = optim.lr_scheduler.CosineAnnealingLR(optimizer_ft,T_max=args.epochs_ft,eta_min=1e-6)
-        
+            if args.epochs_ft>1000:
+                tmax = 100
+            else:
+                tmax = args.epochs_ft
+            scheduler_ft = optim.lr_scheduler.CosineAnnealingLR(optimizer_ft,T_max=tmax,eta_min=1e-6)
+        else:
+            scheduler_ft = optim.lr_scheduler.CosineAnnealingLR(optimizer_ft,T_max=100,eta_min=args.ft_lr)
         # =========== Step1: solve task, track best valid acc
         student0 = copy.deepcopy(student)       # Use this to track the change of message
         best_vacc, best_vacc_ep, best_testacc, vacc_list = 0, 0, 0, []
