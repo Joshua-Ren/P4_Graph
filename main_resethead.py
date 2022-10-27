@@ -178,6 +178,7 @@ def main(args):
         for epoch in range(args.epochs_ft):
             train_task(args, student, loaders['train'], optimizer_ft, scheduler_ft, student0)
             train_roc, valid_roc, test_roc = eval_all(args, student, loaders, title='ft_', no_train=True)
+            vacc_list.append(valid_roc)
             if valid_roc > best_vacc:
                 best_vacc = valid_roc
                 best_testacc = test_roc
