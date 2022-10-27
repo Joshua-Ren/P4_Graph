@@ -170,7 +170,10 @@ def main(args):
         else:
             scheduler_ft = optim.lr_scheduler.CosineAnnealingLR(optimizer_ft,T_max=100,eta_min=args.ft_lr)
         # =========== Step1: solve task, track best valid acc
-        student0 = copy.deepcopy(student)       # Use this to track the change of message
+        if args.track_all:
+            student0 = copy.deepcopy(student)       # Use this to track the change of message
+        else:
+            student0 = None
         best_vacc, best_vacc_ep, best_testacc, vacc_list = 0, 0, 0, []
         for epoch in range(args.epochs_ft):
             train_task(args, student, loaders['train'], optimizer_ft, scheduler_ft, student0)
