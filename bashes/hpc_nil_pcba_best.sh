@@ -32,8 +32,8 @@ cd /home/sg955/GitWS/P4_Graph/
 
 srun python main_nil.py --WD_ID joshua_shawn \
 --proj_name P4_phase_observe --dataset_name ogbg-molpcba --batch_size 107 \
---backbone_type gcn --bottle_type upsample --L 120 --V 30 --num_layer 10 \
+--backbone_type gcn --bottle_type upsample --L 120 --V 30 --num_layer 5 \
 --drop_ratio 0 --scheduler False --dis_loss ce_argmax \
 --dis_lr 0.0007 --dis_sem_tau 1 --dis_smp_tau 2 --epochs_dis 5 --teach_last_best best --dis_loss ce_argmax \
 --epochs_ft 1000 --es_epochs 4 --ft_lr 0.0001 --ft_tau 0.8 \
---run_name nil_gcn10_pcba_dp0_cemax_earlystp
+--run_name nil_gcn_updown_pcba_dp0_cemax_earlystp
