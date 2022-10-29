@@ -40,7 +40,7 @@ def get_args_parser():
                         help='whether track topsim and msg entropy') 
     # ==== Model settings ======
     #===========================
-    parser.add_argument('--backbone_type', type=str, default='gcn',
+    parser.add_argument('--backbone_type', type=str, default='gin_virtual',
                         help='backbone type, can be gcn, gin, gcn_virtual, gin_virtual')
     parser.add_argument('--bottle_type', type=str, default='upsample',
                         help='bottleneck type, can be pool, upsample, updown, lstm, ...')
@@ -108,6 +108,8 @@ def get_args_parser():
 args = get_args_parser()
 args = args.parse_args()
 args.device = torch.device("cuda:" + str(args.device)) if torch.cuda.is_available() else torch.device("cpu")
+loaders = build_dataset(args)
+teacher = get_init_net(args)
 '''
 loaders = build_dataset(args)
 teacher = get_init_net(args)
