@@ -40,7 +40,7 @@ def get_args_parser():
                         help='whether track topsim and msg entropy') 
     # ==== Model settings ======
     #===========================
-    parser.add_argument('--backbone_type', type=str, default='gin_virtual',
+    parser.add_argument('--backbone_type', type=str, default='gcn_virtual',
                         help='backbone type, can be gcn, gin, gcn_virtual, gin_virtual')
     parser.add_argument('--bottle_type', type=str, default='upsample',
                         help='bottleneck type, can be pool, upsample, updown, lstm, ...')
