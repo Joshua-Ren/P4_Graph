@@ -30,4 +30,4 @@ source /home/sg955/glm-env/bin/activate
 
 cd /home/sg955/GitWS/P4_Graph/
 
-wandb agent --count=2 joshua_shawn/P4_phase_observe/blr5wjek
+wandb agent --count=2 joshua_shawn/P4_phase_observe/o1elv8le
