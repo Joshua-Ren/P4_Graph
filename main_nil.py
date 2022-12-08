@@ -73,7 +73,7 @@ def get_args_parser():
                         help='consecutive how many epochs non-increase')
     parser.add_argument('--epochs_dis', type=int, default=None,
                         help='distillation')
-    parser.add_argument('--steps_dis', type=int, default=20,
+    parser.add_argument('--steps_dis', type=int, default=5000,
                         help='distillation batches, epoch should be int(step/N_batches)')
     parser.add_argument('--generations', type=int, default=10,
                         help='number of generations')
@@ -169,11 +169,7 @@ def main(args):
             scheduler_ft = optim.lr_scheduler.CosineAnnealingLR(optimizer_ft,T_max=100,eta_min=args.ft_lr)
         # =========== Step1: distillation, skip in first gen
         if gen>0:
-            args.epochs_dis = int(steps_dis/len(distill_loaders['train']))+1
-            for epoch in range(args.epochs_dis):
-                print(epoch,end='-')
-                train_distill(args, student, teacher, distill_loaders['train'], optimizer_dis)
-                #eval_probing(args, student, task_loaders, title='Stud_prob_', no_train=True)
+            train_distill(args, student, teacher, distill_loaders['train'], optimizer_dis)
         
         # =========== Step2: solve task, track best valid acc
         if args.track_all:

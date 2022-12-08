@@ -81,54 +81,60 @@ def train_distill(args, student, teacher, loader, optimizer):
     # ------------ Train the student using the teacher's prediction (argmax, sample, mse)
     # Wandb record: distill_loss
     #               msg_overlap, the overlap ratio of messages between teacher and student
+    # Controlled by args.steps_dis
     dis_losses = AverageMeter()
     dis_msg_dists = AverageMeter()
     dis_msg_topsim = AverageMeter()
     dis_msg_entropy = AverageMeter()
     teacher.eval()
     student.train()
-    for step, batch in enumerate(loader):
-        tmp_batchsize = batch.y.shape[0]
-        batch = batch.to(args.device)
-        if batch.x.shape[0] == 1 or batch.batch[-1] == 0:
-            pass
-        else:
-            teach_logits, tech_p = teacher.distill_forward(batch, args.dis_sem_tau)
-            stud_logits, stud_p = student.distill_forward(batch, args.dis_sem_tau)
-            
-            if args.track_all:    # Whether to calcualte the topsim
-                corr, p = cal_topsim(stud_logits, batch)
-                entropy = cal_att_entropy(stud_logits)
-                dis_msg_entropy.update(entropy)
-                dis_msg_topsim.update(corr)
-                wandb.log({'Dis_msg_entropy':dis_msg_entropy.avg})
-                wandb.log({'Dis_topsim':dis_msg_topsim.avg})           
-            
-            if args.dis_loss == 'ce_argmax':
-                teach_label = teach_logits.argmax(-1)
-                loss = ce_criterion(stud_logits.reshape(-1,args.V),teach_label.reshape(-1,))
-            elif args.dis_loss == 'ce_sample':
-                sampler = torch.distributions.categorical.Categorical(nn.Softmax(-1)(teach_logits/args.dis_smp_tau))
-                teach_label = sampler.sample().long()
-                loss = ce_criterion(stud_logits.reshape(-1,args.V),teach_label.reshape(-1,))
-            elif args.dis_loss == 'noisy_ce_sample':
-                epsilon = torch.randn_like(teach_logits)
-                dist = F.softmax((teach_logits + epsilon)/args.dis_smp_tau, -1)
-                sampler = torch.distributions.categorical.Categorical(dist)
-                teach_label = sampler.sample().long()
-                loss = ce_criterion(stud_logits.reshape(-1,args.V),teach_label.reshape(-1,))
-            elif args.dis_loss == 'mse':
-                loss = nn.MSELoss(reduction='mean')(stud_logits, teach_logits)
-            elif args.dis_loss == 'kld':   # Seems always giving nan, see what's the problem
-                loss = nn.KLDivLoss(reduction='batchmean')(torch.log(stud_logits.reshape(-1,args.V)),nn.Softmax(-1)(teach_logits))
-            optimizer.zero_grad()
-            loss.backward()
-            optimizer.step()
-            dis_losses.update(loss.data.item(), batch.x.size(0))
-            wandb.log({'distill_loss':dis_losses.avg})
-            msg_dist = cal_msg_distance_logits(stud_logits,teach_logits)
-            dis_msg_dists.update(msg_dist.item())
-            wandb.log({'Dis_msg_overlap':dis_msg_dists.avg})
+    cnt = 0
+    while True:
+        for step, batch in enumerate(loader):
+            cnt += 1
+            if cnt > args.steps_dis:
+                return cnt
+            tmp_batchsize = batch.y.shape[0]
+            batch = batch.to(args.device)
+            if batch.x.shape[0] == 1 or batch.batch[-1] == 0:
+                pass
+            else:
+                teach_logits, tech_p = teacher.distill_forward(batch, args.dis_sem_tau)
+                stud_logits, stud_p = student.distill_forward(batch, args.dis_sem_tau)
+                
+                if args.track_all:    # Whether to calcualte the topsim
+                    corr, p = cal_topsim(stud_logits, batch)
+                    entropy = cal_att_entropy(stud_logits)
+                    dis_msg_entropy.update(entropy)
+                    dis_msg_topsim.update(corr)
+                    wandb.log({'Dis_msg_entropy':dis_msg_entropy.avg})
+                    wandb.log({'Dis_topsim':dis_msg_topsim.avg})           
+                
+                if args.dis_loss == 'ce_argmax':
+                    teach_label = teach_logits.argmax(-1)
+                    loss = ce_criterion(stud_logits.reshape(-1,args.V),teach_label.reshape(-1,))
+                elif args.dis_loss == 'ce_sample':
+                    sampler = torch.distributions.categorical.Categorical(nn.Softmax(-1)(teach_logits/args.dis_smp_tau))
+                    teach_label = sampler.sample().long()
+                    loss = ce_criterion(stud_logits.reshape(-1,args.V),teach_label.reshape(-1,))
+                elif args.dis_loss == 'noisy_ce_sample':
+                    epsilon = torch.randn_like(teach_logits)
+                    dist = F.softmax((teach_logits + epsilon)/args.dis_smp_tau, -1)
+                    sampler = torch.distributions.categorical.Categorical(dist)
+                    teach_label = sampler.sample().long()
+                    loss = ce_criterion(stud_logits.reshape(-1,args.V),teach_label.reshape(-1,))
+                elif args.dis_loss == 'mse':
+                    loss = nn.MSELoss(reduction='mean')(stud_logits, teach_logits)
+                elif args.dis_loss == 'kld':   # Seems always giving nan, see what's the problem
+                    loss = nn.KLDivLoss(reduction='batchmean')(torch.log(stud_logits.reshape(-1,args.V)),nn.Softmax(-1)(teach_logits))
+                optimizer.zero_grad()
+                loss.backward()
+                optimizer.step()
+                dis_losses.update(loss.data.item(), batch.x.size(0))
+                wandb.log({'distill_loss':dis_losses.avg})
+                msg_dist = cal_msg_distance_logits(stud_logits,teach_logits)
+                dis_msg_dists.update(msg_dist.item())
+                wandb.log({'Dis_msg_overlap':dis_msg_dists.avg})
 
 def train_simclr(args, model, loader, optimizer):
     # 1. X --> aug(X1) and aug(X2)
