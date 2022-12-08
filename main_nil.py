@@ -210,11 +210,11 @@ def main(args):
 if __name__ == '__main__':
     args = get_args_parser()
     args = args.parse_args()
-    args.epochs_ft = 1
-    args.distill_set = 'ogbg-molpcba'
+    #args.epochs_ft = 1
+    #args.distill_set = 'ogbg-molpcba'
     args.device = torch.device("cuda:" + str(args.device)) if torch.cuda.is_available() else torch.device("cpu")
-    #main(args)
-    distill_loaders = build_dataset(args,force_name='ogbg-moltox21')
+    main(args)
+    #distill_loaders = build_dataset(args,force_name='ogbg-moltox21')
     
 
 
