@@ -31,6 +31,8 @@ def get_args_parser():
                         help='number of workers (default: 0)')
     parser.add_argument('--dataset_name', type=str, default="ogbg-moltox21",
                         help='dataset name (default: ogbg-molhiv/moltox21/molpcba)')
+    parser.add_argument('--distill_set', type=str, default=None,
+                        help='dataset name (default: ogbg-molhiv/moltox21/molpcba)')
     parser.add_argument('--feature', type=str, default="full",
                         help='full feature or simple feature')
     parser.add_argument('--track_all', action='store_true',
@@ -69,8 +71,10 @@ def get_args_parser():
                         help='student training on real label, >500 is early stopping')
     parser.add_argument('--es_epochs', type=int, default=3,
                         help='consecutive how many epochs non-increase')
-    parser.add_argument('--epochs_dis', type=int, default=2,
+    parser.add_argument('--epochs_dis', type=int, default=None,
                         help='distillation')
+    parser.add_argument('--steps_dis', type=int, default=20,
+                        help='distillation batches, epoch should be int(step/N_batches)')
     parser.add_argument('--generations', type=int, default=10,
                         help='number of generations')
   
@@ -137,7 +141,12 @@ def main(args):
     model_name = args.backbone_type+'_'+args.bottle_type
     args.save_path = os.path.join('results',model_name,args.dataset_name)    
     # ========== Prepare the loader and optimizer
-    loaders = build_dataset(args)    
+    if args.distill_set is not None:
+        distill_loaders = build_dataset(args,force_name=args.distill_set)
+        task_loaders = build_dataset(args) 
+    else:
+        task_loaders = build_dataset(args) 
+        distill_loaders = task_loaders
     #results = {'End_gen_train_roc':[],'End_gen_valid_roc':[],'End_gen_test_roc':[],
     #           'best_val_epoch':0,'best_val_roc':0,'best_test_roc':0}
     
@@ -160,10 +169,11 @@ def main(args):
             scheduler_ft = optim.lr_scheduler.CosineAnnealingLR(optimizer_ft,T_max=100,eta_min=args.ft_lr)
         # =========== Step1: distillation, skip in first gen
         if gen>0:
+            args.epochs_dis = int(steps_dis/len(distill_loaders['train']))+1
             for epoch in range(args.epochs_dis):
                 print(epoch,end='-')
-                train_distill(args, student, teacher, loaders['train'], optimizer_dis)
-                #eval_probing(args, student, loaders, title='Stud_prob_', no_train=True)
+                train_distill(args, student, teacher, distill_loaders['train'], optimizer_dis)
+                #eval_probing(args, student, task_loaders, title='Stud_prob_', no_train=True)
         
         # =========== Step2: solve task, track best valid acc
         if args.track_all:
@@ -173,8 +183,8 @@ def main(args):
         best_vacc, best_vacc_ep, best_testacc, vacc_list = 0, 0, 0, []
         for epoch in range(args.epochs_ft):
             #args.ft_tau = 4/(epoch+1)
-            train_task(args, student, loaders['train'], optimizer_ft, scheduler_ft, student0)
-            train_roc, valid_roc, test_roc = eval_all(args, student, loaders, title='ft_', no_train=True)
+            train_task(args, student, task_loaders['train'], optimizer_ft, scheduler_ft, student0)
+            train_roc, valid_roc, test_roc = eval_all(args, student, task_loaders, title='ft_', no_train=True)
             vacc_list.append(valid_roc)
             if valid_roc > best_vacc:
                 best_vacc = valid_roc
@@ -200,9 +210,12 @@ def main(args):
 if __name__ == '__main__':
     args = get_args_parser()
     args = args.parse_args()
-    args.epochs_ft = 1000
+    args.epochs_ft = 1
+    args.distill_set = 'ogbg-molpcba'
     args.device = torch.device("cuda:" + str(args.device)) if torch.cuda.is_available() else torch.device("cpu")
-    main(args)
+    #main(args)
+    distill_loaders = build_dataset(args,force_name='ogbg-moltox21')
+    
 
 
 

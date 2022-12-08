@@ -7,8 +7,11 @@ from torch_geometric.loader import DataLoader
 # molbbbp(51-781-1), molclintox(37-858-2), molmuv(2328-764-17), molsider(36-1502-27), moltox21(196-431-12), 
 # moltoxcast(215-455-617), molesol(29-417-1), molfreesolv(17-257-1), mollipo(105-783-1)
 
-def build_dataset(args):
-    dataset = PygGraphPropPredDataset(name = args.dataset_name)
+def build_dataset(args, force_name=None):
+    if force_name is not None:
+        dataset = PygGraphPropPredDataset(name = force_name)
+    else:
+        dataset = PygGraphPropPredDataset(name = args.dataset_name)
     if args.feature == 'full':
         pass 
     elif args.feature == 'simple':
