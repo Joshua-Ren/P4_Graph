@@ -169,7 +169,7 @@ def main(args):
             scheduler_ft = optim.lr_scheduler.CosineAnnealingLR(optimizer_ft,T_max=100,eta_min=args.ft_lr)
         # =========== Step1: distillation, skip in first gen
         if gen>0:
-            train_distill(args, student, teacher, distill_loaders['valid'], optimizer_dis)
+            train_distill(args, student, teacher, distill_loaders['test'], optimizer_dis)
         
         # =========== Step2: solve task, track best valid acc
         if args.track_all:
