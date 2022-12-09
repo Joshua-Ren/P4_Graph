@@ -23,7 +23,7 @@ cd /home/mila/y/yi.ren/P4_Graph/
 
 srun python /home/mila/y/yi.ren/P4_Graph/main_nil.py \
 --drop_ratio 0 \
---proj_name P4_phase_observe --dataset_name ogbg-molhiv --distill_set ogbg-hiv \
+--proj_name P4_phase_observe --dataset_name ogbg-molhiv --distill_set ogbg-molhiv \
 --backbone_type gcn --bottle_type upsample --drop_ratio 0.2 --L 123 --V 30 \
 --epochs_ft 100 --steps_dis 10000 --generations 10 --ft_lr 0.001 \
 --dis_loss ce_sample --dis_smp_tau 2 --teach_last_best best --dis_optim_type adam --dis_lr 0.001 \
