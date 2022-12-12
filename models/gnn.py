@@ -48,7 +48,6 @@ class GNN(torch.nn.Module):
         else:
             self.gnn_node = GNN_node(num_layer, emb_dim, JK = JK, drop_ratio = drop_ratio, residual = residual, gnn_type = gnn_type)
 
-
         ### Pooling function to generate whole-graph embeddings
         if self.graph_pooling == "sum":
             self.pool = global_add_pool
@@ -108,36 +107,6 @@ class GNN_STD(GNN):
         h_node = self.gnn_node(batched_data)
         h_graph = self.pool(h_node, batched_data.batch)
         return h_graph, h_graph
-
-class GNN_STD_ATT(GNN):
-    '''
-        Server cannot run this
-    '''
-    def __init__(self, L=200, V=20, tau=1., **kwargs):
-        super(GNN_STD_ATT, self).__init__(**kwargs)
-        self.task_head = nn.Sequential(
-                            nn.Linear(self.emb_dim, self.emb_dim),
-                            nn.ReLU(),
-                            nn.Linear(self.emb_dim, self.num_tasks),
-                            )      
-        #self.pool = GlobalAttention(gate_nn = 
-        self.pool = gnn.aggr.AttentionalAggregation(gate_nn = 
-                nn.Sequential(torch.nn.Linear(self.emb_dim, 2*self.emb_dim), 
-                        nn.BatchNorm1d(2*self.emb_dim),
-                        nn.ReLU(),
-                        nn.Linear(2*self.emb_dim, 1)))
-    def task_forward(self, batched_data, sem_tau=1.):
-        # downstream task forward
-        h_node = self.gnn_node(batched_data)
-        h_graph = self.pool(h_node, batched_data.batch)
-        output = self.task_head(h_graph)
-        return h_graph, output
-
-    def distill_forward(self, batched_data, sem_tau=1.):
-        # for distill, both use logits
-        h_node = self.gnn_node(batched_data)
-        h_graph = self.pool(h_node, batched_data.batch)
-        return h_graph, h_graph        
 
 class GNN_SEM_UPSAMPLE(GNN):
     '''
