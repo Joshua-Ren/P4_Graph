@@ -127,15 +127,16 @@ class GNN_SEM_UPSAMPLE(GNN):
         #                    nn.Linear(self.emb_dim, self.num_tasks)
         #                    )
         self.Vocab_embd = nn.Linear(self.V, self.emb_dim,bias=False)
-        self.Vocab_task = nn.Linear(self.emb_dim, self.num_tasks,bias=False)
-        self.Combi_L = nn.Linear(self.L, 1)
+        self.Vocab_task = nn.Linear(self.L, self.num_tasks,bias=False)
+        self.Combi_L = nn.Linear(self.emb_dim, 1)
 
     def task_head(self, in_vector):
         b_size = in_vector.shape[0]
         in_vector = in_vector.reshape(b_size, self.L, self.V)
         h1 = self.Vocab_embd(in_vector)  # h1 shape: B, L, emb_dim
-        h2 = self.Vocab_task(h1)         # h2 shape: B, L, num_task
-        h2 = h2.transpose(1,2)           # h2 shape: B, num_task, L
+        h1 = h1.transpose(1,2)           # h1 shape: B, emb_dim, L
+        h2 = self.Vocab_task(h1)         # h2 shape: B, emb_dim, num_task
+        h2 = h2.transpose(1,2)           # h2 shape: B, num_task, emb_dim
         h3 = self.Combi_L(h2)            # h3 shape: B, num_task, 1
         return h3.squeeze(-1)
         
