@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --partition=long                           # Ask for unkillable job
 #SBATCH --cpus-per-task=2                                # Ask for 2 CPUs
-#SBATCH --gres=gpu:1                                     # Ask for 1 GPU
+#SBATCH --gres=gpu:rtx8000:1                                     # Ask for 1 GPU
 #SBATCH --mem=10G                                        # Ask for 10 GB of RAM
 #SBATCH --job-name=nil-pcba
 #SBATCH --time=40:00:00                                   # The job will run for 3 hours
@@ -26,5 +26,5 @@ srun python /home/mila/y/yi.ren/P4_Graph/main_nil.py \
 --backbone_type gcn --bottle_type upsample --L 40 --V 20 \
 --drop_ratio 0 --scheduler True --dis_loss ce_argmax \
 --dis_lr=0.0007 --dis_sem_tau 1 --dis_smp_tau 1 --steps_dis 5000 --teach_last_best best --dis_loss ce_argmax \
---epochs_ft 1000 --es_epochs 4 --ft_lr 0.0001 \
+--epochs_ft 1000 --es_epochs 40 --ft_lr 0.0001 \
 --run_name tox21_newtaskhead2_L40V20
