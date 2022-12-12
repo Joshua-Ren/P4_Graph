@@ -126,8 +126,8 @@ class GNN_SEM_UPSAMPLE(GNN):
         #                    nn.Linear(self.L*self.V, self.emb_dim, bias=False),
         #                    nn.Linear(self.emb_dim, self.num_tasks)
         #                    )
-        self.Vocab_embd = nn.Linear(self.V, self.emb_dim,bias=False)
-        self.Vocab_task = nn.Linear(self.L, self.num_tasks,bias=False)
+        self.Vocab_embd = nn.Sequential(nn.Linear(self.V, self.emb_dim), nn.ReLU())
+        self.Vocab_task = nn.Sequential(nn.Linear(self.L, self.num_tasks), nn.ReLU())
         self.Combi_L = nn.Linear(self.emb_dim, 1)
 
     def task_head(self, in_vector):
