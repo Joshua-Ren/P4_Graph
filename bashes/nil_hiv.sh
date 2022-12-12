@@ -27,4 +27,4 @@ srun python /home/mila/y/yi.ren/P4_Graph/main_nil.py \
 --backbone_type gcn --bottle_type upsample --drop_ratio 0 --L 200 --V 20 \
 --epochs_ft 100 --steps_dis 5000 --generations 10 --ft_lr 0.0002 \
 --dis_loss ce_sample --dis_smp_tau 1 --teach_last_best last --dis_optim_type adam --dis_lr 0.001 \
---run_name hiv_distill_hiv_train_last_2en4ftlr
+--run_name hiv_distill_hiv_train_last_2en4ftlradamW

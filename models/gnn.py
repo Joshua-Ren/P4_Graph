@@ -124,7 +124,6 @@ class GNN_SEM_UPSAMPLE(GNN):
         self.task_head = nn.Sequential(
                             #nn.Linear(self.L*self.V, self.num_tasks),
                             nn.Linear(self.L*self.V, self.L, bias=False),
-                            nn.ReLU(),
                             nn.Linear(self.L, self.num_tasks)
                             )
         

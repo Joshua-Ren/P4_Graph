@@ -157,7 +157,8 @@ def main(args):
             optimizer_dis = optim.Adam(student.parameters(), lr=args.dis_lr)
         elif args.dis_optim_type=='sgd':
             optimizer_dis = optim.SGD(student.parameters(), momentum=0.9, lr=args.dis_lr)
-        optimizer_ft = optim.Adam(student.parameters(), lr=args.ft_lr)      
+        #optimizer_ft = optim.Adam(student.parameters(), lr=args.ft_lr)
+        optimizer_ft = optim.AdamW(student.parameters(), lr=args.ft_lr,weight_decay=0.01)
         #optimizer_ft = optim.Adam(student.parameters(), lr=args.ft_lr)
         if args.scheduler:
             if args.epochs_ft>1000:
