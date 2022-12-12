@@ -137,7 +137,7 @@ class GNN_SEM_UPSAMPLE(GNN):
         h2 = self.Vocab_task(h1)         # h2 shape: B, L, num_task
         h2 = h2.transpose(1,2)           # h2 shape: B, num_task, L
         h3 = self.Combi_L(h2)            # h3 shape: B, num_task, 1
-        return h3.squeeze()
+        return h3.squeeze(-1)
         
     def SEM(self, in_vector, tau=1.):
         '''

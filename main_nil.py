@@ -29,7 +29,7 @@ def get_args_parser():
                         help='input batch size for training (default: 32)')
     parser.add_argument('--num_workers', type=int, default=2,
                         help='number of workers (default: 0)')
-    parser.add_argument('--dataset_name', type=str, default="ogbg-moltox21",
+    parser.add_argument('--dataset_name', type=str, default="ogbg-molhiv",
                         help='dataset name (default: ogbg-molhiv/moltox21/molpcba)')
     parser.add_argument('--distill_set', type=str, default=None,
                         help='dataset name (default: ogbg-molhiv/moltox21/molpcba)')
