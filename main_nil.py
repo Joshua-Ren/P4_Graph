@@ -21,7 +21,7 @@ def get_args_parser():
     # Training settings
     # ======= Usually default settings
     parser = argparse.ArgumentParser(description='GNN baselines on ogbgmol* data with Pytorch Geometrics')
-    parser.add_argument('--config_file', type=str, default='hiv_gcn_baseline',
+    parser.add_argument('--config_file', type=str, default=None,
                         help='which gpu to use if any (default: 0)')
     parser.add_argument('--seed', default=0, type=int)
     parser.add_argument('--WD_ID',default='joshuaren', type=str,
@@ -84,7 +84,7 @@ def get_args_parser():
         # ---- Interaction
     parser.add_argument('--int_tau', type=float, default=1.,
                         help='temperature used during interaction')
-    parser.add_argument('--int_epoch', type=int, default=5,
+    parser.add_argument('--int_epoch', type=int, default=100,
                         help='student training on real label, >500 is early stopping')
     parser.add_argument('--es_epochs', type=int, default=3,
                         help='consecutive how many epochs non-increase')
@@ -151,18 +151,18 @@ def main(args):
         else:
             student = get_init_net(args)
             
-        if args.dis_optim=='adam':
+        if args.dis_optim.lower()=='adam':
             optimizer_dis = optim.Adam(student.parameters(), lr=args.dis_lr)
-        elif args.dis_optim=='adamW':
+        elif args.dis_optim.lower()=='adamw':
             optimizer_dis = optim.AdamW(student.parameters(), lr=args.dis_lr, weight_decay=0.01)
-        elif args.dis_optim=='sgd':
+        elif args.dis_optim.lower()=='sgd':
             optimizer_dis = optim.SGD(student.parameters(), momentum=0.9, lr=args.dis_lr, weight_decay=0.01)
         
-        if args.int_optim=='adam':
+        if args.int_optim.lower()=='adam':
             optimizer_int = optim.Adam(student.parameters(), lr=args.int_lr)
-        elif args.int_optim=='adamW':
+        elif args.int_optim.lower()=='adamw':
             optimizer_int = optim.AdamW(student.parameters(), lr=args.int_lr, weight_decay=0.01)
-        elif args.int_optim=='sgd':
+        elif args.int_optim.lower()=='sgd':
             optimizer_int = optim.SGD(student.parameters(), momentum=0.9, lr=args.int_lr, weight_decay=0.01)
         if args.int_sched:
             if args.int_epoch>500:  # Now early stop
@@ -209,8 +209,9 @@ def main(args):
 if __name__ == '__main__':
     args = get_args_parser()
     args = args.parse_args()
-    config = toml.load(os.path.join("configs",args.config_file+".toml"))
-    args = update_args(args, config)
+    if args.config_file is not None:
+        config = toml.load(os.path.join("configs",args.config_file+".toml"))
+        args = update_args(args, config)
     args.device = torch.device("cuda:" + str(args.device)) if torch.cuda.is_available() else torch.device("cpu")
     main(args)
 
