@@ -9,7 +9,10 @@ import torch.backends.cudnn as cudnn
 sys.path.append("..")
 from models.gnn import *
 
-
+def update_args(args, config):
+    for k in config.keys():
+        args.__dict__[k] = config[k]
+    return args
 
 # ============== Wandb =======================
 def wandb_init(proj_name='test', run_name=None, config_args=None, entity="joshuaren"):
@@ -50,41 +53,16 @@ def get_init_net(args, backbone_type=None, bottle_type=None):
         G_type = 'gin'
 
     # ===== bottleneck type
-    if bot_type == 'standard':
+    if bot_type == 'std':
         model = GNN_STD(gnn_type=G_type,num_tasks=args.num_tasks, 
                    num_layer=args.num_layer,emb_dim=args.emb_dim,
                    drop_ratio=args.drop_ratio,virtual_node=V_node,
                    L=args.L, V=args.V, tau=args.pool_tau).to(args.device)        
-    elif bot_type == 'std_att':
-        model = GNN_STD_ATT(gnn_type=G_type,num_tasks=args.num_tasks, 
-                   num_layer=args.num_layer,emb_dim=args.emb_dim,
-                   drop_ratio=args.drop_ratio,virtual_node=V_node,
-                   L=args.L, V=args.V, tau=args.pool_tau).to(args.device)  
-    elif bot_type == 'pool':
-        model = GNN_SEM_POOL(gnn_type=G_type,num_tasks=args.num_tasks, 
-                   num_layer=args.num_layer,emb_dim=args.emb_dim,
-                   drop_ratio=args.drop_ratio,virtual_node=V_node,
-                   L=args.L, V=args.V, tau=args.pool_tau).to(args.device)
-    elif bot_type == 'upsample':
+    elif bot_type == 'sem':
         model = GNN_SEM_UPSAMPLE(gnn_type=G_type,num_tasks=args.num_tasks, 
                    num_layer=args.num_layer,emb_dim=args.emb_dim,
                    drop_ratio=args.drop_ratio,virtual_node=V_node,
-                   L=args.L, V=args.V).to(args.device)        
-    elif bot_type == 'updown':
-        model = GNN_SEM_UPDOWN(gnn_type=G_type,num_tasks=args.num_tasks, 
-                   num_layer=args.num_layer,emb_dim=args.emb_dim,
-                   drop_ratio=args.drop_ratio,virtual_node=V_node,
-                   L=args.L, V=args.V).to(args.device)
-    elif bot_type == 'lstm':
-        model = GNN_SEM_LSTM(gnn_type=G_type,num_tasks=args.num_tasks, 
-                   num_layer=args.num_layer,emb_dim=args.emb_dim,
-                   drop_ratio=args.drop_ratio,virtual_node=V_node,
-                   L=args.L, V=args.V, tau=args.pool_tau).to(args.device)    
-    elif bot_type == 'gumbel':
-        model = GNN_SEM_GUMBEL(gnn_type=G_type,num_tasks=args.num_tasks, 
-                   num_layer=args.num_layer,emb_dim=args.emb_dim,
-                   drop_ratio=args.drop_ratio,virtual_node=V_node,
-                   L=args.L, V=args.V, tau=args.pool_tau).to(args.device)     
+                   L=args.L, V=args.V).to(args.device)   
     return model
 
 # ============== General functions =======================

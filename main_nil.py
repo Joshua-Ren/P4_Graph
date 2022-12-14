@@ -4,9 +4,9 @@ Created on Thu Oct  6 16:34:13 2022
 
 @author: YIREN
 """
-from engine_phases import train_distill, eval_probing, train_task, eval_all
+from engine_phases import train_distill, train_task, evaluate
 from utils.datasets import build_dataset
-from utils.general import wandb_init, get_init_net, rnd_seed, AverageMeter, early_stop_meets
+from utils.general import update_args, wandb_init, get_init_net, rnd_seed, AverageMeter, early_stop_meets
 from utils.nil_related import *
 import torch.optim as optim
 import torch
@@ -15,9 +15,14 @@ import numpy as np
 import random
 import os
 import wandb
+import toml
+
 def get_args_parser():
     # Training settings
+    # ======= Usually default settings
     parser = argparse.ArgumentParser(description='GNN baselines on ogbgmol* data with Pytorch Geometrics')
+    parser.add_argument('--config_file', type=str, default='hiv_gcn_baseline',
+                        help='which gpu to use if any (default: 0)')
     parser.add_argument('--seed', default=0, type=int)
     parser.add_argument('--WD_ID',default='joshuaren', type=str,
                         help='W&D ID, joshuaren or joshua_shawn')
@@ -26,90 +31,76 @@ def get_args_parser():
     parser.add_argument('--drop_ratio', type=float, default=0,
                         help='dropout ratio (default: 0.5)')
     parser.add_argument('--batch_size', type=int, default=64,
-                        help='input batch size for training (default: 32)')
+                        help='input batch size for training (default: 64)')
     parser.add_argument('--num_workers', type=int, default=2,
                         help='number of workers (default: 0)')
     parser.add_argument('--dataset_name', type=str, default="ogbg-molhiv",
                         help='dataset name (default: ogbg-molhiv/moltox21/molpcba)')
-    parser.add_argument('--distill_set', type=str, default=None,
-                        help='dataset name (default: ogbg-molhiv/moltox21/molpcba)')
     parser.add_argument('--feature', type=str, default="full",
                         help='full feature or simple feature')
-    parser.add_argument('--track_all', action='store_true',
-                        help='whether track topsim and msg entropy') 
-    # ==== Model settings ======
-    #===========================
+    parser.add_argument('--bottle_type', type=str, default='sem',
+                        help='bottleneck type, can be std or sem')
+    # ==== Model Structure ======
+        # ----- Backbone
     parser.add_argument('--backbone_type', type=str, default='gcn',
                         help='backbone type, can be gcn, gin, gcn_virtual, gin_virtual')
-    parser.add_argument('--bottle_type', type=str, default='upsample',
-                        help='bottleneck type, can be pool, upsample, updown, lstm, ...')
+    parser.add_argument('--emb_dim', type=int, default=300,
+                        help='dimensionality of hidden units in GNNs (default: 300)')  
     parser.add_argument('--num_layer', type=int, default=5,
                         help='number of GNN message passing layers (default: 5)')
-    parser.add_argument('--emb_dim', type=int, default=300,
-                        help='dimensionality of hidden units in GNNs (default: 300)')    
-        # ---- SEM settings ----
+        # ---- SEM
     parser.add_argument('--L', type=int, default=15,
                         help='No. word in SEM')
     parser.add_argument('--V', type=int, default=20,
                         help='word size in SEM')
-    parser.add_argument('--pool_tau', type=float, default=1.,
-                        help='temperature in SEM')
-    parser.add_argument('--dis_sem_tau', type=float, default=1.,
-                        help='temperature in SEM')
-    parser.add_argument('--ft_tau', type=float, default=1.,
-                        help='temperature in SEM')
+                        
+        # ---- Head-type
+    parser.add_argument('--head_type', type=str, default='linear',
+                        help='Head type in interaction, linear or mlp')    
     
-    # ===== NIL settings ======
-    # =========================
-    parser.add_argument('--teach_last_best', type=str, default='best',
-                        help='use the best or last epoch teacher in distillation')
-    parser.add_argument('--epochs_lp', type=int, default=1,
-                        help='for lp probing epochs')  
-    parser.add_argument('--epochs_ssl', type=int, default=0,
-                        help='byol between two models')
-    parser.add_argument('--epochs_ft', type=int, default=5,
+    # ==== NIL related ======    
+    parser.add_argument('--generations', type=int, default=10,
+                        help='number of generations')
+        # ---- Init student
+    parser.add_argument('--init_strategy', type=str, default='nil',
+                        help='How to generate new student, nil, sil or mile')
+    parser.add_argument('--init_part', type=str, default=None,
+                        help='Which part of the backbone to re-init')
+        # ---- Distillation
+    parser.add_argument('--dis_tau', type=float, default=1.,
+                        help='temperature used during distillation, same on teacher and student')
+    parser.add_argument('--dis_steps', type=int, default=5000,
+                        help='distillation batches, epoch should be int(step/N_batches)')
+    parser.add_argument('--dis_lr', type=float, default=1e-3,
+                        help='learning rate for student')   
+    parser.add_argument('--dis_optim', type=str, default='adam',
+              help='optimizer used in distillation, sgd, adam or adamW')
+    parser.add_argument('--dis_loss', type=str, default='ce_argmax',
+              help='how the teacher generate the samples, ce_argmax, ce_sample, noisy_ce_sample, mse')
+    parser.add_argument('--distill_data', type=str, default=None,
+                        help='dataset name (default: ogbg-molhiv/moltox21/molpcba)')
+    parser.add_argument('--distill_set', type=str, default='train',
+                        help='dataset set train/valid/test')
+        # ---- Interaction
+    parser.add_argument('--int_tau', type=float, default=1.,
+                        help='temperature used during interaction')
+    parser.add_argument('--int_epoch', type=int, default=5,
                         help='student training on real label, >500 is early stopping')
     parser.add_argument('--es_epochs', type=int, default=3,
                         help='consecutive how many epochs non-increase')
-    parser.add_argument('--epochs_dis', type=int, default=None,
-                        help='distillation')
-    parser.add_argument('--steps_dis', type=int, default=5000,
-                        help='distillation batches, epoch should be int(step/N_batches)')
-    parser.add_argument('--generations', type=int, default=10,
-                        help='number of generations')
-  
-        # ===== Finetune or evaluation settings ======
-    parser.add_argument('--ft_lr', type=float, default=1e-3,
-                        help='learning rate for student on task')
-    parser.add_argument('--lp_lr', type=float, default=1e-3,
-                        help='learning rate for student when LP-eval')
-        # ===== Distillation settings ======
-    parser.add_argument('--dis_lr', type=float, default=1e-3,
-                        help='learning rate for student')    
-    parser.add_argument('--scheduler', type=eval, default=True,
+    parser.add_argument('--int_lr', type=float, default=1e-3,
+                        help='learning rate for student on task during interaction')
+    parser.add_argument('--int_optim', type=str, default='adam',
+                        help='optimizer type during distillation, adam or adamW or sgd')
+    parser.add_argument('--int_sched', type=eval, default=True,
                         help='Whether to use cosine scheduler')    
-    parser.add_argument('--dis_loss', type=str, default='ce_argmax',
-              help='how the teacher generate the samples, ce_argmax, ce_sample, noisy_ce_sample, mse, kld')
-    parser.add_argument('--dis_optim_type', type=str, default='adam',
-              help='optimizer used in distillation, sgd or adam')
-    parser.add_argument('--dis_smp_tau', type=float, default=1.,
-              help='temperature used when teacher generating sample, 0 is argmax')
-  
-        # ===== SSL settings ======
-            # ---- Common
-    parser.add_argument('--inter_alpha', type=float, default=0,
-                        help='balance between task loss and inter-loss, 0 is all inter')
-    parser.add_argument('--ssl_lr', type=float, default=1e-3,
-                        help='learning rate for student')                      
-            # ---- BYOL
-    parser.add_argument('--byol_loss', type=str, default='mse',
-                        help='loss type used in byol, mse or cosine')
-    parser.add_argument('--byol_eta', type=float, default=0.99,
-                        help='eta in EMA')  
+        # ---- Generate teacher
+    parser.add_argument('--copy_what', type=str, default='best',
+                        help='use the best or last epoch teacher in distillation')
     
     # ===== Wandb and saving results ====
     parser.add_argument('--run_name',default='test',type=str)
-    parser.add_argument('--proj_name',default='P4_phase_observe', type=str)
+    parser.add_argument('--proj_name',default='P4_paper', type=str)
     return parser
 
 def main(args):
@@ -141,79 +132,87 @@ def main(args):
     model_name = args.backbone_type+'_'+args.bottle_type
     args.save_path = os.path.join('results',model_name,args.dataset_name)    
     # ========== Prepare the loader and optimizer
-    if args.distill_set is not None:
-        distill_loaders = build_dataset(args,force_name=args.distill_set)
-        task_loaders = build_dataset(args) 
+    if args.distill_data is not None:
+        dis_loader = build_dataset(args,force_name=args.distill_data)
+        dis_loader = dis_loader[args.distill_set]
     else:
-        task_loaders = build_dataset(args) 
-        distill_loaders = task_loaders
-    #results = {'End_gen_train_roc':[],'End_gen_valid_roc':[],'End_gen_test_roc':[],
-    #           'best_val_epoch':0,'best_val_roc':0,'best_test_roc':0}
+        dis_loader = None
+    task_loaders = build_dataset(args)
     
     for gen in range(args.generations):
         # =========== Step0: new agent
-        student = get_init_net(args)
-        if args.dis_optim_type=='adam':
+        if args.init_strategy == 'nil':
+            student = get_init_net(args)
+        elif args.init_strategy == 'mile':
+            if gen > 1:
+                student = old_teacher
+            else:
+                student = get_init_net(args)
+        else:
+            student = get_init_net(args)
+            
+        if args.dis_optim=='adam':
             optimizer_dis = optim.Adam(student.parameters(), lr=args.dis_lr)
-        elif args.dis_optim_type=='sgd':
-            optimizer_dis = optim.SGD(student.parameters(), momentum=0.9, lr=args.dis_lr)
-        #optimizer_ft = optim.Adam(student.parameters(), lr=args.ft_lr)
-        optimizer_ft = optim.AdamW(student.parameters(), lr=args.ft_lr,weight_decay=0.01)
-        #optimizer_ft = optim.Adam(student.parameters(), lr=args.ft_lr)
-        if args.scheduler:
-            if args.epochs_ft>1000:
+        elif args.dis_optim=='adamW':
+            optimizer_dis = optim.AdamW(student.parameters(), lr=args.dis_lr, weight_decay=0.01)
+        elif args.dis_optim=='sgd':
+            optimizer_dis = optim.SGD(student.parameters(), momentum=0.9, lr=args.dis_lr, weight_decay=0.01)
+        
+        if args.int_optim=='adam':
+            optimizer_int = optim.Adam(student.parameters(), lr=args.int_lr)
+        elif args.int_optim=='adamW':
+            optimizer_int = optim.AdamW(student.parameters(), lr=args.int_lr, weight_decay=0.01)
+        elif args.int_optim=='sgd':
+            optimizer_int = optim.SGD(student.parameters(), momentum=0.9, lr=args.int_lr, weight_decay=0.01)
+        if args.int_sched:
+            if args.int_epoch>500:  # Now early stop
                 tmax = 100
             else:
-                tmax = args.epochs_ft
-            scheduler_ft = optim.lr_scheduler.CosineAnnealingLR(optimizer_ft,T_max=tmax,eta_min=1e-6)
+                tmax = args.int_epoch
+            scheduler_int = optim.lr_scheduler.CosineAnnealingLR(optimizer_int,T_max=tmax,eta_min=1e-5)
         else:
-            scheduler_ft = optim.lr_scheduler.CosineAnnealingLR(optimizer_ft,T_max=100,eta_min=args.ft_lr)
-        # =========== Step1: distillation, skip in first gen
-        if gen>0:
-            train_distill(args, student, teacher, distill_loaders['train'], optimizer_dis)
+            scheduler_int = optim.lr_scheduler.CosineAnnealingLR(optimizer_int,T_max=100,eta_min=args.int_lr)
         
+        # =========== Step1: distillation, skip in first gen
+        if gen > 0:
+            train_distill(args, student, teacher, task_loaders['train'], dis_loader, optimizer_dis)
+            old_teacher = copy.deepcopy(teacher)        
         # =========== Step2: solve task, track best valid acc
-        if args.track_all:
-            student0 = copy.deepcopy(student)       # Use this to track the change of message
-        else:
-            student0 = None
-        best_vacc, best_vacc_ep, best_testacc, vacc_list = 0, 0, 0, []
-        for epoch in range(args.epochs_ft):
-            #args.ft_tau = 4/(epoch+1)
-            train_task(args, student, task_loaders['train'], optimizer_ft, scheduler_ft, student0)
-            train_roc, valid_roc, test_roc = eval_all(args, student, task_loaders, title='ft_', no_train=True)
+        best_vroc, best_v_ep, best_testroc, vacc_list = 0, 0, 0, []
+        for epoch in range(args.int_epoch):
+            train_task(args, student, task_loaders['train'], optimizer_int)
+            scheduler_int.step()
+            valid_roc = evaluate(args, student, task_loaders['valid'])
+            test_roc = evaluate(args, student, task_loaders['test'])
+            wandb.log({'Inter_val_roc':valid_roc})
+            wandb.log({'Inter_test_roc':test_roc})
             vacc_list.append(valid_roc)
-            #if valid_roc > best_vacc:
-            if test_roc > best_testacc:
-                best_vacc = valid_roc
-                best_testacc = test_roc
-                best_vacc_ep = epoch
-                if args.teach_last_best=='best':
+            if valid_roc > best_vroc:
+                best_vroc = valid_roc
+                best_testroc = test_roc
+                best_v_ep = epoch
+                if args.copy_what=='best':
                     teacher = copy.deepcopy(student)
-            wandb.log({'best_val_epoch':best_vacc_ep})
+            wandb.log({'best_val_epoch':best_v_ep})
             # ------- Early stop the FT if 3 non-increasing epochs
-            if args.epochs_ft>500 and early_stop_meets(vacc_list, best_vacc, how_many=args.es_epochs):
+            if args.int_epoch>500 and early_stop_meets(vacc_list, best_vroc, how_many=args.es_epochs):
                 break
-            if epoch>100:
-                break
-        if args.teach_last_best=='last':
-            teacher = copy.deepcopy(student)     
+        if args.copy_what=='last':
+            teacher = copy.deepcopy(student)
+            
         wandb.log({'End_gen_valid_roc':valid_roc})
         wandb.log({'End_gen_test_roc':test_roc})
-        wandb.log({'Best_gen_valid_roc':best_vacc})
-        wandb.log({'Best_gen_test_roc':best_testacc})
-        del student0
+        wandb.log({'Best_gen_valid_roc':best_vroc})
+        wandb.log({'Best_gen_test_roc':best_testroc})
     wandb.finish()
 
 if __name__ == '__main__':
     args = get_args_parser()
     args = args.parse_args()
-    #args.epochs_ft = 1
-    #args.distill_set = 'ogbg-molpcba'
+    config = toml.load(os.path.join("configs",args.config_file+".toml"))
+    args = update_args(args, config)
     args.device = torch.device("cuda:" + str(args.device)) if torch.cuda.is_available() else torch.device("cpu")
     main(args)
-    #distill_loaders = build_dataset(args,force_name='ogbg-moltox21')
-    
 
 
 

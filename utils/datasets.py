@@ -25,10 +25,10 @@ def build_dataset(args, force_name=None):
                                batch_size=args.batch_size, shuffle=True, 
                                num_workers = args.num_workers)
     valid_loader = DataLoader(dataset[split_idx["valid"]], 
-                               batch_size=args.batch_size, shuffle=False, 
+                               batch_size=args.batch_size, shuffle=True, 
                                num_workers = args.num_workers)
     test_loader = DataLoader(dataset[split_idx["test"]], 
-                               batch_size=args.batch_size, shuffle=False, 
+                               batch_size=args.batch_size, shuffle=True, 
                                num_workers = args.num_workers)
     args.num_tasks = dataset.num_tasks
     args.task_type = dataset.task_type

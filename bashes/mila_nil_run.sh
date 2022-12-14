@@ -1,9 +1,9 @@
 #!/bin/bash
 #SBATCH --partition=long                           # Ask for unkillable job
 #SBATCH --cpus-per-task=2                                # Ask for 2 CPUs
-#SBATCH --gres=gpu:1                                     # Ask for 1 GPU
+#SBATCH --gres=gpu:rtx8000:1                                     # Ask for 1 GPU
 #SBATCH --mem=10G                                        # Ask for 10 GB of RAM
-#SBATCH --job-name=baseline
+#SBATCH --job-name=nil-hiv
 #SBATCH --time=40:00:00                                   # The job will run for 3 hours
 #SBATCH --output=./logs/stage1.txt 
 
@@ -21,8 +21,5 @@ source /home/mila/y/yi.ren/env_graph/bin/activate
 
 cd /home/mila/y/yi.ren/P4_Graph/
 
-srun python /home/mila/y/yi.ren/P4_Graph/main_baseline.py \
---drop_ratio 0.5 --L 400 --V 100 \
---proj_name P4_phase_observe --dataset_name ogbg-molpcba \
---backbone_type gin_virtual --bottle_type standard --ft_lr 0.005 --ft_wd 0.001 --epochs_ft 200 \
---run_name base_pcba_ginv_std_linhead_dp05_wd1e3
+srun python /home/mila/y/yi.ren/P4_Graph/main_nil.py \
+--config_file hiv_gcn_baseline
