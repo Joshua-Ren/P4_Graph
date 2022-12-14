@@ -21,4 +21,4 @@ source /home/mila/y/yi.ren/env_graph/bin/activate
 
 cd /home/mila/y/yi.ren/P4_Graph/
 
-wandb agent --count=2 joshuaren/P4_phase_observe/26a6936o
+wandb agent --count=5 joshuaren/P4_paper/wknnzudp
