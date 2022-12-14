@@ -1,4 +1,5 @@
 # ====== Usuall default
+proj_name = "P4_report"
 drop_ratio = 0
 batch_size = 64
 dataset_name = "ogbg-molhiv"

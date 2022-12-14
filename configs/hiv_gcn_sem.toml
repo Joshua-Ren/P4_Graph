@@ -1,4 +1,5 @@
 # ====== Usuall default
+proj_name = "P4_report"
 drop_ratio = 0
 batch_size = 64
 dataset_name = "ogbg-molhiv"
@@ -18,4 +19,4 @@ int_lr = 1e-1
 int_optim = "sgd"
 int_sched = true
 
-run_name = "hiv_gcn_sem_sgd_biglr"
+run_name = "hiv_gcn_sem"
