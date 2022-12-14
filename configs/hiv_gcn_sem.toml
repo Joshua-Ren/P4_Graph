@@ -14,8 +14,8 @@ generations = 1
 	# ---- Interaction
 int_epoch = 100
 es_epochs = 5
-int_lr = 1e-3
-int_optim = "adamw"
+int_lr = 1e-1
+int_optim = "sgd"
 int_sched = true
 
-run_name = "hiv_gcn_sem_test"
+run_name = "hiv_gcn_sem_sgd_biglr"
