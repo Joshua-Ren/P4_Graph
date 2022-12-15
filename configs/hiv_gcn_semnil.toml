@@ -17,15 +17,15 @@ head_type = "mlp"
 # ==== NIL related ====== 
 generations = 8
 	# ---- Init student
-init_strategy = "nil"
+init_strategy = "mile"
 	# ---- Distillation
-dis_steps = 2000
+dis_steps = 100
 dis_lr = 1e-4
 dis_optim = "sgd"
-dis_loss = "ce_argmax"
+dis_loss = "ce_sample"
 	# ---- Interaction
 int_tau = 1
-int_epoch = 100
+int_epoch = 5
 es_epochs = 5
 int_lr = 1e-4
 int_optim = "sgd"
