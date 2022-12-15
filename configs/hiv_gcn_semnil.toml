@@ -1,0 +1,36 @@
+# ====== Usuall default
+proj_name = "P4_report"
+drop_ratio = 0
+batch_size = 64
+dataset_name = "ogbg-molhiv"
+bottle_type = "sem"
+
+# ==== Model Structure ======
+	# ----- Backbone and SEM
+backbone_type = "gcn"
+emb_dim = 300
+num_layer = 5
+L = 50
+V = 30
+head_type = "mlp"
+
+# ==== NIL related ====== 
+generations = 8
+	# ---- Init student
+init_strategy = nil
+	# ---- Distillation
+dis_steps = 2000
+dis_lr = 1e-4
+dis_optim = "sgd"
+dis_loss = "ce_argmax"
+	# ---- Interaction
+int_tau = 1
+int_epoch = 100
+es_epochs = 5
+int_lr = 1e-4
+int_optim = "sgd"
+int_sched = True
+	# ---- Generate teacher
+copy_what = last
+
+run_name = "hiv_gcn_semnil"

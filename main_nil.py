@@ -63,7 +63,7 @@ def get_args_parser():
                         help='number of generations')
         # ---- Init student
     parser.add_argument('--init_strategy', type=str, default='nil',
-                        help='How to generate new student, nil, sil or mile')
+                        help='How to generate new student, nil or mile')
     parser.add_argument('--init_part', type=str, default=None,
                         help='Which part of the backbone to re-init')
         # ---- Distillation
