@@ -63,9 +63,17 @@ def train_distill(args, student, teacher, task_loader, unsup_loader, optimizer):
         unsup_iter = iter(unsup_loader)
     while True:
         if unsup_loader is not None and np.random.randint(2): 
-            batch = next(unsup_loader)
+            try:
+                batch = next(unsup_iter)
+            except:
+                unsup_iter = iter(unsup_loader)
+                batch = next(unsup_iter)
         else:
-            batch = next(task_iter)
+            try:
+                batch = next(task_iter)
+            except:
+                task_iter = iter(task_loader)
+                batch = next(task_iter)
         cnt += 1
         if cnt > args.dis_steps:
             return cnt
