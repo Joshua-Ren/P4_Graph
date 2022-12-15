@@ -19,12 +19,12 @@ generations = 8
 	# ---- Init student
 init_strategy = "mile"
 	# ---- Distillation
-dis_steps = 100
+dis_steps = 500
 dis_lr = 1e-4
-dis_optim = "sgd"
+dis_optim = "adam"
 dis_loss = "ce_sample"
 	# ---- Interaction
-int_tau = 1
+int_tau = 10
 int_epoch = 5
 es_epochs = 5
 int_lr = 1e-4
