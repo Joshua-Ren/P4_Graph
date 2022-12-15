@@ -31,6 +31,6 @@ int_lr = 1e-4
 int_optim = "sgd"
 int_sched = true
 	# ---- Generate teacher
-copy_what = last
+copy_what = "last"
 
 run_name = "hiv_gcn_semnil"
