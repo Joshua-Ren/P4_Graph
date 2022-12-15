@@ -17,7 +17,7 @@ head_type = "mlp"
 # ==== NIL related ====== 
 generations = 8
 	# ---- Init student
-init_strategy = nil
+init_strategy = "nil"
 	# ---- Distillation
 dis_steps = 2000
 dis_lr = 1e-4
