@@ -10,8 +10,8 @@ bottle_type = "sem"
 backbone_type = "gcn"
 emb_dim = 300
 num_layer = 5
-L = 50
-V = 30
+L = 40
+V = 20
 head_type = "mlp"
 
 # ==== NIL related ====== 
@@ -21,11 +21,12 @@ init_strategy = "mile"
 	# ---- Distillation
 dis_steps = 500
 dis_lr = 1e-4
+dis_tau = 0.2
 dis_optim = "adam"
 dis_loss = "ce_sample"
 	# ---- Interaction
-int_tau = 10
-int_epoch = 5
+int_tau = 1
+int_epoch = 10
 es_epochs = 5
 int_lr = 1e-4
 int_optim = "adam"
@@ -33,4 +34,4 @@ int_sched = true
 	# ---- Generate teacher
 copy_what = "last"
 
-run_name = "hiv_gcn_semnil"
+run_name = "hiv_gcn_semnil_distau0p2"
