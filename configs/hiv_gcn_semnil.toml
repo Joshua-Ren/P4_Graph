@@ -12,7 +12,7 @@ emb_dim = 300
 num_layer = 5
 L = 30
 V = 10
-head_type = "mlp"
+head_type = "linear"
 
 # ==== NIL related ====== 
 generations = 10
@@ -34,4 +34,4 @@ int_sched = true
 	# ---- Generate teacher
 copy_what = "last"
 
-run_name = "hiv_gcn_semmile_last"
+run_name = "hiv_gcn_semmile_linear"
