@@ -29,7 +29,7 @@ int_epoch = 100
 es_epochs = 5
 int_lr = 1e-4
 int_optim = "sgd"
-int_sched = True
+int_sched = true
 	# ---- Generate teacher
 copy_what = last
 
