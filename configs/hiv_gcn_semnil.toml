@@ -17,7 +17,7 @@ head_type = "linear"
 # ==== NIL related ====== 
 generations = 10
 	# ---- Init student
-init_strategy = "nil"
+init_strategy = "mile"
 	# ---- Distillation
 dis_steps = 2000
 dis_lr = 1e-4
