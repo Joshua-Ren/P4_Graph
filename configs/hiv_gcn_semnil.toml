@@ -19,7 +19,7 @@ generations = 10
 	# ---- Init student
 init_strategy = "mile"
 	# ---- Distillation
-distill_data = "ogbg-pcba"
+distill_data = "ogbg-molpcba"
 distill_set = "test"
 dis_steps = 2000
 dis_lr = 1e-4
