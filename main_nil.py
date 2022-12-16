@@ -28,7 +28,7 @@ def get_args_parser():
                         help='W&D ID, joshuaren or joshua_shawn')
     parser.add_argument('--device', type=int, default=0,
                         help='which gpu to use if any (default: 0)')
-    parser.add_argument('--drop_ratio', type=float, default=0,
+    parser.add_argument('--drop_ratio', type=float, default=0.5,
                         help='dropout ratio (default: 0.5)')
     parser.add_argument('--batch_size', type=int, default=64,
                         help='input batch size for training (default: 64)')
