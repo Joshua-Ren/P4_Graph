@@ -24,7 +24,7 @@ distill_data = "ogbg-molhiv"
 distill_set = "train"
 dis_steps = 20000
 dis_lr = 1e-3
-dis_tau = 10
+dis_tau = 0.1
 dis_optim = "adam"
 dis_loss = "ce_argmax"
 	# ---- Interaction
@@ -37,4 +37,4 @@ int_sched = true
 	# ---- Generate teacher
 copy_what = "last"
 
-run_name = "hiv_gcn_sem_observe_distillation_argmax_distau10"
+run_name = "hiv_gcn_sem_observe_distillation_argmax_distau0p1"
