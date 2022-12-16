@@ -19,7 +19,7 @@ generations = 10
 	# ---- Init student
 init_strategy = "mile"
 	# ---- Distillation
-distill_data = "ogbg-molhiv"
+distill_data = "ogbg-pcba"
 distill_set = "test"
 dis_steps = 2000
 dis_lr = 1e-4
@@ -36,4 +36,4 @@ int_sched = true
 	# ---- Generate teacher
 copy_what = "last"
 
-run_name = "hiv_gcn_semmile_linear_distest"
+run_name = "hiv_gcn_semmile_linear_dispcbatest"
