@@ -3,7 +3,7 @@ proj_name = "P4_report"
 drop_ratio = 0.5
 batch_size = 32
 dataset_name = "ogbg-molhiv"
-bottle_type = "nil"
+bottle_type = "sem"
 
 # ==== Model Structure ======
 	# ----- Backbone and SEM
@@ -17,7 +17,7 @@ head_type = "linear"
 # ==== NIL related ====== 
 generations = 20
 	# ---- Init student
-init_strategy = "mile"
+init_strategy = "nil"
 	# ---- Distillation
 distill_data = "ogbg-molhiv"
 distill_set = "test"
