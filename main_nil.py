@@ -111,17 +111,6 @@ def main(args):
     #   [Step2: student SSL like SimCLR]
     #   Step2: student ft on task
     #   Step3: student becomes the teacher
-    '''
-    ft_losses = AverageMeter()
-    ft_msg_dists = AverageMeter()
-    ft_msg_topsim = AverageMeter()
-    ft_msg_entropy = AverageMeter()
-    ft_train_roc = AverageMeter()
-    dis_losses = AverageMeter()
-    dis_msg_dists = AverageMeter()
-    dis_msg_topsim = AverageMeter()
-    dis_msg_entropy = AverageMeter()
-    '''
     # ========== Generate seed ==========
     if args.seed==0:
         args.seed = np.random.randint(1,10086)
@@ -139,6 +128,8 @@ def main(args):
         dis_loader = None
     task_loaders = build_dataset(args)
     
+    gens_valid_roc, gens_test_roc = [], []
+
     for gen in range(args.generations):
         # =========== Step0: new agent
         if args.init_strategy == 'nil':
@@ -199,11 +190,15 @@ def main(args):
                 break
         if args.copy_what=='last':
             teacher = copy.deepcopy(student)
-            
+        gens_valid_roc.append(best_vroc)
+        gens_test_roc.append(best_testroc)
         wandb.log({'End_gen_valid_roc':valid_roc})
         wandb.log({'End_gen_test_roc':test_roc})
         wandb.log({'Best_gen_valid_roc':best_vroc})
         wandb.log({'Best_gen_test_roc':best_testroc})
+    best_gen = np.argmax(gens_valid_roc)
+    wandb.log({'NIL_Best_val':gens_valid_roc[best_gen]})
+    wandb.log({'NIL_Best_test':gens_test_roc[best_gen]})
     wandb.finish()
 
 if __name__ == '__main__':
