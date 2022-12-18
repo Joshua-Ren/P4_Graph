@@ -46,7 +46,7 @@ def get_args_parser():
                         help='backbone type, can be gcn, gin, gcn_virtual, gin_virtual')
     parser.add_argument('--emb_dim', type=int, default=300,
                         help='dimensionality of hidden units in GNNs (default: 300)')  
-    parser.add_argument('--num_layer', type=int, default=5,
+    parser.add_argument('--num_layer', type=int, default=3,
                         help='number of GNN message passing layers (default: 5)')
         # ---- SEM
     parser.add_argument('--L', type=int, default=15,
