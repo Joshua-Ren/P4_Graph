@@ -1,8 +1,8 @@
 # ====== Usuall default
-seed = 5405
+seed = 10086
 proj_name = "P4_report"
 drop_ratio = 0.5
-batch_size = 16
+batch_size = 64
 dataset_name = "ogbg-molhiv"
 bottle_type = "sem"
 
@@ -10,31 +10,31 @@ bottle_type = "sem"
 	# ----- Backbone and SEM
 backbone_type = "gcn"
 emb_dim = 300
-num_layer = 5
+num_layer = 3
 L = 30
-V = 10
+V = 20
 head_type = "linear"
 
 # ==== NIL related ====== 
-generations = 100
+generations = 10
 	# ---- Init student
-init_strategy = "mile"
+init_strategy = "nil"
 	# ---- Distillation
 distill_data = "ogbg-molhiv"
 distill_set = "train"
-dis_steps = 4000
+dis_steps = 400
 dis_lr = 1e-3
 dis_tau = 1
-dis_optim = "sgd"
-dis_loss = "ce_argmax"
+dis_optim = "adam"
+dis_loss = "ce_sample"
 	# ---- Interaction
-int_tau = 1
-int_epoch = 5
+int_epoch = 20
 es_epochs = 5
 int_lr = 1e-3
+int_tau = 1
 int_optim = "adam"
 int_sched = true
 	# ---- Generate teacher
 copy_what = "best"
 
-run_name = "hiv_gcn_semnil_longgen2"
+run_name = "hiv_gcn_semnil_3layers"
