@@ -3,7 +3,7 @@ seed = 10086
 proj_name = "P4_report"
 drop_ratio = 0.5
 batch_size = 64
-dataset_name = "ogbg-pcba"
+dataset_name = "ogbg-molpcba"
 bottle_type = "std"
 
 # ==== Model Structure ======
