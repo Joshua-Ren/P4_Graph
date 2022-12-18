@@ -9,10 +9,10 @@ bottle_type = "sem"
 # ==== Model Structure ======
 	# ----- Backbone and SEM
 backbone_type = "gcn"
-emb_dim = 300
+emb_dim = 100
 num_layer = 3
 L = 30
-V = 20
+V = 10
 head_type = "linear"
 
 # ==== NIL related ====== 
@@ -22,13 +22,13 @@ init_strategy = "nil"
 	# ---- Distillation
 distill_data = "ogbg-molhiv"
 distill_set = "train"
-dis_steps = 400
+dis_steps = 200
 dis_lr = 1e-3
 dis_tau = 1
 dis_optim = "adam"
 dis_loss = "ce_sample"
 	# ---- Interaction
-int_epoch = 20
+int_epoch = 50
 es_epochs = 5
 int_lr = 1e-3
 int_tau = 1
@@ -37,4 +37,4 @@ int_sched = true
 	# ---- Generate teacher
 copy_what = "best"
 
-run_name = "hiv_gcn_semnil_3layers"
+run_name = "hiv_gcn_semnil_3layers_100hid"
