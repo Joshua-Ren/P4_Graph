@@ -121,6 +121,7 @@ class GNN_SEM_UPSAMPLE(GNN):
         self.V = V
         self.head_type = head_type
         self.Wup = nn.Linear(self.emb_dim, self.L*self.V)
+        self.BN = nn.BatchNorm1d(self.L*self.V)
         self.linear_head = nn.Sequential(
                             nn.Linear(self.L*self.V, self.num_tasks),
                             )
@@ -138,6 +139,9 @@ class GNN_SEM_UPSAMPLE(GNN):
         b_size = in_vector.shape[0]
         w_invector = self.Wup(in_vector)    # N*300 --> N*4000
         logits = w_invector.reshape(b_size, self.L, self.V)
+        
+        w_invector = self.BN(w_invector)
+        
         w_invector = w_invector/tau
         logits_tau = w_invector.reshape(b_size, self.L, self.V)
         z_hat = torch.nn.Softmax(-1)(logits_tau).reshape(b_size, -1)   # reshaped prob-logits

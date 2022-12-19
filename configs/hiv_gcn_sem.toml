@@ -16,7 +16,7 @@ generations = 1
 	# ---- Interaction
 int_epoch = 100
 es_epochs = 5
-int_lr = 1e-1
+int_lr = 1e-3
 int_optim = "sgd"
 int_sched = true
 

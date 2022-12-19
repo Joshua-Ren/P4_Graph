@@ -9,8 +9,8 @@ bottle_type = "sem"
 # ==== Model Structure ======
 	# ----- Backbone and SEM
 backbone_type = "gcn"
-emb_dim = 40
-num_layer = 3
+emb_dim = 300
+num_layer = 5
 L = 30
 V = 10
 head_type = "linear"
@@ -37,4 +37,4 @@ int_sched = true
 	# ---- Generate teacher
 copy_what = "best"
 
-run_name = "hiv_gcn_semnil_3layers_40hid"
+run_name = "hiv_gcn_semnil_addBN"
