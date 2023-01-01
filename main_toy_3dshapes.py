@@ -94,8 +94,8 @@ def main(args):
     if not os.path.exists(args.save_path):
         os.makedirs(args.save_path)    
     # ========== Prepare the loader and optimizer
-    #train_loader, test_loader, unsup_loader = generate_3dshape_loaders(args)
-    train_loader, test_loader, unsup_loader = generate_small_3dshape_loaders(args)
+    train_loader, test_loader, unsup_loader = generate_3dshape_loaders(args)
+    #train_loader, test_loader, unsup_loader = generate_small_3dshape_loaders(args)
     if args.dis_dataset=='train':
         dis_loader = train_loader
     elif args.dis_dataset=='test':
