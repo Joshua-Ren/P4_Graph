@@ -144,7 +144,6 @@ def main(args):
 if __name__ == '__main__':
     args = get_args_parser()
     args = args.parse_args()
-    args.config_file = 'toy_baseline'
     if args.config_file is not None:
         config = toml.load(os.path.join("configs",args.config_file+".toml"))
         args = update_args(args, config)
