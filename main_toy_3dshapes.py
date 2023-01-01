@@ -122,7 +122,7 @@ def main(args):
                 dis_loss = train_distill(args, student, teacher, optimizer_dis, dis_loader)
                 results['dis_loss'].append(dis_loss)
         # ========= Interaction
-        best_vloss = 0
+        best_vloss = 10
         for i in range(args.int_epochs):
             loss = train_epoch(args, student, optimizer_inter, train_loader)
             vloss = evaluate(args, student, test_loader)
