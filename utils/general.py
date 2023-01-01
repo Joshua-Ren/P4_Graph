@@ -8,6 +8,7 @@ import numpy as np
 import torch.backends.cudnn as cudnn
 sys.path.append("..")
 from models.gnn import *
+from models.resnet import ResNet18_ML, ResNet18_SEM
 
 def update_args(args, config):
     for k in config.keys():
@@ -64,6 +65,14 @@ def get_init_net(args, backbone_type=None, bottle_type=None):
                    drop_ratio=args.drop_ratio,virtual_node=V_node,
                    L=args.L, V=args.V).to(args.device)   
     return model
+
+def get_init_net_toy(args):
+    if args.model_structure == 'standard':
+        model = ResNet18_ML(num_classes=1).to(args.device)
+    elif args.model_structure == 'sem':
+        model = ResNet18_SEM(L=args.L, V=args.V, tau=1., num_classes=1).to(args.device)
+    return model
+    
 
 # ============== General functions =======================
 def rnd_seed(seed):

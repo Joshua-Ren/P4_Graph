@@ -22,7 +22,7 @@ def get_args_parser():
     # ======= Usually default settings
     parser = argparse.ArgumentParser(description='GNN baselines on ogbgmol* data with Pytorch Geometrics')
     parser.add_argument('--config_file', type=str, default=None,
-                        help='which gpu to use if any (default: 0)')
+                        help='the name of the toml configuration file')
     parser.add_argument('--seed', default=0, type=int)
     parser.add_argument('--WD_ID',default='joshuaren', type=str,
                         help='W&D ID, joshuaren or joshua_shawn')

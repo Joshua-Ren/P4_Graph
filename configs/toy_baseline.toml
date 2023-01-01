@@ -1,0 +1,21 @@
+# ====== Usuall default
+seed = 10086
+proj_name = "P4_toy"
+
+# ======== Dataset and task related
+sup_ratio = 0.1
+batch_size = 20
+data_per_g = 1
+
+# ==== Model Structure ======
+model_structure = "standard"
+
+# ======== Learning related
+generations = 1
+
+	# ---- Interaction
+int_lr = 1e-3
+int_epochs = 2000
+	# ---- Distillation
+
+run_name = "baseline"
