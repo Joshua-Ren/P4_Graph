@@ -36,7 +36,7 @@ def train_epoch(args, model, optimizer, data_loader):
         loss.backward()
         optimizer.step()
         losses.update(loss.data.item(), y.size(0))
-        wandb.log({'Inter_loss':loss.data.item()})
+        #wandb.log({'Inter_loss':loss.data.item()})
     return losses.avg
 
 def train_distill(args, student, teacher, optimizer, dataloader):
@@ -67,7 +67,7 @@ def train_distill(args, student, teacher, optimizer, dataloader):
             return
         loss.backward()
         optimizer.step()
-        wandb.log({'Distill_loss':loss.data.item()})
+        #wandb.log({'Distill_loss':loss.data.item()})
         losses.update(loss.data.item(), x.size(0))
     return losses.avg
 
@@ -80,7 +80,7 @@ def evaluate(args, model, dataloader):
             reg = reg.unsqueeze(1)
             msg_all, h_all = model(x)
             loss = nn.MSELoss(reduction='mean')(h_all,reg)
-            wandb.log({'Test_loss':loss.data.item()})
+            #wandb.log({'Test_loss':loss.data.item()})
             losses.update(loss.data.item(), reg.size(0))
         return losses.avg
 

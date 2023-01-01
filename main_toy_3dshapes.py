@@ -128,6 +128,8 @@ def main(args):
             vloss = evaluate(args, student, test_loader)
             results['tloss'].append(loss)
             results['vloss'].append(vloss)
+            wandb.log({'train_loss':loss})
+            wandb.log({'test_loss':vloss})
             if vloss < best_vloss:
                 best_vloss = vloss
                 if args.copy_what=='best':
