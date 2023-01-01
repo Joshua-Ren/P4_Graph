@@ -13,11 +13,17 @@ L=4
 V=10
 
 # ======== Learning related
-generations = 1
+init_strategy = "nil"
+generations = 10
 
 	# ---- Interaction
 int_lr = 1e-3
-int_epochs = 2000
+int_epochs = 200
 	# ---- Distillation
+dis_lr = 1e-3
+dis_epochs = 50
+dis_loss = "cesample"
 
-run_name = "nil_sem"
+copy_what = "best"
+
+run_name = "nil_sem_cpbest"

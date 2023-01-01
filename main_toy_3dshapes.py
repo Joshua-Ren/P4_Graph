@@ -15,7 +15,7 @@ from enegine_toy_3dshapes import train_epoch, train_distill, evaluate
 from utils.general import update_args, wandb_init, get_init_net_toy, rnd_seed, AverageMeter, early_stop_meets
 from utils.nil_related import *
 from utils.toy_example import generate_3dshape_loaders, generate_small_3dshape_loaders
-
+from matplotlib import pyplot as plt
 
 def get_args_parser():
     # Training settings
