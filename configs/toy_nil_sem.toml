@@ -24,6 +24,6 @@ dis_lr = 1e-3
 dis_epochs = 50
 dis_loss = "cesample"
 
-copy_what = "best"
+copy_what = "last"
 
-run_name = "nil_sem_cpbest"
+run_name = "nil_sem_cplast"

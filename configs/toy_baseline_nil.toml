@@ -1,0 +1,29 @@
+# ====== Usuall default
+seed = 10086
+proj_name = "P4_toy"
+
+# ======== Dataset and task related
+sup_ratio = 0.1
+batch_size = 20
+data_per_g = 1
+
+# ==== Model Structure ======
+model_structure = "standard"
+L=4
+V=10
+
+# ======== Learning related
+init_strategy = "nil"
+generations = 10
+
+	# ---- Interaction
+int_lr = 1e-3
+int_epochs = 200
+	# ---- Distillation
+dis_lr = 1e-3
+dis_epochs = 50
+dis_loss = "cesample"
+
+copy_what = "best"
+
+run_name = "nil_sem_cpbest"
