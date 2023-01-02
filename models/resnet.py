@@ -107,10 +107,10 @@ class ResNet(nn.Module):
         out = self.layer3(out)
         out = self.layer4(out)
         out = F.avg_pool2d(out, 4)
-        out = out.view(out.size(0), -1)
-        out = self.linear(out)
+        hid = out.view(out.size(0), -1)
+        pred = self.linear(hid)
         #out = self.linear2(out)
-        return out, out
+        return hid, pred
 
 class ResNet_SEM(nn.Module):
     def __init__(self, block, num_blocks, L=4, V=10, tau=1., num_classes=38):

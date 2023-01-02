@@ -22,8 +22,8 @@ int_epochs = 200
 	# ---- Distillation
 dis_lr = 1e-3
 dis_epochs = 50
-dis_loss = "cesample"
+dis_loss = "mse"
 
 copy_what = "best"
 
-run_name = "nil_sem_cpbest"
+run_name = "baseline_nil"
