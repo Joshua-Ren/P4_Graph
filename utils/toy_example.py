@@ -47,7 +47,7 @@ def generate_3dshape_loaders(args):
     oht_labels[:,2] = np.array(labels[:,2]*10,dtype=int)
     oht_labels[:,3] = np.array(labels[:,0]*8,dtype=int)
     reg_labels = oht_labels[:,0]/10*AREA[0] + oht_labels[:,1]/10*AREA[1] + oht_labels[:,2]*oht_labels[:,3]/80*AREA[2]
-    #reg_labels = (reg_labels-reg_labels.mean())/reg_labels.std()
+    reg_labels = (reg_labels-reg_labels.mean())/reg_labels.std()
     
     tmp = np.random.binomial(n=1,p=args.sup_ratio,size=(1,8000))
     mask_train = (tmp==1).squeeze()

@@ -49,7 +49,10 @@ def get_args_parser():
     parser.add_argument('--generations', default=5, type=int,
                         help='how many generations we train')
     parser.add_argument('--lr_min', default=1e-5, type=float,
-                        help='cosine decay to this learning rate') 
+                        help='cosine decay to this learning rate')
+    parser.add_argument('--bob_adapt_ep', default=20, type=float,
+                        help='how many epoch we adapt bob first')    
+
         # ---- Interaction
     parser.add_argument('--int_lr', default=1e-3, type=float,
                         help='learning rate used in interaction')  
@@ -122,6 +125,10 @@ def main(args):
                 results['dis_loss'].append(dis_loss)
         # ========= Interaction
         best_vloss = 10
+            # --- Bob adaptation
+        bob_optim = optim.SGD(student.linear.parameters(), lr=args.dis_lr, momentum=0.9, weight_decay=5e-4,nesterov=True)
+        for i in range(args.bob_adapt_ep):
+            train_epoch(args, student, bob_optim, train_loader)
         for i in range(args.int_epochs):
             loss = train_epoch(args, student, optimizer_inter, train_loader)
             vloss = evaluate(args, student, test_loader)
