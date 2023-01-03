@@ -20,4 +20,4 @@ int_lr = 1e-3
 int_epochs = 2000
 	# ---- Distillation
 
-run_name = "baseline_sem"
+run_name = "Set2_baseline_sem"
