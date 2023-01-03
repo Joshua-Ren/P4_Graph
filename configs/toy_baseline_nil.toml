@@ -26,4 +26,4 @@ dis_loss = "mse"
 
 copy_what = "best"
 
-run_name = "Set2_baseline_nil"
+run_name = "Set3_baseline_nil"

@@ -26,4 +26,4 @@ dis_loss = "cesample"
 
 copy_what = "last"
 
-run_name = "Set2_nil_sem_cplast"
+run_name = "Set3_nil_sem_cplast"
