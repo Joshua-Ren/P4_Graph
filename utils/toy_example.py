@@ -38,7 +38,8 @@ def generate_3dshape_loaders(args):
     label_shape = labels.shape[1:]  # [6]
     n_samples = labels.shape[0]  # 10*10*10*8*4*15=480000
     
-    AREA = [1, 2, 0.5]
+    #AREA = [1, 2, 0.5]
+    AREA = [1.1234, 2.5678, 0.5432]
     
     oht_labels = np.zeros((480000,4))
     oht_labels[:,0] = np.array(labels[:,0]*10,dtype=int)
