@@ -27,4 +27,4 @@ dis_loss = "cesample"
 
 copy_what = "last"
 
-run_name = "nil_sem_bobadpt20"
+run_name = "nil_sem_mlpbobadpt20"
