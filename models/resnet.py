@@ -127,12 +127,12 @@ class ResNet_SEM(nn.Module):
         self.V = V
         self.tau = tau
         self.Wup = nn.Linear(512*block.expansion, self.L*self.V)    #Split the linear by Wup and Whead
-        #self.linear = nn.Linear(self.L*self.V, num_classes)
-        self.linear = nn.Sequential(
-                        nn.Linear(self.L*self.V, 128),
-                        nn.ReLU(),
-                        nn.Linear(128, num_classes)
-        )
+        self.linear = nn.Linear(self.L*self.V, num_classes)
+        #self.linear = nn.Sequential(
+        #                nn.Linear(self.L*self.V, 128),
+        #                nn.ReLU(),
+        #                nn.Linear(128, num_classes)
+        #)
 
     def _make_layer(self, block, planes, num_blocks, stride):
         strides = [stride] + [1]*(num_blocks-1)

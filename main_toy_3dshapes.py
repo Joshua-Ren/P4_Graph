@@ -123,6 +123,7 @@ def main(args):
             for i in range(args.dis_epochs):
                 dis_loss = train_distill(args, student, teacher, optimizer_dis, dis_loader)
                 results['dis_loss'].append(dis_loss)
+            old_teacher = copy.deepcopy(teacher)   
         # ========= Interaction
         best_vloss = 10
             # --- Bob adaptation

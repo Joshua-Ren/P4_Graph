@@ -15,7 +15,7 @@ V=10
 # ======== Learning related
 init_strategy = "nil"
 generations = 10
-bob_adapt_ep = 20
+bob_adapt_ep = 0
 
 	# ---- Interaction
 int_lr = 1e-3
@@ -26,5 +26,5 @@ dis_epochs = 50
 dis_loss = "cesample"
 
 copy_what = "last"
-
-run_name = "nil_sem_mlpbobadpt20"
+init_strategy = "mile"
+run_name = "nil_sem_mile"
