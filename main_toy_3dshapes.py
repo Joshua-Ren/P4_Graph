@@ -143,7 +143,7 @@ def main(args):
                     teacher = copy.deepcopy(student)
         wandb.log({'Best_vloss':best_vloss})
         if args.copy_what=='last':
-            teacher = copy.deepcopy(student)     
+            teacher = copy.deepcopy(student)
     wandb.finish()
     result_save_name = os.path.join(args.save_path, 'loss.npy')
     np.save(result_save_name, results)

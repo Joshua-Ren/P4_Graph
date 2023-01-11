@@ -108,8 +108,14 @@ def get_args_parser():
 args = get_args_parser()
 args = args.parse_args()
 args.device = torch.device("cuda:" + str(args.device)) if torch.cuda.is_available() else torch.device("cpu")
-loaders = build_dataset(args)
-teacher = get_init_net(args)
+
+from ogb.lsc import PCQM4Mv2Dataset
+from ogb.utils import smiles2graph
+dataset = PCQM4Mv2Dataset(root = 'E:\\P4_Graph\\dataset', only_smiles = True)
+dataset2 = PCQM4Mv2Dataset(root = 'E:\\P4_Graph\\dataset', smiles2graph = smiles2graph)
+
+#loaders = build_dataset(args)
+#teacher = get_init_net(args)
 '''
 loaders = build_dataset(args)
 teacher = get_init_net(args)
