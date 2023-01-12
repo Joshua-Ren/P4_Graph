@@ -37,12 +37,14 @@ def train_task(args, model, loader, optimizer):
             optimizer.zero_grad()
             ## ignore nan targets (unlabeled) when computing training loss.
             is_labeled = batch.y == batch.y
+            if is_labeled.sum()==0:
+                continue
             if "classification" in args.task_type: 
                 output, target = pred[is_labeled], batch.y.to(torch.float32)[is_labeled]
                 loss = cls_criterion(output, target)
                 #loss = torchvision.ops.sigmoid_focal_loss(output, target).sum()
             else:
-                loss = reg_criterion(pred.to(torch.float32)[is_labeled], batch.y.to(torch.float32)[is_labeled])
+                loss = reg_criterion(pred.to(torch.float32)[is_labeled], batch.y.to(torch.float32)[is_labeled].unsqueeze(-1))
             loss.backward()
             optimizer.step()
             wandb.log({'Inter_loss':loss.data.item()})
