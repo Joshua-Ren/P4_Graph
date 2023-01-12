@@ -16,7 +16,7 @@ generations = 1
 int_epoch = 100
 es_epochs = 1
 int_lr = 1e-3
-int_optim = "adam"
+int_optim = "adamW"
 int_sched = true
 
-run_name = "pcqm_gcn_baseline"
+run_name = "pcqm_gcn_baselineW"

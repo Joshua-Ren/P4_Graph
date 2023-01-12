@@ -169,7 +169,10 @@ def main(args):
             train_distill(args, student, teacher, task_loaders['train'], dis_loader, optimizer_dis)
             old_teacher = copy.deepcopy(teacher)        
         # =========== Step2: solve task, track best valid acc
-        best_vroc, best_v_ep, best_testroc, vacc_list = 0, 0, 0, []
+        if args.task_type == "regression":
+            best_vroc, best_v_ep, best_testroc, vacc_list = 10, 10, 10, []
+        else:
+            best_vroc, best_v_ep, best_testroc, vacc_list = 0, 0, 0, []
         for epoch in range(args.int_epoch):
             train_task(args, student, task_loaders['train'], optimizer_int)
             scheduler_int.step()
@@ -181,7 +184,12 @@ def main(args):
             wandb.log({'Inter_val_roc':valid_roc})
             wandb.log({'Inter_test_roc':test_roc})
             vacc_list.append(valid_roc)
-            if valid_roc > best_vroc:
+            
+            if args.task_type == "regression":
+                BEST_FLAG = valid_roc < best_vroc
+            else:
+                BEST_FLAG = valid_roc > best_vroc
+            if BEST_FLAG:
                 best_vroc = valid_roc
                 best_testroc = test_roc
                 best_v_ep = epoch
