@@ -16,9 +16,11 @@ def build_dataset(args, force_name=None):
     
     if dataset_name == 'pcqm':
         dataset = PygPCQM4Mv2Dataset(root = './dataset/', smiles2graph = smiles2graph)
+        test_name = 'test-dev'
     else:
         dataset = PygGraphPropPredDataset(name = dataset_name)
-        
+        test_name = 'test'
+
     if args.feature == 'full':
         pass 
     elif args.feature == 'simple':
@@ -34,7 +36,7 @@ def build_dataset(args, force_name=None):
     valid_loader = DataLoader(dataset[split_idx["valid"]], 
                             batch_size=args.batch_size, shuffle=True, 
                             num_workers = args.num_workers)
-    test_loader = DataLoader(dataset[split_idx["test"]], 
+    test_loader = DataLoader(dataset[split_idx[test_name]], 
                             batch_size=args.batch_size, shuffle=True, 
                             num_workers = args.num_workers)
     args.num_tasks = dataset.num_tasks
