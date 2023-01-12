@@ -113,14 +113,11 @@ args.device = torch.device("cuda:" + str(args.device)) if torch.cuda.is_availabl
 
 loaders = build_dataset(args)
 teacher = get_init_net(args)
-'''
-loaders = build_dataset(args)
-teacher = get_init_net(args)
 student = copy.deepcopy(teacher)
 for step, batch in enumerate(loaders['train']):
     break
 
-
+'''
 for n,p1 in teacher.task_head.named_parameters():
     break
 for n,p2 in student.task_head.named_parameters():

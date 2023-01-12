@@ -139,6 +139,9 @@ def evaluate(args, model, loader):
             
     y_true = torch.cat(y_true, dim = 0).numpy()
     y_pred = torch.cat(y_pred, dim = 0).numpy()
+    if args.dataset_name=='pcqm':
+        y_true = y_true.squeeze()
+        y_pred = y_pred.squeeze() 
     input_dict = {"y_true": y_true, "y_pred": y_pred}
     eval_result = evaluator.eval(input_dict)
     rocauc = eval_result[args.eval_metric]

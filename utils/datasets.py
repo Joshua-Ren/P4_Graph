@@ -31,13 +31,13 @@ def build_dataset(args, force_name=None):
     split_idx = dataset.get_idx_split()
     ### automatic evaluator. takes dataset name as input
     train_loader = DataLoader(dataset[split_idx["train"]], 
-                            batch_size=args.batch_size, shuffle=True, 
+                            batch_size=args.batch_size, shuffle=True, drop_last=True,
                             num_workers = args.num_workers)
     valid_loader = DataLoader(dataset[split_idx["valid"]], 
-                            batch_size=args.batch_size, shuffle=True, 
+                            batch_size=args.batch_size, shuffle=True, drop_last=True,
                             num_workers = args.num_workers)
     test_loader = DataLoader(dataset[split_idx[test_name]], 
-                            batch_size=args.batch_size, shuffle=True, 
+                            batch_size=args.batch_size, shuffle=True, drop_last=True,
                             num_workers = args.num_workers)
     if dataset_name == 'pcqm':
         args.num_tasks = 1
