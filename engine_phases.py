@@ -15,8 +15,8 @@ from ogb.lsc import PCQM4Mv2Evaluator
 
 cls_criterion = torch.nn.BCEWithLogitsLoss()
 ce_criterion = torch.nn.CrossEntropyLoss()
-reg_criterion = torch.nn.MSELoss()
-
+#reg_criterion = torch.nn.MSELoss()
+reg_criterion = torch.nn.L1Loss()
 # ================== Different training stages =======================
 def train_task(args, model, loader, optimizer):
     # --------- Update the whole network under the task-supervision
