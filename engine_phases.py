@@ -130,6 +130,9 @@ def evaluate(args, model, loader):
             pass
         else:
             with torch.no_grad():
+                is_labeled = batch.y == batch.y
+                if is_labeled.sum()==0:
+                    continue
                 _, pred = model.task_forward(batch, args.int_tau)
                 y_true.append(batch.y.view(pred.shape).detach().cpu())
                 y_pred.append(pred.detach().cpu())
