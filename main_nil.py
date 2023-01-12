@@ -32,7 +32,7 @@ def get_args_parser():
                         help='dropout ratio (default: 0.5)')
     parser.add_argument('--batch_size', type=int, default=64,
                         help='input batch size for training (default: 64)')
-    parser.add_argument('--num_workers', type=int, default=2,
+    parser.add_argument('--num_workers', type=int, default=0,
                         help='number of workers (default: 0)')
     parser.add_argument('--dataset_name', type=str, default="ogbg-molhiv",
                         help='dataset name (default: ogbg-molhiv/moltox21/molpcba/pcqm)')
