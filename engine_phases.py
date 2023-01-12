@@ -50,11 +50,11 @@ def train_task(args, model, loader, optimizer):
             wandb.log({'Inter_loss':loss.data.item()})
             y_true.append(batch.y.view(pred.shape).detach().cpu())
             y_pred.append(pred.detach().cpu())
-    y_true = torch.cat(y_true, dim = 0).numpy()
-    y_pred = torch.cat(y_pred, dim = 0).numpy()
     if args.dataset_name=='pcqm':
         y_true = y_true.squeeze()
         y_pred = y_pred.squeeze()
+    y_true = torch.cat(y_true, dim = 0).numpy()
+    y_pred = torch.cat(y_pred, dim = 0).numpy()
     input_dict = {"y_true": y_true, "y_pred": y_pred}
     eval_result = evaluator.eval(input_dict)
     wandb.log({'Inter_train_roc':eval_result[args.eval_metric]})
