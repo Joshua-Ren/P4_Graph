@@ -39,8 +39,13 @@ def build_dataset(args, force_name=None):
     test_loader = DataLoader(dataset[split_idx[test_name]], 
                             batch_size=args.batch_size, shuffle=True, 
                             num_workers = args.num_workers)
-    args.num_tasks = dataset.num_tasks
-    args.task_type = dataset.task_type
-    args.eval_metric = dataset.eval_metric
+    if dataset_name == 'pcqm':
+        args.num_tasks = 1
+        args.task_type = "regression"
+        args.eval_metric = "mae"
+    else:
+        args.num_tasks = dataset.num_tasks
+        args.task_type = dataset.task_type
+        args.eval_metric = dataset.eval_metric
     loaders = {'train':train_loader, 'valid':valid_loader, 'test':test_loader}
     return loaders

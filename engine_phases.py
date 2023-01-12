@@ -11,6 +11,7 @@ from utils.nil_related import *
 from ogb.graphproppred import Evaluator
 import torch.optim as optim
 from torch.nn.functional import cosine_similarity
+from ogb.lsc import PCQM4Mv2Evaluator
 
 cls_criterion = torch.nn.BCEWithLogitsLoss()
 ce_criterion = torch.nn.CrossEntropyLoss()
@@ -110,7 +111,10 @@ def train_distill(args, student, teacher, task_loader, unsup_loader, optimizer):
 # ================== Different evaluation methods during training
 def evaluate(args, model, loader):
     #---- Basic evaluation, give the loader and return rocauc or other metrics
-    evaluator = Evaluator(args.dataset_name)
+    if args.dataset_name=='pcqm':
+        evaluator = PCQM4Mv2Evaluator()
+    else:
+        evaluator = Evaluator(args.dataset_name)
     model.eval()
     y_true = []
     y_pred = []
