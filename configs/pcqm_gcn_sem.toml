@@ -2,21 +2,21 @@
 seed = 10086
 proj_name = "P4_report"
 drop_ratio = 0
-batch_size = 64
-dataset_name = "ogbg-molhiv"
+batch_size = 256
+dataset_name = "pcqm"
 bottle_type = "sem"
 
 # ==== Model Structure ======
 backbone_type = "gcn"
 head_type = "mlp"
-emb_dim = 300
+emb_dim = 600
 num_layer = 5
 generations = 1
 
 	# ---- Interaction
 int_epoch = 100
 int_lr = 1e-3
-int_optim = "sgd"
+int_optim = "adam"
 int_sched = true
 
-run_name = "hiv_gcn_sem"
+run_name = "pcqm_gcn_sem"
