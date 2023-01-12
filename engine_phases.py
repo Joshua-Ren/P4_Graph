@@ -23,7 +23,10 @@ def train_task(args, model, loader, optimizer):
     # Can be used in generating the baseline, or as a phase in NIL
     # Wandb records: 
     model.train()
-    evaluator = Evaluator(args.dataset_name)
+    if args.dataset_name=='pcqm':
+        evaluator = PCQM4Mv2Evaluator()
+    else:
+        evaluator = Evaluator(args.dataset_name)
     y_true, y_pred = [], []
     for step, batch in enumerate(loader):
         batch = batch.to(args.device)
