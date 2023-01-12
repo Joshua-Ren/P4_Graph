@@ -16,7 +16,7 @@ def build_dataset(args, force_name=None):
     
     if dataset_name == 'pcqm':
         dataset = PygPCQM4Mv2Dataset(root = './dataset/', smiles2graph = smiles2graph)
-        test_name = 'test-challenge'
+        test_name = 'valid'
     else:
         dataset = PygGraphPropPredDataset(name = dataset_name)
         test_name = 'test'

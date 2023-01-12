@@ -113,13 +113,17 @@ args.device = torch.device("cuda:" + str(args.device)) if torch.cuda.is_availabl
 
 loaders = build_dataset(args)
 teacher = get_init_net(args)
-student = copy.deepcopy(teacher)
+#student = copy.deepcopy(teacher)
 for step, batch in enumerate(loaders['test']):
     is_labeled = batch.y == batch.y
     if is_labeled.sum()==0:
         print('wtf')
         break
 
+
+cnt = 0
+for i in range(200):
+    print(test[i]['y'].item())
 '''
 for n,p1 in teacher.task_head.named_parameters():
     break

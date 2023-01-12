@@ -174,7 +174,10 @@ def main(args):
             train_task(args, student, task_loaders['train'], optimizer_int)
             scheduler_int.step()
             valid_roc = evaluate(args, student, task_loaders['valid'])
-            test_roc = evaluate(args, student, task_loaders['test'])
+            if args.dataset_name=='pcqm':
+                test_roc = valid_roc
+            else:
+                test_roc = evaluate(args, student, task_loaders['test'])
             wandb.log({'Inter_val_roc':valid_roc})
             wandb.log({'Inter_test_roc':test_roc})
             vacc_list.append(valid_roc)
@@ -204,10 +207,10 @@ def main(args):
 if __name__ == '__main__':
     args = get_args_parser()
     args = args.parse_args()
+    args.device = torch.device("cuda:" + str(args.device)) if torch.cuda.is_available() else torch.device("cpu")
     if args.config_file is not None:
         config = toml.load(os.path.join("configs",args.config_file+".toml"))
         args = update_args(args, config)
-    args.device = torch.device("cuda:" + str(args.device)) if torch.cuda.is_available() else torch.device("cpu")
     main(args)
 
 
