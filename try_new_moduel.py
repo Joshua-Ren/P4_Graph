@@ -22,100 +22,97 @@ import matplotlib.pyplot as plt
 
 def get_args_parser():
     # Training settings
+    # ======= Usually default settings
     parser = argparse.ArgumentParser(description='GNN baselines on ogbgmol* data with Pytorch Geometrics')
+    parser.add_argument('--config_file', type=str, default=None,
+                        help='the name of the toml configuration file')
     parser.add_argument('--seed', default=0, type=int)
+    parser.add_argument('--WD_ID',default='joshuaren', type=str,
+                        help='W&D ID, joshuaren or joshua_shawn')
     parser.add_argument('--device', type=int, default=0,
                         help='which gpu to use if any (default: 0)')
     parser.add_argument('--drop_ratio', type=float, default=0.5,
                         help='dropout ratio (default: 0.5)')
     parser.add_argument('--batch_size', type=int, default=64,
-                        help='input batch size for training (default: 32)')
-    parser.add_argument('--num_workers', type=int, default=0,
+                        help='input batch size for training (default: 64)')
+    parser.add_argument('--num_workers', type=int, default=2,
                         help='number of workers (default: 0)')
-    parser.add_argument('--dataset_name', type=str, default="ogbg-moltox21",
+    parser.add_argument('--dataset_name', type=str, default="ogbg-molhiv",
                         help='dataset name (default: ogbg-molhiv/moltox21/molpcba)')
     parser.add_argument('--feature', type=str, default="full",
                         help='full feature or simple feature')
-    parser.add_argument('--track_all', action='store_false',
-                        help='whether track topsim and msg entropy') 
-    # ==== Model settings ======
-    #===========================
-    parser.add_argument('--backbone_type', type=str, default='gcn_virtual',
+    parser.add_argument('--bottle_type', type=str, default='sem',
+                        help='bottleneck type, can be std or sem')
+    # ==== Model Structure ======
+        # ----- Backbone
+    parser.add_argument('--backbone_type', type=str, default='gcn',
                         help='backbone type, can be gcn, gin, gcn_virtual, gin_virtual')
-    parser.add_argument('--bottle_type', type=str, default='upsample',
-                        help='bottleneck type, can be pool, upsample, updown, lstm, ...')
-    parser.add_argument('--num_layer', type=int, default=5,
-                        help='number of GNN message passing layers (default: 5)')
     parser.add_argument('--emb_dim', type=int, default=300,
-                        help='dimensionality of hidden units in GNNs (default: 300)')    
-        # ---- SEM settings ----
-    parser.add_argument('--L', type=int, default=200,
+                        help='dimensionality of hidden units in GNNs (default: 300)')  
+    parser.add_argument('--num_layer', type=int, default=3,
+                        help='number of GNN message passing layers (default: 5)')
+        # ---- SEM
+    parser.add_argument('--L', type=int, default=15,
                         help='No. word in SEM')
     parser.add_argument('--V', type=int, default=20,
                         help='word size in SEM')
-    parser.add_argument('--pool_tau', type=float, default=1.,
-                        help='temperature in SEM')
-    parser.add_argument('--dis_sem_tau', type=float, default=1.,
-                        help='temperature in SEM')
-    parser.add_argument('--ft_tau', type=float, default=1.,
-                        help='temperature in SEM')
-   
-    # ===== NIL settings ======
-    # =========================
-    parser.add_argument('--epochs_lp', type=int, default=1,
-                        help='for lp probing epochs')  
-    parser.add_argument('--epochs_ssl', type=int, default=0,
-                        help='byol between two models')
-    parser.add_argument('--epochs_ft', type=int, default=0,
-                        help='student training on real label')
-    parser.add_argument('--epochs_dis', type=int, default=100,
-                        help='distillation')
-    parser.add_argument('--generations', type=int, default=2,
+                        
+        # ---- Head-type
+    parser.add_argument('--head_type', type=str, default='linear',
+                        help='Head type in interaction, linear or mlp')    
+    
+    # ==== NIL related ======    
+    parser.add_argument('--generations', type=int, default=10,
                         help='number of generations')
-    
-        # ===== Finetune or evaluation settings ======
-    parser.add_argument('--ft_lr', type=float, default=1e-3,
-                        help='learning rate for student on task')
-    parser.add_argument('--lp_lr', type=float, default=1e-3,
-                        help='learning rate for student when LP-eval')
-        # ===== Distillation settings ======
+        # ---- Init student
+    parser.add_argument('--init_strategy', type=str, default='nil',
+                        help='How to generate new student, nil or mile')
+    parser.add_argument('--init_part', type=str, default=None,
+                        help='Which part of the backbone to re-init')
+        # ---- Distillation
+    parser.add_argument('--dis_tau', type=float, default=1.,
+                        help='temperature used during distillation, same on teacher and student')
+    parser.add_argument('--dis_steps', type=int, default=5000,
+                        help='distillation batches, epoch should be int(step/N_batches)')
     parser.add_argument('--dis_lr', type=float, default=1e-3,
-                        help='learning rate for student')    
+                        help='learning rate for student')   
+    parser.add_argument('--dis_optim', type=str, default='adam',
+              help='optimizer used in distillation, sgd, adam or adamW')
     parser.add_argument('--dis_loss', type=str, default='ce_argmax',
-              help='how the teacher generate the samples, ce_argmax, ce_sample, mse, kld')
-    parser.add_argument('--dis_smp_tau', type=float, default=1.,
-              help='temperature used when teacher generating sample, 0 is argmax')
-    
-        # ===== SSL settings ======
-            # ---- Common
-    parser.add_argument('--inter_alpha', type=float, default=0,
-                        help='balance between task loss and inter-loss, 0 is all inter')
-    parser.add_argument('--ssl_lr', type=float, default=1e-3,
-                        help='learning rate for student')                      
-            # ---- BYOL
-    parser.add_argument('--byol_loss', type=str, default='mse',
-                        help='loss type used in byol, mse or cosine')
-    parser.add_argument('--byol_eta', type=float, default=0.99,
-                        help='eta in EMA')  
+              help='how the teacher generate the samples, ce_argmax, ce_sample, noisy_ce_sample, mse')
+    parser.add_argument('--distill_data', type=str, default=None,
+                        help='dataset name (default: ogbg-molhiv/moltox21/molpcba)')
+    parser.add_argument('--distill_set', type=str, default='train',
+                        help='dataset set train/valid/test')
+        # ---- Interaction
+    parser.add_argument('--int_tau', type=float, default=1.,
+                        help='temperature used during interaction')
+    parser.add_argument('--int_epoch', type=int, default=100,
+                        help='student training on real label, >500 is early stopping')
+    parser.add_argument('--es_epochs', type=int, default=3,
+                        help='consecutive how many epochs non-increase')
+    parser.add_argument('--int_lr', type=float, default=1e-3,
+                        help='learning rate for student on task during interaction')
+    parser.add_argument('--int_optim', type=str, default='adam',
+                        help='optimizer type during distillation, adam or adamW or sgd')
+    parser.add_argument('--int_sched', type=eval, default=True,
+                        help='Whether to use cosine scheduler')    
+        # ---- Generate teacher
+    parser.add_argument('--copy_what', type=str, default='best',
+                        help='use the best or last epoch teacher in distillation')
     
     # ===== Wandb and saving results ====
     parser.add_argument('--run_name',default='test',type=str)
-    parser.add_argument('--proj_name',default='P4_phase_observe', type=str)
-    parser.add_argument('--save_dir', default=None,
-                        help='path of the pretrained checkpoint')    
+    parser.add_argument('--proj_name',default='P4_paper', type=str)
     return parser
 
 args = get_args_parser()
 args = args.parse_args()
 args.device = torch.device("cuda:" + str(args.device)) if torch.cuda.is_available() else torch.device("cpu")
 
-from ogb.lsc import PCQM4Mv2Dataset
-from ogb.utils import smiles2graph
-dataset = PCQM4Mv2Dataset(root = 'E:\\P4_Graph\\dataset', only_smiles = True)
-dataset2 = PCQM4Mv2Dataset(root = 'E:\\P4_Graph\\dataset', smiles2graph = smiles2graph)
 
-#loaders = build_dataset(args)
-#teacher = get_init_net(args)
+loaders = build_dataset(args)
+teacher = get_init_net(args)
 '''
 loaders = build_dataset(args)
 teacher = get_init_net(args)

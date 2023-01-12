@@ -1,6 +1,7 @@
 from ogb.graphproppred import PygGraphPropPredDataset
 from torch_geometric.loader import DataLoader
-
+from ogb.lsc import PygPCQM4Mv2Dataset
+from ogb.utils import smiles2graph
 
 # possible datasets: (size,batch.num_nodes,y.shape)
 # molpcba(10949-763-128), molhiv(1029-852-1), molbace (38-1103-1), 
@@ -9,9 +10,15 @@ from torch_geometric.loader import DataLoader
 
 def build_dataset(args, force_name=None):
     if force_name is not None:
-        dataset = PygGraphPropPredDataset(name = force_name)
+        dataset_name = force_name
     else:
-        dataset = PygGraphPropPredDataset(name = args.dataset_name)
+        dataset_name = args.dataset_name
+    
+    if dataset_name == 'pcqm':
+        dataset = PygPCQM4Mv2Dataset(root = './dataset/', smiles2graph = smiles2graph)
+    else:
+        dataset = PygGraphPropPredDataset(name = dataset_name)
+        
     if args.feature == 'full':
         pass 
     elif args.feature == 'simple':
@@ -22,14 +29,14 @@ def build_dataset(args, force_name=None):
     split_idx = dataset.get_idx_split()
     ### automatic evaluator. takes dataset name as input
     train_loader = DataLoader(dataset[split_idx["train"]], 
-                               batch_size=args.batch_size, shuffle=True, 
-                               num_workers = args.num_workers)
+                            batch_size=args.batch_size, shuffle=True, 
+                            num_workers = args.num_workers)
     valid_loader = DataLoader(dataset[split_idx["valid"]], 
-                               batch_size=args.batch_size, shuffle=True, 
-                               num_workers = args.num_workers)
+                            batch_size=args.batch_size, shuffle=True, 
+                            num_workers = args.num_workers)
     test_loader = DataLoader(dataset[split_idx["test"]], 
-                               batch_size=args.batch_size, shuffle=True, 
-                               num_workers = args.num_workers)
+                            batch_size=args.batch_size, shuffle=True, 
+                            num_workers = args.num_workers)
     args.num_tasks = dataset.num_tasks
     args.task_type = dataset.task_type
     args.eval_metric = dataset.eval_metric

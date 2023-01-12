@@ -35,7 +35,7 @@ def get_args_parser():
     parser.add_argument('--num_workers', type=int, default=2,
                         help='number of workers (default: 0)')
     parser.add_argument('--dataset_name', type=str, default="ogbg-molhiv",
-                        help='dataset name (default: ogbg-molhiv/moltox21/molpcba)')
+                        help='dataset name (default: ogbg-molhiv/moltox21/molpcba/pcqm)')
     parser.add_argument('--feature', type=str, default="full",
                         help='full feature or simple feature')
     parser.add_argument('--bottle_type', type=str, default='sem',
