@@ -121,7 +121,10 @@ def main(args):
     # ========== Prepare save folder and wandb ==========
     wandb_init(proj_name=args.proj_name, run_name=args.run_name, config_args=args)
     model_name = args.backbone_type+'_'+args.bottle_type
-    args.save_path = os.path.join('results',model_name,args.dataset_name)    
+    args.save_path = os.path.join('results',model_name,args.dataset_name)  
+            # -------- save results in this folder
+    if not os.path.exists(args.save_path):
+        os.makedirs(args.save_path)      
     # ========== Prepare the loader and optimizer
     if args.distill_data is not None:
         dis_loader = build_dataset(args,force_name=args.distill_data)
