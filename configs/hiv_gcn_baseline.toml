@@ -18,5 +18,6 @@ es_epochs = 5
 int_lr = 1e-3
 int_optim = "adam"
 int_sched = true
+save_model = true
 
 run_name = "hiv_gcn_baseline"

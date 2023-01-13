@@ -106,24 +106,25 @@ def get_args_parser():
     parser.add_argument('--proj_name',default='P4_paper', type=str)
     return parser
 
-args = get_args_parser()
-args = args.parse_args()
-args.device = torch.device("cuda:" + str(args.device)) if torch.cuda.is_available() else torch.device("cpu")
-
-
-loaders = build_dataset(args)
-teacher = get_init_net(args)
-#student = copy.deepcopy(teacher)
-for step, batch in enumerate(loaders['test']):
-    is_labeled = batch.y == batch.y
-    if is_labeled.sum()==0:
-        print('wtf')
-        break
-
-
-cnt = 0
-for i in range(200):
-    print(test[i]['y'].item())
+if __name__ == '__main__':
+    args = get_args_parser()
+    args = args.parse_args()
+    args.device = torch.device("cuda:" + str(args.device)) if torch.cuda.is_available() else torch.device("cpu")
+    
+    
+    loaders = build_dataset(args)
+    teacher = get_init_net(args)
+    #student = copy.deepcopy(teacher)
+    for step, batch in enumerate(loaders['test']):
+        is_labeled = batch.y == batch.y
+        if is_labeled.sum()==0:
+            print('wtf')
+            break
+    
+    
+    cnt = 0
+    for i in range(200):
+        print(test[i]['y'].item())
 '''
 for n,p1 in teacher.task_head.named_parameters():
     break

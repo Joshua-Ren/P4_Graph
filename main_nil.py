@@ -99,6 +99,8 @@ def get_args_parser():
                         help='use the best or last epoch teacher in distillation')
     
     # ===== Wandb and saving results ====
+    parser.add_argument('--save_model', type=eval, default=False,
+                        help='Whether save the model in the save-path') 
     parser.add_argument('--run_name',default='test',type=str)
     parser.add_argument('--proj_name',default='P4_paper', type=str)
     return parser
@@ -117,7 +119,7 @@ def main(args):
     rnd_seed(args.seed)
     
     # ========== Prepare save folder and wandb ==========
-    run_name = wandb_init(proj_name=args.proj_name, run_name=args.run_name, config_args=args)
+    wandb_init(proj_name=args.proj_name, run_name=args.run_name, config_args=args)
     model_name = args.backbone_type+'_'+args.bottle_type
     args.save_path = os.path.join('results',model_name,args.dataset_name)    
     # ========== Prepare the loader and optimizer
@@ -164,6 +166,10 @@ def main(args):
         else:
             scheduler_int = optim.lr_scheduler.CosineAnnealingLR(optimizer_int,T_max=100,eta_min=args.int_lr)
         
+        # ------ Save the model
+        if args.save_model and gen==0:
+            ckp_path = os.path.join(args.save_path, 'model_seed.pt')
+            torch.save(student.state_dict(), ckp_path)
         # =========== Step1: distillation, skip in first gen
         if gen > 0:
             train_distill(args, student, teacher, task_loaders['train'], dis_loader, optimizer_dis)
@@ -199,6 +205,9 @@ def main(args):
             # ------- Early stop the FT if 3 non-increasing epochs
             if args.int_epoch>500 and early_stop_meets(vacc_list, best_vroc, how_many=args.es_epochs):
                 break
+        if args.save_model:
+            ckp_path = os.path.join(args.save_path, 'model_ep_'+str(gen).zfill(2)+'.pt')
+            torch.save(student.state_dict(), ckp_path)
         if args.copy_what=='last':
             teacher = copy.deepcopy(student)
         gens_valid_roc.append(best_vroc)
