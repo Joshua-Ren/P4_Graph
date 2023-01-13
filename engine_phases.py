@@ -93,7 +93,7 @@ def train_distill(args, student, teacher, task_loader, unsup_loader, optimizer):
         else:
             teach_logits, _ = teacher.distill_forward(batch)
             stud_logits, _ = student.distill_forward(batch)
-            teach_logits, stud_logits = teach_logits/args.dis_tau, stud_logits/args.dis_tau
+            teach_logits, stud_logits = teach_logits/args.dis_tau, stud_logits
             if args.dis_loss == 'ce_argmax':
                 teach_label = teach_logits.argmax(-1)
                 loss = ce_criterion(stud_logits.reshape(-1,args.V),teach_label.reshape(-1,))

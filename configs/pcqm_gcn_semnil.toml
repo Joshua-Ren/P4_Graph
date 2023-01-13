@@ -22,9 +22,9 @@ init_strategy = "nil"
 	# ---- Distillation
 distill_data = "pcqm"
 distill_set = "train"
-dis_steps = 4000
-dis_lr = 1e-3
-dis_tau = 1
+dis_steps = 40000
+dis_lr = 3e-3
+dis_tau = 0.2
 dis_optim = "adamW"
 dis_loss = "ce_sample"
 	# ---- Interaction
