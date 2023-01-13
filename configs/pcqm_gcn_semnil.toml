@@ -35,6 +35,6 @@ int_tau = 1
 int_optim = "adamW"
 int_sched = true
 	# ---- Generate teacher
-copy_what = "last"
+copy_what = "best"
 
-run_name = "pcqm_gcn_semnil"
+run_name = "pcqm_gcn_semnil_distau0p2"
