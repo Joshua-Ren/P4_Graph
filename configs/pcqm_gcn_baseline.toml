@@ -18,5 +18,6 @@ es_epochs = 1
 int_lr = 1e-3
 int_optim = "adamW"
 int_sched = true
+save_model = true
 
 run_name = "pcqm_gcn_baselineW"

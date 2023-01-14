@@ -222,6 +222,9 @@ def evaluate_properties(num_neighbors, adj_list, properties, probing_func=local_
 
 def linear_probing(embedding_train,y_train,  embeding_test=None, y_test= None, seed=0, percent_train=0.8, scale=True):
     np.random.seed(seed)
+    y_train[y_train>1] = 1
+    if (type(y_test) != type(None)):
+        y_test[y_test>1] = 1
     if (type(embeding_test) == type(None)):
         n_train = int(percent_train*len(y_train))
         rnd = np.random.permutation(len(y_train))
