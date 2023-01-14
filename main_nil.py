@@ -121,7 +121,7 @@ def main(args):
     # ========== Prepare save folder and wandb ==========
     wandb_init(proj_name=args.proj_name, run_name=args.run_name, config_args=args)
     model_name = args.backbone_type+'_'+args.bottle_type
-    args.save_path = os.path.join('results',model_name,args.dataset_name)  
+    args.save_path = os.path.join('results',model_name,args.dataset_name,args.run_name)  
             # -------- save results in this folder
     if not os.path.exists(args.save_path):
         os.makedirs(args.save_path)      
@@ -209,7 +209,7 @@ def main(args):
             if args.int_epoch>500 and early_stop_meets(vacc_list, best_vroc, how_many=args.es_epochs):
                 break
         if args.save_model:
-            ckp_path = os.path.join(args.save_path, 'model_ep_'+str(gen).zfill(2)+'.pt')
+            ckp_path = os.path.join(args.save_path, 'model_gen_'+str(gen).zfill(2)+'.pt')
             torch.save(student.state_dict(), ckp_path)
         if args.copy_what=='last':
             teacher = copy.deepcopy(student)

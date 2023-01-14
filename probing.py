@@ -247,7 +247,7 @@ def linear_probing(embedding_train,y_train,  embeding_test=None, y_test= None, s
     y_proba = lr.predict_proba(test)
     y_pred = y_proba.argmax(1)
 
-    return 0,roc_auc_score(y_test, y_proba[:, 1], multi_class='ovr')
+    return roc_auc_score(y_test, y_proba[:, 1], multi_class='ovr')
     #return log_loss(y_test, y_proba), accuracy_score(y_pred, y_test), f1_score(y_pred, y_test, average='macro'), roc_auc_score(y_test, y_proba[:, 1], multi_class='ovr')
 
 
@@ -275,7 +275,7 @@ def linear_probing_regression(embedding_train,y_train,  embeding_test=None, y_te
     lr.fit(train, y_train)
     y_pred = lr.predict(test)
 
-    return mean_absolute_error(y_pred,y_test),0
+    return mean_absolute_error(y_pred,y_test)
 
 
 # def linear_probing(embedding, property, seed=0, percent_train=0.8, scale=True):

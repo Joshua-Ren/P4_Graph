@@ -18,7 +18,7 @@ head_type = "linear"
 # ==== NIL related ====== 
 generations = 10
 	# ---- Init student
-init_strategy = "mile"
+init_strategy = "nil"
 	# ---- Distillation
 distill_data = "ogbg-molhiv"
 distill_set = "train"
@@ -28,13 +28,14 @@ dis_tau = 1
 dis_optim = "adam"
 dis_loss = "ce_sample"
 	# ---- Interaction
-int_epoch = 100
+int_epoch = 50
 es_epochs = 5
 int_lr = 1e-3
 int_tau = 1
-int_optim = "adam"
+int_optim = "adamW"
 int_sched = true
 	# ---- Generate teacher
-copy_what = "best"
+copy_what = "last"
+save_model = true
 
-run_name = "hiv_gcn_semmile_save"
+run_name = "hiv_gcn_semnil_save"
