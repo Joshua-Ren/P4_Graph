@@ -11,18 +11,18 @@ bottle_type = "sem"
 backbone_type = "gcn"
 emb_dim = 300
 num_layer = 5
-L = 40
-V = 20
+L = 30
+V = 10
 head_type = "linear"
 
 # ==== NIL related ====== 
-generations = 10
+generations = 7
 	# ---- Init student
-init_strategy = "nil"
+init_strategy = "mile"
 	# ---- Distillation
 distill_data = "ogbg-molpcba"
 distill_set = "train"
-dis_steps = 4000
+dis_steps = 10000
 dis_lr = 1e-3
 dis_tau = 1
 dis_optim = "adam"
@@ -38,4 +38,4 @@ int_sched = true
 copy_what = "last"
 save_model = true
 
-run_name = "pcba_gcn_semnil_save"
+run_name = "pcba_gcn_semmile_3010_save"
