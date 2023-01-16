@@ -1,9 +1,9 @@
 # ====== Usuall default
 seed = 10086
 proj_name = "P4_report"
-drop_ratio = 0
+drop_ratio = 0.5
 batch_size = 64
-dataset_name = "ogbg-molhiv"
+dataset_name = "ogbg-molpcba"
 bottle_type = "sem"
 
 # ==== Model Structure ======
@@ -12,14 +12,15 @@ head_type = "mlp"
 emb_dim = 300
 num_layer = 5
 generations = 1
-L = 30
-V = 10
+L=30
+V=10
 
 	# ---- Interaction
 int_epoch = 500
+es_epochs = 5
 int_lr = 1e-3
-int_optim = "sgd"
+int_optim = "adamW"
 int_sched = true
 save_model = true
 
-run_name = "hiv_gcn_sem_save"
+run_name = "pcba_gcn_sem_save"
