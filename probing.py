@@ -7,6 +7,8 @@ from sklearn.neighbors import kneighbors_graph
 from sklearn.metrics import auc, accuracy_score, f1_score, roc_auc_score
 from sklearn.linear_model import LogisticRegression, LinearRegression
 from sklearn import preprocessing
+from sklearn.multioutput import MultiOutputClassifier
+from sklearn.neural_network import MLPClassifier
 
 from rdkit import Chem
 from rdkit.Chem import Descriptors
@@ -253,6 +255,30 @@ def linear_probing(embedding_train,y_train,  embeding_test=None, y_test= None, s
     return roc_auc_score(y_test, y_proba[:, 1], multi_class='ovr')
     #return log_loss(y_test, y_proba), accuracy_score(y_pred, y_test), f1_score(y_pred, y_test, average='macro'), roc_auc_score(y_test, y_proba[:, 1], multi_class='ovr')
 
+def linear_probing_multiclass(embedding_train,y_train,  embeding_test=None, y_test= None, seed=0, percent_train=0.8, scale=True):
+    np.random.seed(seed)
+    n_class = y_train.max()
+    if (type(embeding_test) == type(None)):
+        n_train = int(percent_train*len(y_train))
+        rnd = np.random.permutation(len(y_train))
+        idx_train, idx_test = rnd[:n_train], rnd[n_train:]
+      
+        train = embedding_train[idx_train]
+        test = embedding_train[idx_test]
+        y_test = y_train[idx_test]
+        y_train = y_train[idx_train]
+    else:
+        train = embedding_train
+        test = embeding_test
+   
+    if scale:
+        scaler = preprocessing.StandardScaler()
+        train = scaler.fit_transform(train)
+        test = scaler.transform(test)
+    
+    lr = MLPClassifier(random_state=1, max_iter=300).fit(train, y_train)
+    
+    return lr.score(test, y_test)
 
 def linear_probing_regression(embedding_train,y_train,  embeding_test=None, y_test= None, seed=0, percent_train=0.8, scale=True):
     np.random.seed(seed)
