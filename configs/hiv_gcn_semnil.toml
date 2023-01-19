@@ -22,7 +22,7 @@ init_strategy = "nil"
 	# ---- Distillation
 distill_data = "ogbg-molhiv"
 distill_set = "train"
-dis_steps = 4000
+dis_steps = 100
 dis_lr = 1e-3
 dis_tau = 1
 dis_optim = "adam"
