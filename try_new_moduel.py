@@ -37,8 +37,12 @@ def get_args_parser():
                         help='input batch size for training (default: 64)')
     parser.add_argument('--num_workers', type=int, default=2,
                         help='number of workers (default: 0)')
-    parser.add_argument('--dataset_name', type=str, default="ogbg-molhiv",
+    parser.add_argument('--dataset_name', type=str, default="ogbg-molpcba",
                         help='dataset name (default: ogbg-molhiv/moltox21/molpcba)')
+    parser.add_argument('--dataset_ratio', type=float, default=1.,
+                        help='The ratio of training samples')
+    parser.add_argument('--dataset_forcetask', type=int, default=1,
+                        help='Only for molpcba-one experiment')
     parser.add_argument('--feature', type=str, default="full",
                         help='full feature or simple feature')
     parser.add_argument('--bottle_type', type=str, default='sem',
@@ -111,8 +115,10 @@ if __name__ == '__main__':
     args = args.parse_args()
     args.device = torch.device("cuda:" + str(args.device)) if torch.cuda.is_available() else torch.device("cpu")
     
-    
+    args.dataset_ratio=0.1
     loaders = build_dataset(args)
+
+'''
     teacher = get_init_net(args)
     #student = copy.deepcopy(teacher)
     for step, batch in enumerate(loaders['test']):
@@ -125,7 +131,7 @@ if __name__ == '__main__':
     cnt = 0
     for i in range(200):
         print(test[i]['y'].item())
-'''
+
 for n,p1 in teacher.task_head.named_parameters():
     break
 for n,p2 in student.task_head.named_parameters():

@@ -13,11 +13,14 @@ num_layer = 5
 generations = 1
 
 	# ---- Interaction
-int_epoch = 100
+int_epoch = 500
 es_epochs = 5
 int_lr = 1e-3
 int_optim = "adamW"
 int_sched = true
 save_model = true
 
-run_name = "pcba_gcn_baseline"
+#----- Here is the difference
+dataset_ratio = 0.1
+
+run_name = "pcba_gcn_baseline_subset"

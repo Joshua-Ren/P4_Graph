@@ -36,6 +36,10 @@ def get_args_parser():
                         help='number of workers (default: 0)')
     parser.add_argument('--dataset_name', type=str, default="ogbg-molhiv",
                         help='dataset name (default: ogbg-molhiv/moltox21/molpcba/pcqm)')
+    parser.add_argument('--dataset_ratio', type=float, default=1.,
+                        help='The ratio of training samples, only for molpcba-one experiment')
+    parser.add_argument('--dataset_forcetask', type=int, default=0,
+                        help='Only for molpcba-one experiment')
     parser.add_argument('--feature', type=str, default="full",
                         help='full feature or simple feature')
     parser.add_argument('--bottle_type', type=str, default='sem',

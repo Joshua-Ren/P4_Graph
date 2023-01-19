@@ -28,9 +28,13 @@ def build_dataset(args, force_name=None):
         # only retain the top two node/edge features
         dataset.data.x = dataset.data.x[:,:2]
         dataset.data.edge_attr = dataset.data.edge_attr[:,:2]
+    
+    if args.dataset_forcetask != 0:
+        dataset.data.y = dataset.data.y[:,:args.dataset_forcetask]
     split_idx = dataset.get_idx_split()
     ### automatic evaluator. takes dataset name as input
-    train_loader = DataLoader(dataset[split_idx["train"]], 
+    ratio_idx = int(args.dataset_ratio*len(split_idx["train"]))
+    train_loader = DataLoader(dataset[split_idx["train"]][:ratio_idx], 
                             batch_size=args.batch_size, shuffle=True, drop_last=True,
                             num_workers = args.num_workers)
     valid_loader = DataLoader(dataset[split_idx["valid"]], 
@@ -44,8 +48,13 @@ def build_dataset(args, force_name=None):
         args.task_type = "regression"
         args.eval_metric = "mae"
     else:
-        args.num_tasks = dataset.num_tasks
-        args.task_type = dataset.task_type
-        args.eval_metric = dataset.eval_metric
+        if  args.dataset_forcetask != 0:
+            args.num_tasks = 1
+            args.task_type = 'binary classification'
+            args.eval_metric = 'rocauc'
+        else:
+            args.num_tasks = dataset.num_tasks
+            args.task_type = dataset.task_type
+            args.eval_metric = dataset.eval_metric
     loaders = {'train':train_loader, 'valid':valid_loader, 'test':test_loader}
     return loaders
