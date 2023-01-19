@@ -36,6 +36,6 @@ int_optim = "adamW"
 int_sched = true
 	# ---- Generate teacher
 copy_what = "best"
-#save_model = true
+save_model = true
 
 run_name = "hiv_gcn_semnil_tab1"

@@ -206,8 +206,8 @@ def main(args):
                     teacher = copy.deepcopy(student)
             wandb.log({'best_val_epoch':best_v_ep})
             # ------- Early stop the FT if 3 non-increasing epochs
-            if args.int_epoch>500 and early_stop_meets(vacc_list, best_vroc, how_many=args.es_epochs):
-                break
+            #if args.int_epoch>500 and early_stop_meets(vacc_list, best_vroc, how_many=args.es_epochs):
+            #    break
         if args.save_model:
             ckp_path = os.path.join(args.save_path, 'model_gen_'+str(gen).zfill(2)+'.pt')
             torch.save(student.state_dict(), ckp_path)
