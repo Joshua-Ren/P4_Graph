@@ -23,4 +23,7 @@ int_optim = "adamW"
 int_sched = true
 save_model = true
 
-run_name = "pcba_gcn_sem_save"
+#----- Here is the difference
+dataset_ratio = 0.1
+
+run_name = "pcba_gcn_sem_subset"
