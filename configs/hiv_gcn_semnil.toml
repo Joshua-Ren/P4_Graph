@@ -11,8 +11,8 @@ bottle_type = "sem"
 backbone_type = "gcn"
 emb_dim = 300
 num_layer = 5
-L = 100
-V = 20
+L = 30
+V = 10
 head_type = "linear"
 
 # ==== NIL related ====== 
@@ -38,4 +38,4 @@ int_sched = true
 copy_what = "best"
 save_model = true
 
-run_name = "hiv_gcn_semnil_tab1"
+run_name = "hiv_gcn_semnil_tab1_3010"

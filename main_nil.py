@@ -162,7 +162,7 @@ def main(args):
             optimizer_int = optim.SGD(student.parameters(), momentum=0.9, lr=args.int_lr, weight_decay=0.01)
         if args.int_sched:
             if args.int_epoch>500:  # Now early stop
-                tmax = 100
+                tmax = args.int_epoch
             else:
                 tmax = args.int_epoch
             scheduler_int = optim.lr_scheduler.CosineAnnealingLR(optimizer_int,T_max=tmax,eta_min=1e-5)
