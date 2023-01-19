@@ -16,7 +16,7 @@ V = 10
 head_type = "linear"
 
 # ==== NIL related ====== 
-generations = 7
+generations = 5
 	# ---- Init student
 init_strategy = "nil"
 	# ---- Distillation
