@@ -1,5 +1,5 @@
 # ====== Usuall default
-seed = 10086
+#seed = 10086
 proj_name = "P4_report"
 drop_ratio = 0.5
 batch_size = 64
@@ -11,8 +11,8 @@ bottle_type = "sem"
 backbone_type = "gcn"
 emb_dim = 300
 num_layer = 5
-L = 30
-V = 10
+L = 100
+V = 20
 head_type = "linear"
 
 # ==== NIL related ====== 
@@ -28,14 +28,14 @@ dis_tau = 1
 dis_optim = "adam"
 dis_loss = "ce_sample"
 	# ---- Interaction
-int_epoch = 50
+int_epoch = 100
 es_epochs = 5
-int_lr = 2e-4
+int_lr = 1e-3
 int_tau = 1
 int_optim = "adamW"
 int_sched = true
 	# ---- Generate teacher
-copy_what = "last"
-save_model = true
+copy_what = "best"
+#save_model = true
 
-run_name = "hiv_gcn_semnil_save"
+run_name = "hiv_gcn_semnil_tab1"
