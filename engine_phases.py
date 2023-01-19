@@ -27,6 +27,11 @@ def train_task(args, model, loader, optimizer):
         evaluator = PCQM4Mv2Evaluator()
     else:
         evaluator = Evaluator(args.dataset_name)
+    
+    ### Only for subtask
+    if args.dataset_forcetask==1:
+        evaluator = Evaluator('ogbg-molhiv')
+
     y_true, y_pred = [], []
     for step, batch in enumerate(loader):
         batch = batch.to(args.device)
@@ -123,6 +128,11 @@ def evaluate(args, model, loader):
         evaluator = PCQM4Mv2Evaluator()
     else:
         evaluator = Evaluator(args.dataset_name)
+
+    ### Only for subtask
+    if args.dataset_forcetask==1:
+        evaluator = Evaluator('ogbg-molhiv')
+
     model.eval()
     y_true = []
     y_pred = []

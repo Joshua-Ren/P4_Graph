@@ -22,4 +22,4 @@ source /home/mila/y/yi.ren/env_graph/bin/activate
 cd /home/mila/y/yi.ren/P4_Graph/
 
 srun python /home/mila/y/yi.ren/P4_Graph/main_nil.py \
---config_file subtask_pcba_gcn_semnil
+--config_file subtask_pcba_gcn_baseline

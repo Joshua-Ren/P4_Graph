@@ -39,7 +39,7 @@ def get_args_parser():
                         help='number of workers (default: 0)')
     parser.add_argument('--dataset_name', type=str, default="ogbg-molpcba",
                         help='dataset name (default: ogbg-molhiv/moltox21/molpcba)')
-    parser.add_argument('--dataset_ratio', type=float, default=1.,
+    parser.add_argument('--dataset_ratio', type=float, default=0.1,
                         help='The ratio of training samples')
     parser.add_argument('--dataset_forcetask', type=int, default=1,
                         help='Only for molpcba-one experiment')
@@ -56,9 +56,9 @@ def get_args_parser():
     parser.add_argument('--num_layer', type=int, default=3,
                         help='number of GNN message passing layers (default: 5)')
         # ---- SEM
-    parser.add_argument('--L', type=int, default=15,
+    parser.add_argument('--L', type=int, default=30,
                         help='No. word in SEM')
-    parser.add_argument('--V', type=int, default=20,
+    parser.add_argument('--V', type=int, default=10,
                         help='word size in SEM')
                         
         # ---- Head-type
