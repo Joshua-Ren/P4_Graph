@@ -4,7 +4,7 @@ proj_name = "P4_report"
 drop_ratio = 0.5
 batch_size = 64
 dataset_name = "ogbg-molhiv"
-bottle_type = "sem"
+bottle_type = "sem_base"
 
 # ==== Model Structure ======
 backbone_type = "gcn"
@@ -22,4 +22,4 @@ int_optim = "adamW"
 int_sched = true
 #save_model = true
 
-run_name = "hiv_gcn_semonly"
+run_name = "hiv_gcn_baselineplus"
