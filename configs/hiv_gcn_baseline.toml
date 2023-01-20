@@ -13,11 +13,11 @@ num_layer = 5
 generations = 1
 
 	# ---- Interaction
-int_epoch = 1000
+int_epoch = 200
 es_epochs = 5
 int_lr = 1e-3
 int_optim = "adam"
 int_sched = true
-save_model = true
+#save_model = true
 
-run_name = "hiv_gcn_baseline_tab1"
+run_name = "hiv_gcn_baseline"

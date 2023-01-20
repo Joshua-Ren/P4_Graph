@@ -16,10 +16,10 @@ L = 100
 V = 20
 
 	# ---- Interaction
-int_epoch = 1000
+int_epoch = 200
 int_lr = 1e-3
 int_optim = "adamW"
 int_sched = true
-save_model = true
+#save_model = true
 
-run_name = "hiv_gcn_sem_tab1"
+run_name = "hiv_gcn_sem"

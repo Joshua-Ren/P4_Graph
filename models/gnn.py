@@ -166,5 +166,64 @@ class GNN_SEM_UPSAMPLE(GNN):
         logits, z_hat = self.SEM(h_graph, sem_tau)
         return logits, z_hat   
 
+
+class GNN_SEM_BASELINE(GNN):
+    '''
+        For design 2, the message matrix has shape L*V
+        Task head is L*V->L, then L->Ntask
+        For distillation, output long L*V vector
+        For SSL, need more Wq and Wg
+    '''
+    def __init__(self, L=200, V=20, tau=1., head_type='linear', **kwargs):
+        super(GNN_SEM_BASELINE, self).__init__(**kwargs)
+        self.L = L
+        self.V = V
+        self.head_type = head_type
+        self.Wup = nn.Linear(self.emb_dim, self.L*self.V)
+        self.BN = nn.BatchNorm1d(self.L*self.V)
+        self.linear_head = nn.Sequential(
+                            nn.Linear(self.L*self.V, self.num_tasks),
+                            )
+        self.mlp_head = nn.Sequential(
+                            nn.Linear(self.L*self.V, self.emb_dim),
+                            nn.ReLU(),
+                            nn.Linear(self.emb_dim, self.num_tasks)
+                            )       
+    def SEM(self, in_vector, tau=1.):
+        '''
+            Piecewise softmax on a long 1*(L*V) vector
+            Use tau to control the softmax temperature
+            e.g., embd_size=300, L=30, V=10, as we have 30 words, each with 10 possible choices
+        '''
+        b_size = in_vector.shape[0]
+        w_invector = self.Wup(in_vector)    # N*300 --> N*4000
+        logits = w_invector.reshape(b_size, self.L, self.V)
+        
+        w_invector = self.BN(w_invector)
+        
+        w_invector = w_invector/tau
+        logits_tau = w_invector.reshape(b_size, self.L, self.V)
+        z_hat = logits_tau.reshape(b_size, -1)   # reshaped prob-logits
+        #q_theta = self.Wq(z_hat)  # q only for BYOL
+        return logits, z_hat
+          
+    def task_forward(self, batched_data, sem_tau=1.):
+        # downstream task forward
+        h_node = self.gnn_node(batched_data)
+        h_graph = self.pool(h_node, batched_data.batch)
+        logits, z_hat = self.SEM(h_graph, sem_tau)
+        if self.head_type=='mlp':
+            output = self.mlp_head(z_hat)
+        else:
+            output = self.linear_head(z_hat)
+        return logits, output
+
+    def distill_forward(self, batched_data, sem_tau=1.):
+        # for distill, both use logits
+        h_node = self.gnn_node(batched_data)
+        h_graph = self.pool(h_node, batched_data.batch) 
+        logits, z_hat = self.SEM(h_graph, sem_tau)
+        return logits, z_hat
+
 if __name__ == '__main__':
     GNN(num_tasks = 10)

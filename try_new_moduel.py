@@ -118,16 +118,13 @@ if __name__ == '__main__':
     args.dataset_ratio=0.1
     loaders = build_dataset(args)
 
-'''
-    teacher = get_init_net(args)
-    #student = copy.deepcopy(teacher)
+
+    #teacher = get_init_net(args)
+    student = copy.deepcopy(teacher)
     for step, batch in enumerate(loaders['test']):
-        is_labeled = batch.y == batch.y
-        if is_labeled.sum()==0:
-            print('wtf')
-            break
+        batch
     
-    
+'''    
     cnt = 0
     for i in range(200):
         print(test[i]['y'].item())
