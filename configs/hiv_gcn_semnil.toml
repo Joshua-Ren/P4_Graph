@@ -11,8 +11,8 @@ bottle_type = "sem"
 backbone_type = "gcn"
 emb_dim = 300
 num_layer = 5
-L = 30
-V = 10
+L = 100
+V = 20
 head_type = "linear"
 
 # ==== NIL related ====== 
@@ -23,7 +23,7 @@ init_strategy = "nil"
 distill_data = "ogbg-molhiv"
 distill_set = "train"
 dis_steps = 100
-dis_lr = 1e-3
+dis_lr = 1e-4
 dis_tau = 1
 dis_optim = "adam"
 dis_loss = "ce_sample"
@@ -38,4 +38,4 @@ int_sched = true
 copy_what = "best"
 save_model = true
 
-run_name = "hiv_gcn_semnil_tab1_3010"
+run_name = "hiv_gcn_semnil"
