@@ -1,7 +1,7 @@
 # ====== Usuall default
 #seed = 10086
 proj_name = "P4_report"
-drop_ratio = 0
+drop_ratio = 0.5
 batch_size = 64
 dataset_name = "ogbg-molhiv"
 bottle_type = "sem"
@@ -22,4 +22,4 @@ int_optim = "adamW"
 int_sched = true
 #save_model = true
 
-run_name = "hiv_gcn_sem"
+run_name = "hiv_gcn_semonly"
