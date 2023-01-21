@@ -11,8 +11,8 @@ bottle_type = "sem"
 backbone_type = "gin"
 emb_dim = 300
 num_layer = 5
-L = 100
-V = 20
+L = 30
+V = 10
 head_type = "linear"
 
 # ==== NIL related ====== 
@@ -23,7 +23,7 @@ init_strategy = "nil"
 distill_data = "ogbg-molhiv"
 distill_set = "train"
 dis_steps = 10000
-dis_lr = 1e-4
+dis_lr = 1e-3
 dis_tau = 5
 dis_optim = "adam"
 dis_loss = "ce_sample"
