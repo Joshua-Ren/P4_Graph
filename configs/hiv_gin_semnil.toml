@@ -2,7 +2,7 @@
 #seed = 10086
 proj_name = "P4_report"
 drop_ratio = 0.5
-batch_size = 64
+batch_size = 128
 dataset_name = "ogbg-molhiv"
 bottle_type = "sem"
 
@@ -22,9 +22,9 @@ init_strategy = "nil"
 	# ---- Distillation
 distill_data = "ogbg-molhiv"
 distill_set = "train"
-dis_steps = 4000
+dis_steps = 10000
 dis_lr = 1e-4
-dis_tau = 1
+dis_tau = 5
 dis_optim = "adam"
 dis_loss = "ce_sample"
 	# ---- Interaction
@@ -33,9 +33,9 @@ es_epochs = 5
 int_lr = 1e-3
 int_tau = 1
 int_optim = "adamW"
-int_sched = true
+#int_sched = true
 	# ---- Generate teacher
 copy_what = "best"
-save_model = true
+#save_model = true
 
 run_name = "hiv_gin_semnil"
