@@ -7,20 +7,20 @@ dataset_name = "ogbg-molpcba"
 bottle_type = "sem"
 
 # ==== Model Structure ======
-backbone_type = "gcn"
-head_type = "mlp"
+backbone_type = "gin"
+head_type = "linear"
 emb_dim = 300
 num_layer = 5
 generations = 1
-L=30
-V=10
+L=123
+V=30
 
 	# ---- Interaction
-int_epoch = 500
+int_epoch = 400
 es_epochs = 5
 int_lr = 1e-3
 int_optim = "adamW"
 int_sched = true
-#save_model = true
+save_model = true
 
-run_name = "pcba_gcn_sem"
+run_name = "pcba_gin_semonly"
