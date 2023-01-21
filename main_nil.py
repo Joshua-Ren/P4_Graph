@@ -190,7 +190,8 @@ def main(args):
         else:
             best_vroc, best_v_ep, best_testroc, vacc_list = 0, 0, 0, []
         
-        train_task(args, student, task_loaders['train'], optimizer_int_bob)
+        for i in range(5):
+            train_task(args, student, task_loaders['train'], optimizer_int_bob)
 
         for epoch in range(args.int_epoch):
             train_task(args, student, task_loaders['train'], optimizer_int)
