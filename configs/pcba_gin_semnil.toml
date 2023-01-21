@@ -23,15 +23,15 @@ init_strategy = "nil"
 distill_data = "ogbg-molpcba"
 distill_set = "train"
 dis_steps = 2000
-dis_lr = 1e-3
-dis_tau = 2
+dis_lr = 1e-4
+dis_tau = 1
 dis_optim = "adam"
 dis_loss = "ce_sample"
 	# ---- Interaction
 int_epoch = 50
 es_epochs = 5
 int_lr = 1e-3
-int_tau = 0.85
+int_tau = 1
 int_optim = "adamW"
 int_sched = false
 	# ---- Generate teacher
