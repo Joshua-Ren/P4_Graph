@@ -2,7 +2,7 @@
 #seed = 10086
 proj_name = "P4_report"
 drop_ratio = 0.5
-batch_size = 64
+batch_size = 128
 dataset_name = "ogbg-molpcba"
 bottle_type = "sem"
 
@@ -11,7 +11,7 @@ bottle_type = "sem"
 backbone_type = "gcn"
 emb_dim = 300
 num_layer = 5
-L = 120
+L = 123
 V = 30
 head_type = "linear"
 
@@ -23,14 +23,14 @@ init_strategy = "nil"
 distill_data = "ogbg-molpcba"
 distill_set = "train"
 dis_steps = 20000
-dis_lr = 5e-3
+dis_lr = 1e-3
 dis_tau = 1
 dis_optim = "adam"
-dis_loss = "ce_sample"
+dis_loss = "ce_argmax"
 	# ---- Interaction
-int_epoch = 150
+int_epoch = 50
 es_epochs = 5
-int_lr = 5e-3
+int_lr = 1e-3
 int_tau = 1
 int_optim = "adamW"
 int_sched = true
