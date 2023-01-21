@@ -160,13 +160,10 @@ def main(args):
         
         if args.int_optim.lower()=='adam':
             optimizer_int = optim.Adam(student.parameters(), lr=args.int_lr)
-            optimizer_int_bob = optim.Adam(student.linear_head.parameters(), lr=args.int_lr)
         elif args.int_optim.lower()=='adamw':
             optimizer_int = optim.AdamW(student.parameters(), lr=args.int_lr, weight_decay=0.01)
-            optimizer_int_bob = optim.AdamW(student.linear_head.parameters(), lr=args.int_lr, weight_decay=0.01)
         elif args.int_optim.lower()=='sgd':
             optimizer_int = optim.SGD(student.parameters(), momentum=0.9, lr=args.int_lr, weight_decay=0.01)
-            optimizer_int_bob = optim.SGD(student.linear_head.parameters(), momentum=0.9, lr=args.int_lr, weight_decay=0.01)
         if args.int_sched:
             if args.int_epoch>500:  # Now early stop
                 tmax = args.int_epoch
@@ -189,9 +186,6 @@ def main(args):
             best_vroc, best_v_ep, best_testroc, vacc_list = 10, 10, 10, []
         else:
             best_vroc, best_v_ep, best_testroc, vacc_list = 0, 0, 0, []
-        
-        train_task(args, student, task_loaders['train'], optimizer_int_bob)
-
         for epoch in range(args.int_epoch):
             train_task(args, student, task_loaders['train'], optimizer_int)
             scheduler_int.step()
