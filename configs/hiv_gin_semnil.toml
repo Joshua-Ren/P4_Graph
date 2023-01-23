@@ -2,7 +2,7 @@
 #seed = 10086
 proj_name = "P4_report"
 drop_ratio = 0.5
-batch_size = 128
+batch_size = 64
 dataset_name = "ogbg-molhiv"
 bottle_type = "sem"
 
@@ -10,30 +10,30 @@ bottle_type = "sem"
 	# ----- Backbone and SEM
 backbone_type = "gin"
 emb_dim = 300
-num_layer = 5
-L = 30
-V = 10
+num_layer = 3
+L = 43
+V = 31
 head_type = "linear"
 
 # ==== NIL related ====== 
-generations = 5
+generations = 8
 	# ---- Init student
-init_strategy = "nil"
+init_strategy = "mile"
 	# ---- Distillation
 distill_data = "ogbg-molhiv"
 distill_set = "train"
 dis_steps = 5000
-dis_lr = 5e-4
-dis_tau = 1
+dis_lr = 1e-3
+dis_tau = 0.96
 dis_optim = "adam"
 dis_loss = "ce_sample"
 	# ---- Interaction
 int_epoch = 100
-es_epochs = 5
+es_epochs = 3
 int_lr = 1e-3
-int_tau = 1
+int_tau = 2.28
 int_optim = "adamW"
-int_sched = true
+int_sched = false
 	# ---- Generate teacher
 copy_what = "best"
 #save_model = true
