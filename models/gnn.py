@@ -89,7 +89,7 @@ class GNN_STD(GNN):
     '''
     def __init__(self, L=200, V=20, tau=1., **kwargs):
         super(GNN_STD, self).__init__(**kwargs)
-        self.task_head = nn.Sequential(
+        self.linear_head = nn.Sequential(
                             nn.Linear(self.emb_dim, self.num_tasks),
                             #nn.ReLU(),
                             #nn.Linear(self.emb_dim, self.num_tasks),
@@ -99,7 +99,7 @@ class GNN_STD(GNN):
         # downstream task forward
         h_node = self.gnn_node(batched_data)
         h_graph = self.pool(h_node, batched_data.batch)
-        output = self.task_head(h_graph)
+        output = self.linear_head(h_graph)
         return h_graph, output
 
     def distill_forward(self, batched_data, sem_tau=1.):
