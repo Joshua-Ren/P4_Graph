@@ -11,27 +11,27 @@ bottle_type = "sem"
 backbone_type = "gin"
 emb_dim = 300
 num_layer = 3
-L = 43
-V = 31
+L = 50
+V = 10
 head_type = "linear"
 
 # ==== NIL related ====== 
 generations = 8
 	# ---- Init student
-init_strategy = "mile"
+init_strategy = "nil"
 	# ---- Distillation
 distill_data = "ogbg-molhiv"
 distill_set = "train"
 dis_steps = 5000
 dis_lr = 1e-3
-dis_tau = 0.96
-dis_optim = "adam"
+dis_tau = 3
+dis_optim = "sgd"
 dis_loss = "ce_sample"
 	# ---- Interaction
 int_epoch = 100
 es_epochs = 3
 int_lr = 1e-3
-int_tau = 2.28
+int_tau = 0.8
 int_optim = "adamW"
 int_sched = false
 	# ---- Generate teacher
