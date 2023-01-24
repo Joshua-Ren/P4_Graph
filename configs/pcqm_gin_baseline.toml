@@ -4,7 +4,7 @@ proj_name = "P4_report"
 drop_ratio = 0
 batch_size = 256
 dataset_name = "pcqm"
-bottle_type = "std"
+bottle_type = "sem_base"
 
 # ==== Model Structure ======
 backbone_type = "gin"
@@ -20,4 +20,4 @@ int_optim = "adamW"
 int_sched = true
 save_model = true
 
-run_name = "pcqm_gin_baseline"
+run_name = "pcqm_gin_baselineplus"
