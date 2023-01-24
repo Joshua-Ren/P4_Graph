@@ -12,7 +12,8 @@ head_type = "mlp"
 emb_dim = 600
 num_layer = 5
 generations = 1
-
+L = 40
+V = 20
 	# ---- Interaction
 int_epoch = 200
 int_lr = 1e-3
