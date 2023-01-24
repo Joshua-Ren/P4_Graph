@@ -10,7 +10,7 @@ bottle_type = "sem"
 	# ----- Backbone and SEM
 backbone_type = "gin"
 emb_dim = 300
-num_layer = 5
+num_layer = 10
 L = 30
 V = 10
 head_type = "mlp"
@@ -38,4 +38,4 @@ int_sched = true
 copy_what = "best"
 #save_model = true
 
-run_name = "hiv_gin_semnil"
+run_name = "hiv_gin_semnil_10layers"
