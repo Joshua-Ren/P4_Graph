@@ -1,7 +1,7 @@
 # ====== Usuall default
 #seed = 10086
 proj_name = "P4_report"
-drop_ratio = 0
+drop_ratio = 0.5
 batch_size = 64
 dataset_name = "ogbg-molhiv"
 bottle_type = "sem"
@@ -11,8 +11,8 @@ bottle_type = "sem"
 backbone_type = "gin"
 emb_dim = 300
 num_layer = 5
-L = 30
-V = 10
+L = 10
+V = 5
 head_type = "mlp"
 
 # ==== NIL related ====== 
@@ -38,4 +38,4 @@ int_sched = true
 copy_what = "best"
 #save_model = true
 
-run_name = "hiv_gin_semnil_nodropout"
+run_name = "hiv_gin_semnil_L10V5"
