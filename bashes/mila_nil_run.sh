@@ -22,4 +22,4 @@ source /home/mila/y/yi.ren/env_graph/bin/activate
 cd /home/mila/y/yi.ren/P4_Graph/
 
 srun python /home/mila/y/yi.ren/P4_Graph/main_nil.py \
---config_file pcba_gin_baseline
+--config_file pcba_gin_sem
