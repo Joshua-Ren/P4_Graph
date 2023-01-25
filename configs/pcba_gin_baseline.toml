@@ -4,14 +4,15 @@ proj_name = "P4_report"
 drop_ratio = 0.5
 batch_size = 64
 dataset_name = "ogbg-molpcba"
-bottle_type = "std"
+bottle_type = "sem_base"
 
 # ==== Model Structure ======
 backbone_type = "gin"
 emb_dim = 300
 num_layer = 5
 generations = 1
-
+L = 40
+V = 20
 	# ---- Interaction
 int_epoch = 400
 es_epochs = 5
@@ -20,4 +21,4 @@ int_optim = "adamW"
 int_sched = true
 #save_model = true
 
-run_name = "pcba_gin_baseline"
+run_name = "pcba_gin_baselineplus"
