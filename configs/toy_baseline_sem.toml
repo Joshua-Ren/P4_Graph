@@ -3,7 +3,7 @@ seed = 10086
 proj_name = "P4_toy"
 
 # ======== Dataset and task related
-sup_ratio = 0.2
+sup_ratio = 0.002
 batch_size = 20
 data_per_g = 1
 
@@ -20,4 +20,4 @@ int_lr = 1e-3
 int_epochs = 2000
 	# ---- Distillation
 
-run_name = "Alpha02_baseline_sem"
+run_name = "Alpha0002_baseline_sem"
