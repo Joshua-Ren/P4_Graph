@@ -3,7 +3,7 @@ seed = 10086
 proj_name = "P4_toy"
 
 # ======== Dataset and task related
-sup_ratio = 0.002
+sup_ratio = 0.01
 batch_size = 20
 data_per_g = 1
 
@@ -26,4 +26,4 @@ dis_epochs = 50
 dis_loss = "cesample"
 
 copy_what = "last"
-run_name = "Alpha0002_nil_sem_mile"
+run_name = "Alpha001_nil_sem_mile"
