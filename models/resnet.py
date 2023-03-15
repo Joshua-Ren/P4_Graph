@@ -167,8 +167,74 @@ class ResNet_SEM(nn.Module):
         out = self.linear(sem_hid)
         return msg, out
 
+class MLP_ML(nn.Module):
+  def __init__(self, in_dim=3072, hid_size=128, num_classes=38):
+    super(MLP_ML, self).__init__()
+    self.in_dim = in_dim
+    self.num_classes = num_classes
+    self.hid_size = hid_size
+    self.Alice = nn.Sequential(
+              nn.Linear(self.in_dim, self.hid_size),
+              nn.ReLU(True),
+              nn.Linear(self.hid_size, self.hid_size),
+              nn.ReLU(True),
+              nn.Linear(self.hid_size, self.hid_size),
+              nn.ReLU(True),
+            )
+    self.Bob = nn.Sequential(
+              nn.Linear(self.hid_size, self.num_classes)
+            )
+  def forward(self, x):
+    x = x.view(x.size(0),-1)
+    z = self.Alice(x)
+    out = self.Bob(z)
+    return z, out
+
+class MLP_SEM(nn.Module):
+  def __init__(self, L=4, V=10, tau=1., in_dim=3072, hid_size=256, num_classes=38):
+    super(MLP_SEM, self).__init__()
+    self.in_dim = in_dim
+    self.num_classes = num_classes
+    self.hid_size = hid_size
+    self.Alice = nn.Sequential(
+              nn.Linear(self.in_dim, self.hid_size),
+              nn.ReLU(True),
+              nn.Linear(self.hid_size, self.hid_size),
+              nn.ReLU(True),
+              nn.Linear(self.hid_size, self.hid_size),
+              nn.ReLU(True),
+            )
+    self.L = L
+    self.V = V
+    self.tau = tau
+    self.Wup = nn.Linear(self.hid_size, self.L*self.V)    #Split the linear by Wup and Whead
+
+    self.Bob = nn.Sequential(
+              nn.Linear(self.L*self.V, self.num_classes)
+            )
+  def SEM(self, in_vector):
+      '''
+          Piecewise softmax on a long 1*(L*V) vector
+          Use tau to control the softmax temperature
+          e.g., embd_size=300, L=30, V=10, as we have 30 words, each with 10 possible choices
+      '''
+      b_size = in_vector.shape[0]
+      w_invector = self.Wup(in_vector)    # N*512 --> N*40
+      w_invector = w_invector/self.tau
+      msg = w_invector.reshape(b_size, self.L, self.V)
+      p_theta = torch.nn.Softmax(-1)(msg).reshape(b_size, -1)   # reshaped prob-logits
+      return msg, p_theta
+
+  def forward(self, x):
+    x = x.view(x.size(0),-1)
+    z = self.Alice(x)
+    msg, sem_hid = self.SEM(z)
+    out = self.Bob(sem_hid)
+    return msg, out
+
 def ResNet18_ML(num_classes=1):
     return ResNet(BasicBlock, [2, 2, 2, 2],num_classes=num_classes)
 
 def ResNet18_SEM(L=4, V=10, tau=1., num_classes=1):
     return ResNet_SEM(BasicBlock, [2, 2, 2, 2],num_classes=num_classes)
+

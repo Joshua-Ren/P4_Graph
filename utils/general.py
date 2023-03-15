@@ -8,7 +8,7 @@ import numpy as np
 import torch.backends.cudnn as cudnn
 sys.path.append("..")
 from models.gnn import *
-from models.resnet import ResNet18_ML, ResNet18_SEM
+from models.resnet import ResNet18_ML, ResNet18_SEM, MLP_ML, MLP_SEM
 
 def update_args(args, config):
     for k in config.keys():
@@ -76,6 +76,10 @@ def get_init_net_toy(args):
         model = ResNet18_ML(num_classes=1).to(args.device)
     elif args.model_structure == 'sem':
         model = ResNet18_SEM(L=args.L, V=args.V, tau=1., num_classes=1).to(args.device)
+    elif args.model_structure == 'standardmlp':
+        model = MLP_ML(num_classes=1).to(args.device)
+    elif args.model_structure == 'semmlp':
+        model = MLP_SEM(L=args.L, V=args.V, tau=1., num_classes=1).to(args.device)
     return model
     
 

@@ -30,7 +30,7 @@ def generate_3dshape_loaders(args):
     #_FACTORS_IN_ORDER = ['floor_hue', 'wall_hue', 'object_hue', 'scale', 'shape', 'orientation']
     #_NUM_VALUES_PER_FACTOR = {'floor_hue': 10, 'wall_hue': 10, 'object_hue': 10, 'scale': 8, 'shape': 4, 'orientation': 15}
     DATA_SIZE = 8000*args.data_per_g
-    dataset = h5py.File('/home/mila/y/yi.ren/P4_Graph/dataset/3dshapes.h5', 'r')
+    dataset = h5py.File('/home/joshua52/projects/def-dsuth/joshua52/P4_Graph/dataset/3dshapes.h5', 'r')
     #dataset = h5py.File('E:\\DATASET\\3dshapes.h5', 'r')
     images = dataset['images']  # array shape [480000,64,64,3], uint8 in range(256)
     labels = dataset['labels']  # array shape [480000,6], float64
