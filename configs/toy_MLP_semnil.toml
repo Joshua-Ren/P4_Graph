@@ -24,6 +24,6 @@ dis_lr = 1e-3
 dis_epochs = 50
 dis_loss = "cesample"
 
-copy_what = "last"
+copy_what = "best"
 
 run_name = "MLPSEM_nil_mile"

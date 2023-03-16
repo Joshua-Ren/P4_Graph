@@ -186,13 +186,17 @@ class MLP_ML(nn.Module):
               nn.ReLU(True),
               nn.Linear(self.hid_size, self.hid_size),
               nn.ReLU(True),
+              nn.Linear(self.hid_size, self.hid_size),
+              nn.ReLU(True),
             )
+    self.Wup = nn.Linear(self.hid_size, 40)
     self.Bob = nn.Sequential(
-              nn.Linear(self.hid_size, self.num_classes)
+              nn.Linear(40, self.num_classes)
             )
   def forward(self, x):
     x = x.view(x.size(0),-1)
     z = self.Alice(x)
+    z = self.Wup(z)
     out = self.Bob(z)
     return z, out
 
@@ -204,6 +208,8 @@ class MLP_SEM(nn.Module):
     self.hid_size = hid_size
     self.Alice = nn.Sequential(
               nn.Linear(self.in_dim, self.hid_size),
+              nn.ReLU(True),
+              nn.Linear(self.hid_size, self.hid_size),
               nn.ReLU(True),
               nn.Linear(self.hid_size, self.hid_size),
               nn.ReLU(True),
