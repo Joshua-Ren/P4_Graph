@@ -17,13 +17,13 @@ init_strategy = "mile"
 generations = 30
 
 	# ---- Interaction
-int_lr = 1e-3
+int_lr = 3e-3
 int_epochs = 200
 	# ---- Distillation
-dis_lr = 1e-3
-dis_epochs = 50
+dis_lr = 3e-3
+dis_epochs = 100
 dis_loss = "cesample"
 
 copy_what = "last"
 
-run_name = "MLPSEM_nil_mile_30"
+run_name = "MLPSEM_nil_mile"
