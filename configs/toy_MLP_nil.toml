@@ -24,6 +24,6 @@ dis_lr = 1e-3
 dis_epochs = 50
 dis_loss = "mse"
 
-copy_what = "lost"
+copy_what = "last"
 
 run_name = "MLP_nil_mile"
