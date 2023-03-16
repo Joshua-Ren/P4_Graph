@@ -174,7 +174,7 @@ class ResNet_SEM(nn.Module):
         return msg, out
 
 class MLP_ML(nn.Module):
-  def __init__(self, in_dim=3072, hid_size=256, num_classes=38):
+  def __init__(self, in_dim=3072, hid_size=128, num_classes=38):
     super(MLP_ML, self).__init__()
     self.in_dim = in_dim
     self.num_classes = num_classes
@@ -201,7 +201,7 @@ class MLP_ML(nn.Module):
     return z, out
 
 class MLP_SEM(nn.Module):
-  def __init__(self, L=4, V=10, tau=1., in_dim=3072, hid_size=256, num_classes=38):
+  def __init__(self, L=4, V=10, tau=1., in_dim=3072, hid_size=128, num_classes=38):
     super(MLP_SEM, self).__init__()
     self.in_dim = in_dim
     self.num_classes = num_classes

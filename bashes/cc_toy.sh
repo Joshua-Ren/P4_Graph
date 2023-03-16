@@ -22,4 +22,4 @@ source /home/joshua52/projects/def-dsuth/joshua52/env_graph/bin/activate
 cd /home/joshua52/projects/def-dsuth/joshua52/P4_Graph
 
 srun python /home/joshua52/projects/def-dsuth/joshua52/P4_Graph/main_toy_3dshapes.py \
---config_file toy_MLP_nil
+--config_file toy_MLP_semnil
