@@ -127,7 +127,7 @@ def main(args):
         # ========= Interaction
         best_vloss = 10
             # --- Bob adaptation
-        bob_optim = optim.SGD(student.linear.parameters(), lr=args.dis_lr, momentum=0.9, weight_decay=5e-4,nesterov=True)
+        bob_optim = optim.SGD(student.Bob.parameters(), lr=args.dis_lr, momentum=0.9, weight_decay=5e-4,nesterov=True)
         for i in range(args.bob_adapt_ep):
             train_epoch(args, student, bob_optim, train_loader)
         for i in range(args.int_epochs):

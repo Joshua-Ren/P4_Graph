@@ -89,7 +89,10 @@ class ResNet(nn.Module):
         self.layer2 = self._make_layer(block, 128, num_blocks[1], stride=2)
         self.layer3 = self._make_layer(block, 256, num_blocks[2], stride=2)
         self.layer4 = self._make_layer(block, 512, num_blocks[3], stride=2)
-        self.linear = nn.Linear(512*block.expansion, num_classes)
+        self.Bob = nn.Sequential(
+                nn.Linear(512*block.expansion, self.num_classes)
+                )        
+        #self.linear = nn.Linear(512*block.expansion, num_classes)
         #self.linear2 = nn.Linear(128,num_classes)
 
     def _make_layer(self, block, planes, num_blocks, stride):
@@ -108,7 +111,7 @@ class ResNet(nn.Module):
         out = self.layer4(out)
         out = F.avg_pool2d(out, 4)
         hid = out.view(out.size(0), -1)
-        pred = self.linear(hid)
+        pred = self.Bob(hid)
         #out = self.linear2(out)
         return hid, pred
 
@@ -127,7 +130,10 @@ class ResNet_SEM(nn.Module):
         self.V = V
         self.tau = tau
         self.Wup = nn.Linear(512*block.expansion, self.L*self.V)    #Split the linear by Wup and Whead
-        self.linear = nn.Linear(self.L*self.V, num_classes)
+        #self.linear = nn.Linear(self.L*self.V, num_classes)
+        self.Bob = nn.Sequential(
+                nn.Linear(self.L*self.V, self.num_classes)
+                )
         #self.linear = nn.Sequential(
         #                nn.Linear(self.L*self.V, 128),
         #                nn.ReLU(),
@@ -164,7 +170,7 @@ class ResNet_SEM(nn.Module):
         out = F.avg_pool2d(out, 4)
         hid = out.view(out.size(0), -1)
         msg, sem_hid = self.SEM(hid) 
-        out = self.linear(sem_hid)
+        out = self.Bob(sem_hid)
         return msg, out
 
 class MLP_ML(nn.Module):
