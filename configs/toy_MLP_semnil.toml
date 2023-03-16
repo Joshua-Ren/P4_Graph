@@ -14,7 +14,7 @@ V=10
 
 # ======== Learning related
 init_strategy = "mile"
-generations = 10
+generations = 30
 
 	# ---- Interaction
 int_lr = 1e-3
@@ -26,4 +26,4 @@ dis_loss = "cesample"
 
 copy_what = "last"
 
-run_name = "MLPSEM_nil_mile_last"
+run_name = "MLPSEM_nil_mile_30"
