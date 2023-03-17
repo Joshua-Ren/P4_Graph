@@ -13,7 +13,7 @@ L=4
 V=10
 
 # ======== Learning related
-init_strategy = "mile"
+init_strategy = "nil"
 generations = 30
 
 	# ---- Interaction
@@ -26,4 +26,4 @@ dis_loss = "mse"
 
 copy_what = "last"
 
-run_name = "MLP_nil_mile"
+run_name = "MLP_nil"
