@@ -13,17 +13,17 @@ L=4
 V=10
 
 # ======== Learning related
-init_strategy = "nil"
-generations = 30
+init_strategy = "mile"
+generations = 100
 
 	# ---- Interaction
-int_lr = 3e-3
+int_lr = 2e-3
 int_epochs = 200
 	# ---- Distillation
-dis_lr = 3e-3
-dis_epochs = 100
+dis_lr = 2e-3
+dis_epochs = 25
 dis_loss = "cesample"
 
 copy_what = "last"
 
-run_name = "MLPSEM_nil"
+run_name = "MLPSEM_mile"

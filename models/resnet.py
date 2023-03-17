@@ -174,9 +174,11 @@ class ResNet_SEM(nn.Module):
         return msg, out
 
 class MLP_ML(nn.Module):
-  def __init__(self, in_dim=3072, hid_size=128, num_classes=38):
+  def __init__(self, L=4, V=10, in_dim=3072, hid_size=128, num_classes=38):
     super(MLP_ML, self).__init__()
     self.in_dim = in_dim
+    self.L = L
+    self.V = V
     self.num_classes = num_classes
     self.hid_size = hid_size
     self.Alice = nn.Sequential(
@@ -186,12 +188,10 @@ class MLP_ML(nn.Module):
               nn.ReLU(True),
               nn.Linear(self.hid_size, self.hid_size),
               nn.ReLU(True),
-              nn.Linear(self.hid_size, self.hid_size),
-              nn.ReLU(True),
             )
-    self.Wup = nn.Linear(self.hid_size, 40)
+    self.Wup = nn.Linear(self.hid_size, self.L*self.V)
     self.Bob = nn.Sequential(
-              nn.Linear(40, self.num_classes)
+              nn.Linear(self.L*self.V, self.num_classes)
             )
   def forward(self, x):
     x = x.view(x.size(0),-1)
@@ -208,8 +208,6 @@ class MLP_SEM(nn.Module):
     self.hid_size = hid_size
     self.Alice = nn.Sequential(
               nn.Linear(self.in_dim, self.hid_size),
-              nn.ReLU(True),
-              nn.Linear(self.hid_size, self.hid_size),
               nn.ReLU(True),
               nn.Linear(self.hid_size, self.hid_size),
               nn.ReLU(True),

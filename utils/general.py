@@ -77,7 +77,7 @@ def get_init_net_toy(args):
     elif args.model_structure == 'sem':
         model = ResNet18_SEM(L=args.L, V=args.V, tau=1., num_classes=1).to(args.device)
     elif args.model_structure == 'standardmlp':
-        model = MLP_ML(num_classes=1).to(args.device)
+        model = MLP_ML(L=args.L, V=args.V, num_classes=1).to(args.device)
     elif args.model_structure == 'semmlp':
         model = MLP_SEM(L=args.L, V=args.V, tau=1., num_classes=1).to(args.device)
     return model
