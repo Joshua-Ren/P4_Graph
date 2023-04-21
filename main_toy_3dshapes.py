@@ -28,6 +28,8 @@ def get_args_parser():
     parser.add_argument('--device', type=int, default=0,
                         help='which gpu to use if any (default: 0)')
     # ======== Dataset and task related
+    parser.add_argument('--dataset_name', default='3dshape', type=str,
+                        help='3dshapes or dsprite')    
     parser.add_argument('--sup_ratio', default=0.1, type=float,
                         help='ratio of the training factors')
     parser.add_argument('--batch_size', default=20, type=int,
