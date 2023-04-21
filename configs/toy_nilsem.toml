@@ -28,4 +28,4 @@ dis_loss = "cesample"
 
 copy_what = "best"
 
-run_name = "nilsem_sup0p1_k6"
+run_name = "milesem_sup0p1_k6"
