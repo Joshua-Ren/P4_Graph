@@ -135,6 +135,7 @@ def main(args):
         for i in range(args.bob_adapt_ep):
             train_epoch(args, student, bob_optim, train_loader)
         for i in range(args.int_epochs):
+            wandb.log({'int_epoch':i})
             loss = train_epoch(args, student, optimizer_inter, train_loader)
             if i%5==0 or i==args.int_epochs-1:
                 vloss = evaluate(args, student, test_loader)
