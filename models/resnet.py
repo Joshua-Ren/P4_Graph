@@ -82,7 +82,7 @@ class ResNet(nn.Module):
     def __init__(self, block, num_blocks, num_classes=38):
         super(ResNet, self).__init__()
         self.in_planes = 64
-
+        self.num_classes=num_classes
         self.conv1 = nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=1, bias=False)
         self.bn1 = nn.BatchNorm2d(64)
         self.layer1 = self._make_layer(block, 64, num_blocks[0], stride=1)
@@ -116,8 +116,9 @@ class ResNet(nn.Module):
         return hid, pred
 
 class ResNet_SEM(nn.Module):
-    def __init__(self, block, num_blocks, L=4, V=10, tau=1., num_classes=38):
+    def __init__(self, block, num_blocks, L=4, V=10, tau=1., num_classes=1):
         super(ResNet_SEM, self).__init__()
+        self.num_classes=num_classes
         self.in_planes = 64
         self.conv1 = nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=1, bias=False)
         self.bn1 = nn.BatchNorm2d(64)
@@ -243,7 +244,7 @@ class MLP_SEM(nn.Module):
     return msg, out
 
 def ResNet18_ML(num_classes=1):
-    return ResNet(BasicBlock, [2, 2, 2, 2],num_classes=num_classes)
+    return ResNet(BasicBlock, [2, 2, 2, 2], num_classes=num_classes)
 
 def ResNet18_SEM(L=4, V=10, tau=1., num_classes=1):
     return ResNet_SEM(BasicBlock, [2, 2, 2, 2],num_classes=num_classes)
