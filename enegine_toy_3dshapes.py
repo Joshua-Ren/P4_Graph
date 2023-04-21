@@ -67,7 +67,7 @@ def train_distill(args, student, teacher, optimizer, dataloader):
             return
         loss.backward()
         optimizer.step()
-        #wandb.log({'Distill_loss':loss.data.item()})
+        wandb.log({'Distill_loss':loss.data.item()})
         losses.update(loss.data.item(), x.size(0))
     return losses.avg
 
