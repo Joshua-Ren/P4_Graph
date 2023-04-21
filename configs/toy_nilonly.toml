@@ -9,7 +9,7 @@ data_per_g = 1
 num_class = 6
 
 # ==== Model Structure ======
-model_structure = "standard"
+model_structure = "sem"
 L=4
 V=10
 
@@ -27,4 +27,4 @@ dis_loss = "mse"
 
 copy_what = "best"
 
-run_name = "nil_sup0p1_k6"
+run_name = "nilonly_sup0p1_k6"
