@@ -29,7 +29,7 @@ def train_epoch(args, model, optimizer, data_loader):
     model.train()     
     for i,(x,y,reg,idx) in enumerate(data_loader):
         x, reg = x.float().cuda(), reg.float().cuda()
-        reg = reg.unsqueeze(1)
+        #reg = reg.unsqueeze(1)
         msg_all, h_all = model(x)
         optimizer.zero_grad()
         loss = nn.MSELoss(reduction='mean')(h_all,reg)
@@ -77,7 +77,7 @@ def evaluate(args, model, dataloader):
     with torch.no_grad(): 
         for i,(x,y,reg,idx) in enumerate(dataloader):
             x, reg = x.float().cuda(), reg.float().cuda()
-            reg = reg.unsqueeze(1)
+            #reg = reg.unsqueeze(1)
             msg_all, h_all = model(x)
             loss = nn.MSELoss(reduction='mean')(h_all,reg)
             #wandb.log({'Test_loss':loss.data.item()})

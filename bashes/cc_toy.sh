@@ -5,6 +5,7 @@
 #SBATCH --mem=64000M               # memory per node
 #SBATCH --time=1-00:00            # time (DD-HH:MM)
 #SBATCH --output=./logs/stage1.txt 
+#SBATCH --job-name=toy
 
 
 # 1. Load the required modules

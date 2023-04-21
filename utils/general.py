@@ -73,13 +73,13 @@ def get_init_net(args, backbone_type=None, bottle_type=None):
 
 def get_init_net_toy(args):
     if args.model_structure == 'standard':
-        model = ResNet18_ML(num_classes=1).to(args.device)
+        model = ResNet18_ML(num_classes=args.num_class).to(args.device)
     elif args.model_structure == 'sem':
-        model = ResNet18_SEM(L=args.L, V=args.V, tau=1., num_classes=1).to(args.device)
+        model = ResNet18_SEM(L=args.L, V=args.V, tau=1., num_classes=args.num_class).to(args.device)
     elif args.model_structure == 'standardmlp':
-        model = MLP_ML(L=args.L, V=args.V, num_classes=1).to(args.device)
+        model = MLP_ML(L=args.L, V=args.V, num_classes=args.num_class).to(args.device)
     elif args.model_structure == 'semmlp':
-        model = MLP_SEM(L=args.L, V=args.V, tau=1., num_classes=1).to(args.device)
+        model = MLP_SEM(L=args.L, V=args.V, tau=1., num_classes=args.num_class).to(args.device)
     return model
     
 
