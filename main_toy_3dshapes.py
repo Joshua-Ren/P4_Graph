@@ -14,7 +14,7 @@ import toml
 from enegine_toy_3dshapes import train_epoch, train_distill, evaluate
 from utils.general import update_args, wandb_init, get_init_net_toy, rnd_seed, AverageMeter, early_stop_meets
 from utils.nil_related import *
-from utils.toy_example import generate_3dshape_loaders, generate_small_3dshape_loaders
+from utils.toy_example import generate_3dshape_loaders
 
 def get_args_parser():
     # Training settings
@@ -32,8 +32,11 @@ def get_args_parser():
                         help='ratio of the training factors')
     parser.add_argument('--batch_size', default=20, type=int,
                         help='batch size of train and test set')
+    parser.add_argument('--num_class', default=1, type=int,
+                        help='How many reg-tasks, 1~6')
     parser.add_argument('--data_per_g', default=1, type=int,
-                        help='batch size of train and test set')
+                        help='how many samples for each G')
+
     
     # ======== Model structure
     parser.add_argument('--model_structure', type=str, default='standard',
@@ -97,7 +100,6 @@ def main(args):
         os.makedirs(args.save_path)    
     # ========== Prepare the loader and optimizer
     train_loader, test_loader, unsup_loader = generate_3dshape_loaders(args)
-    #train_loader, test_loader, unsup_loader = generate_small_3dshape_loaders(args)
     if args.dis_dataset=='train':
         dis_loader = train_loader
     elif args.dis_dataset=='test':
@@ -132,15 +134,16 @@ def main(args):
             train_epoch(args, student, bob_optim, train_loader)
         for i in range(args.int_epochs):
             loss = train_epoch(args, student, optimizer_inter, train_loader)
-            vloss = evaluate(args, student, test_loader)
-            results['tloss'].append(loss)
-            results['vloss'].append(vloss)
-            wandb.log({'train_loss':loss})
-            wandb.log({'test_loss':vloss})
-            if vloss < best_vloss:
-                best_vloss = vloss
-                if args.copy_what=='best':
-                    teacher = copy.deepcopy(student)
+            if i%5==0 or i==args.int_epochs-1:
+                vloss = evaluate(args, student, test_loader)
+                results['tloss'].append(loss)
+                results['vloss'].append(vloss)
+                wandb.log({'train_loss':loss})
+                wandb.log({'test_loss':vloss})
+                if vloss < best_vloss:
+                    best_vloss = vloss
+                    if args.copy_what=='best':
+                        teacher = copy.deepcopy(student)
         wandb.log({'Best_vloss':best_vloss})
         if args.copy_what=='last':
             teacher = copy.deepcopy(student)
@@ -159,7 +162,3 @@ if __name__ == '__main__':
     #train_loader, test_loader, unsup_loader = generate_3dshape_loaders(args)
     #model1 = ResNet18_ML(num_classes=1)
     #model2 = ResNet18_SEM(L=4, V=10, tau=1., num_classes=1)
-    
-
-    
-    

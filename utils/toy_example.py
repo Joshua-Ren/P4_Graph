@@ -26,6 +26,19 @@ class My_toy_Dataset(Data.Dataset):
     def __len__(self):
         return self.y.shape[0]
 
+def get_reg_labels(oht_labels):
+  PERM = np.array([
+      [3,4,1,2],[1,2,3,4],[1,3,2,4],[1,4,2,3],[2,3,1,4],[2,4,1,3]
+      ])-1
+  reg_labels = []
+  for i in range(PERM.shape[0]):
+    AREA = np.random.randint(0,10,(3,1))
+    id1,id2,id3,id4 = PERM[i]
+    reg_label = oht_labels[:,id1]/10*AREA[0] + oht_labels[:,id2]/10*AREA[1] + oht_labels[:,id3]*oht_labels[:,id4]/100*AREA[2]
+    reg_label = (reg_label-reg_label.mean())/reg_label.std()
+    reg_labels.append(reg_label)
+  return np.array(reg_labels).transpose(1,0)
+
 def generate_3dshape_loaders(args):
     #_FACTORS_IN_ORDER = ['floor_hue', 'wall_hue', 'object_hue', 'scale', 'shape', 'orientation']
     #_NUM_VALUES_PER_FACTOR = {'floor_hue': 10, 'wall_hue': 10, 'object_hue': 10, 'scale': 8, 'shape': 4, 'orientation': 15}
@@ -34,20 +47,13 @@ def generate_3dshape_loaders(args):
     #dataset = h5py.File('E:\\DATASET\\3dshapes.h5', 'r')
     images = dataset['images']  # array shape [480000,64,64,3], uint8 in range(256)
     labels = dataset['labels']  # array shape [480000,6], float64
-    image_shape = images.shape[1:]  # [64,64,3]
-    label_shape = labels.shape[1:]  # [6]
-    n_samples = labels.shape[0]  # 10*10*10*8*4*15=480000
-    
-    #AREA = [1, 2, 0.5]
-    AREA = [1.1234, 2.5678, 0.5432]
-    
+     
     oht_labels = np.zeros((480000,4))
     oht_labels[:,0] = np.array(labels[:,0]*10,dtype=int)
     oht_labels[:,1] = np.array(labels[:,1]*10,dtype=int)
     oht_labels[:,2] = np.array(labels[:,2]*10,dtype=int)
-    oht_labels[:,3] = np.array(labels[:,0]*8,dtype=int)
-    reg_labels = oht_labels[:,0]/10*AREA[0] + oht_labels[:,1]/10*AREA[1] + oht_labels[:,2]*oht_labels[:,3]/80*AREA[2]
-    reg_labels = (reg_labels-reg_labels.mean())/reg_labels.std()
+    oht_labels[:,3] = np.array((labels[:,3]-0.75)*15,dtype=int)
+    reg_labels = get_reg_labels(oht_labels)
     
     tmp = np.random.binomial(n=1,p=args.sup_ratio,size=(1,8000))
     mask_train = (tmp==1).squeeze()
@@ -77,7 +83,7 @@ def generate_3dshape_loaders(args):
     
     return train_loader, test_loader, unsup_loader
 
-
+'''
 def generate_small_3dshape_loaders(args):
     #_FACTORS_IN_ORDER = ['floor_hue', 'wall_hue', 'object_hue', 'scale', 'shape', 'orientation']
     #_NUM_VALUES_PER_FACTOR = {'floor_hue': 10, 'wall_hue': 10, 'object_hue': 10, 'scale': 8, 'shape': 4, 'orientation': 15}
@@ -96,7 +102,7 @@ def generate_small_3dshape_loaders(args):
     oht_labels[:,0] = np.array(labels[:100,0]*10,dtype=int)
     oht_labels[:,1] = np.array(labels[:100,1]*10,dtype=int)
     oht_labels[:,2] = np.array(labels[:100,2]*10,dtype=int)
-    oht_labels[:,3] = np.array(labels[:100,0]*8,dtype=int)
+    oht_labels[:,3] = np.array((labels[:,3]-0.75)*15,dtype=int)
     reg_labels = oht_labels[:,0]/10*AREA[0] + oht_labels[:,1]/10*AREA[1] + oht_labels[:,2]*oht_labels[:,3]/80*AREA[2]
     #reg_labels = (reg_labels-reg_labels.mean())/reg_labels.std()
     
@@ -124,4 +130,5 @@ def generate_small_3dshape_loaders(args):
     unsup_loader = Data.DataLoader(dataset_unsup, batch_size=args.batch_size, shuffle=True, drop_last = True, num_workers=2)
     
     return train_loader, test_loader, unsup_loader
+'''
     
