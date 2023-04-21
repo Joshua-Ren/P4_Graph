@@ -125,6 +125,7 @@ def main(args):
         if gen>0:
             optimizer_dis = optim.SGD(student.parameters(), lr=args.int_lr, momentum=0.9, weight_decay=5e-4,nesterov=True)
             for i in range(args.dis_epochs):
+                wandb.log({'idx_epoch':i})
                 dis_loss = train_distill(args, student, teacher, optimizer_dis, dis_loader)
                 results['dis_loss'].append(dis_loss)
             old_teacher = copy.deepcopy(teacher)   
@@ -135,7 +136,7 @@ def main(args):
         for i in range(args.bob_adapt_ep):
             train_epoch(args, student, bob_optim, train_loader)
         for i in range(args.int_epochs):
-            wandb.log({'int_epoch':i})
+            wandb.log({'idx_epoch':i})
             loss = train_epoch(args, student, optimizer_inter, train_loader)
             if i%5==0 or i==args.int_epochs-1:
                 vloss = evaluate(args, student, test_loader)
