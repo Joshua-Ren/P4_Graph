@@ -28,7 +28,7 @@ class My_toy_Dataset(Data.Dataset):
 
 def get_reg_labels(oht_labels):
   PERM = np.array([
-      [1,2,3,4],[1,3,2,4],[1,4,2,3],[2,3,1,4],[2,4,1,3]，[3,4,1,2]
+      [1,2,3,4],[1,3,2,4],[1,4,2,3],[2,3,1,4],[2,4,1,3],[3,4,1,2]
       ])-1
   reg_labels = []
   for i in range(PERM.shape[0]):
