@@ -28,11 +28,12 @@ class My_toy_Dataset(Data.Dataset):
 
 def get_reg_labels(oht_labels):
   PERM = np.array([
-      [3,4,1,2],[1,2,3,4],[1,3,2,4],[1,4,2,3],[2,3,1,4],[2,4,1,3]
+      [1,2,3,4],[1,3,2,4],[1,4,2,3],[2,3,1,4],[2,4,1,3]，[3,4,1,2]
       ])-1
   reg_labels = []
   for i in range(PERM.shape[0]):
-    AREA = np.random.randint(0,10,(3,1))
+    #AREA = np.random.randint(0,10,(3,1))
+    AREA = [1, 2, 0.5]
     id1,id2,id3,id4 = PERM[i]
     reg_label = oht_labels[:,id1]/10*AREA[0] + oht_labels[:,id2]/10*AREA[1] + oht_labels[:,id3]*oht_labels[:,id4]/100*AREA[2]
     reg_label = (reg_label-reg_label.mean())/reg_label.std()

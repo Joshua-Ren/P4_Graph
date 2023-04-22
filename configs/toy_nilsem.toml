@@ -6,8 +6,8 @@ proj_name = "P4_toy"
 sup_ratio = 0.1
 batch_size = 20
 data_per_g = 1
-num_class = 6
-
+num_class = 1
+dis_dataset = train
 # ==== Model Structure ======
 model_structure = "sem"
 L=4
@@ -28,4 +28,4 @@ dis_loss = "cesample"
 
 copy_what = "best"
 
-run_name = "milesem_sup0p1_k6"
+run_name = "milesem_sup0p1_k1"
