@@ -1,0 +1,32 @@
+# ====== Usuall default
+seed = 10086
+proj_name = "P4_toy"
+
+# ======== Dataset and task related
+sup_ratio = 0.2
+batch_size = 128
+data_per_g = 1
+num_class = 1
+
+dis_dataset = "train"
+# ==== Model Structure ======
+model_structure = "sem"
+L=4
+V=10
+
+# ======== Learning related
+init_strategy = "mile"
+generations = 1
+bob_adapt_ep = 0
+
+	# ---- Interaction
+int_lr = 1e-3
+int_epochs = 2000
+	# ---- Distillation
+dis_lr = 1e-3
+dis_epochs = 20
+dis_loss = "cesample"
+
+copy_what = "best"
+
+run_name = "semonly_sup0p2_k1"
