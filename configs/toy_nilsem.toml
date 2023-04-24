@@ -3,10 +3,11 @@ seed = 10086
 proj_name = "P4_toy"
 
 # ======== Dataset and task related
-sup_ratio = 0.1
-batch_size = 50
+sup_ratio = 0.2
+batch_size = 128
 data_per_g = 1
 num_class = 1
+
 dis_dataset = train
 # ==== Model Structure ======
 model_structure = "sem"
@@ -28,4 +29,4 @@ dis_loss = "cesample"
 
 copy_what = "best"
 
-run_name = "milesem_sup0p1_k1"
+run_name = "milesem_sup0p2_k1"
