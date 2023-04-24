@@ -4,7 +4,7 @@ proj_name = "P4_toy"
 
 # ======== Dataset and task related
 sup_ratio = 0.2
-batch_size = 20
+batch_size = 128
 data_per_g = 1
 num_class = 1
 
