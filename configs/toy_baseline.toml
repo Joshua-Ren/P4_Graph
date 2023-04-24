@@ -6,7 +6,7 @@ proj_name = "P4_toy"
 sup_ratio = 0.2
 batch_size = 128
 data_per_g = 1
-num_class = 4
+num_class = 1
 
 # ==== Model Structure ======
 model_structure = "standard"
@@ -19,4 +19,4 @@ int_lr = 1e-3
 int_epochs = 2000
 	# ---- Distillation
 
-run_name = "base_sup0p2_k4"
+run_name = "base_sup0p2_k1"

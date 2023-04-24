@@ -3,8 +3,8 @@ seed = 10086
 proj_name = "P4_toy"
 
 # ======== Dataset and task related
-sup_ratio = 0.1
-batch_size = 20
+sup_ratio = 0.2
+batch_size = 128
 data_per_g = 1
 num_class = 1
 
@@ -14,7 +14,7 @@ L=4
 V=10
 
 # ======== Learning related
-init_strategy = "nil"
+init_strategy = "mile"
 generations = 10
 
 	# ---- Interaction
@@ -27,4 +27,4 @@ dis_loss = "mse"
 
 copy_what = "best"
 
-run_name = "nilonly_sup0p1_k1"
+run_name = "nilonly_sup0p2_k1"
