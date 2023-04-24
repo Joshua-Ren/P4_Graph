@@ -6,7 +6,7 @@ proj_name = "P4_toy"
 sup_ratio = 0.2
 batch_size = 128
 data_per_g = 1
-num_class = 1
+num_class = 2
 
 # ==== Model Structure ======
 model_structure = "sem"
@@ -27,4 +27,4 @@ dis_loss = "mse"
 
 copy_what = "best"
 
-run_name = "nilonly_sup0p2_k1"
+run_name = "nilonly_sup0p2_k2"

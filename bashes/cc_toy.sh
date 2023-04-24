@@ -23,4 +23,13 @@ source /home/joshua52/projects/def-dsuth/joshua52/env_graph/bin/activate
 cd /home/joshua52/projects/def-dsuth/joshua52/P4_Graph
 
 srun python /home/joshua52/projects/def-dsuth/joshua52/P4_Graph/main_toy_3dshapes.py \
+--config_file toy_nilsem
+
+srun python /home/joshua52/projects/def-dsuth/joshua52/P4_Graph/main_toy_3dshapes.py \
 --config_file toy_semonly
+
+srun python /home/joshua52/projects/def-dsuth/joshua52/P4_Graph/main_toy_3dshapes.py \
+--config_file toy_nilonly
+
+srun python /home/joshua52/projects/def-dsuth/joshua52/P4_Graph/main_toy_3dshapes.py \
+--config_file toy_baseline

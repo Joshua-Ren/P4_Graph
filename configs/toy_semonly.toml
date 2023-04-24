@@ -6,7 +6,7 @@ proj_name = "P4_toy"
 sup_ratio = 0.2
 batch_size = 128
 data_per_g = 1
-num_class = 4
+num_class = 2
 
 dis_dataset = "train"
 # ==== Model Structure ======
@@ -29,4 +29,4 @@ dis_loss = "cesample"
 
 copy_what = "best"
 
-run_name = "semonly_sup0p2_k4"
+run_name = "semonly_sup0p2_k2"
