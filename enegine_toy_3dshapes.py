@@ -28,6 +28,7 @@ def train_epoch(args, model, optimizer, data_loader):
     losses = AverageMeter()
     model.train()     
     for i,(x,y,reg,idx) in enumerate(data_loader):
+        reg = reg[:,:args.num_class]
         x, reg = x.float().cuda(), reg.float().cuda()
         #reg = reg.unsqueeze(1)
         msg_all, h_all = model(x)
@@ -76,6 +77,7 @@ def evaluate(args, model, dataloader):
     model.eval()
     with torch.no_grad(): 
         for i,(x,y,reg,idx) in enumerate(dataloader):
+            reg = reg[:,:args.num_class]
             x, reg = x.float().cuda(), reg.float().cuda()
             #reg = reg.unsqueeze(1)
             msg_all, h_all = model(x)
