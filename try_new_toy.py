@@ -8,7 +8,7 @@ import toml
 from enegine_toy_3dshapes import train_epoch, train_distill, evaluate
 from utils.general import update_args, wandb_init, get_init_net_toy, rnd_seed, AverageMeter, early_stop_meets
 from utils.nil_related import *
-from utils.toy_example import generate_3dshape_loaders
+from utils.toy_example import generate_3dshape_fullloader_vae
 
 def get_args_parser():
     # Training settings
@@ -90,7 +90,7 @@ def main(args):
         args.seed = np.random.randint(1,10086)
     rnd_seed(args.seed)
     # ========== Prepare the loader and optimizer
-    train_loader, test_loader, unsup_loader = generate_3dshape_loaders(args)
+    train_loader, test_loader, unsup_loader = generate_3dshape_fullloader_vae(args)
     if args.dis_dataset=='train':
         dis_loader = train_loader
     elif args.dis_dataset=='test':

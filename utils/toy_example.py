@@ -85,6 +85,32 @@ def generate_3dshape_loaders(args):
     
     return train_loader, test_loader, unsup_loader
 
+
+def generate_3dshape_fullloader_vae(args):
+    #_FACTORS_IN_ORDER = ['floor_hue', 'wall_hue', 'object_hue', 'scale', 'shape', 'orientation']
+    #_NUM_VALUES_PER_FACTOR = {'floor_hue': 10, 'wall_hue': 10, 'object_hue': 10, 'scale': 8, 'shape': 4, 'orientation': 15}
+    dataset = h5py.File('/home/joshua52/projects/def-dsuth/joshua52/P4_Graph/dataset/3dshapes.h5', 'r')
+    #dataset = h5py.File('E:\\DATASET\\3dshapes.h5', 'r')
+    images = dataset['images']  # array shape [480000,64,64,3], uint8 in range(256)
+    labels = dataset['labels']  # array shape [480000,6], float64
+     
+    oht_labels = np.zeros((480000,4))
+    oht_labels[:,0] = np.array(labels[:,0]*10,dtype=int)
+    oht_labels[:,1] = np.array(labels[:,1]*10,dtype=int)
+    oht_labels[:,2] = np.array(labels[:,2]*10,dtype=int)
+    oht_labels[:,3] = np.array((labels[:,3]-0.75)*15,dtype=int)
+    reg_labels = get_reg_labels(oht_labels)
+    
+    tmp = np.random.binomial(n=1,p=args.sup_ratio,size=(1,480000))
+    mask_sel = (tmp==1).squeeze()
+
+    basic_T = T.Compose([T.ToTensor(), T.Resize([32,32])])
+    input_all, label_all, reg_all = images[mask_sel], labels[mask_sel], reg_labels[mask_sel]
+    dataset_all = My_toy_Dataset(input_all, label_all, reg_all, basic_T)
+    all_loader = Data.DataLoader(dataset_all, batch_size=args.batch_size, shuffle=True, drop_last = True)
+
+    return all_loader
+
 '''
 def generate_small_3dshape_loaders(args):
     #_FACTORS_IN_ORDER = ['floor_hue', 'wall_hue', 'object_hue', 'scale', 'shape', 'orientation']

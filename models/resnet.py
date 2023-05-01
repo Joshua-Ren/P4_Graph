@@ -91,7 +91,7 @@ class ResNet(nn.Module):
         self.layer4 = self._make_layer(block, 512, num_blocks[3], stride=2)
         self.Bob = nn.Sequential(
                 nn.Linear(512*block.expansion, self.num_classes)
-                )        
+                )
         #self.linear = nn.Linear(512*block.expansion, num_classes)
         #self.linear2 = nn.Linear(128,num_classes)
 
@@ -115,17 +115,9 @@ class ResNet(nn.Module):
         #out = self.linear2(out)
         return hid, pred
 
-class ResNet_SEM(nn.Module):
-    def __init__(self, block, num_blocks, L=4, V=10, tau=1., num_classes=1):
-        super(ResNet_SEM, self).__init__()
-        self.num_classes=num_classes
-        self.in_planes = 64
-        self.conv1 = nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=1, bias=False)
-        self.bn1 = nn.BatchNorm2d(64)
-        self.layer1 = self._make_layer(block, 64, num_blocks[0], stride=1)
-        self.layer2 = self._make_layer(block, 128, num_blocks[1], stride=2)
-        self.layer3 = self._make_layer(block, 256, num_blocks[2], stride=2)
-        self.layer4 = self._make_layer(block, 512, num_blocks[3], stride=2)
+class ResNet_SEM(ResNet):
+    def __init__(self, block, L=4, V=10, tau=1., **kwargs):
+        super(ResNet_SEM, self).__init__(**kwargs)
         # ------ SEM Part
         self.L = L
         self.V = V
@@ -140,14 +132,6 @@ class ResNet_SEM(nn.Module):
         #                nn.ReLU(),
         #                nn.Linear(128, num_classes)
         #)
-
-    def _make_layer(self, block, planes, num_blocks, stride):
-        strides = [stride] + [1]*(num_blocks-1)
-        layers = []
-        for stride in strides:
-            layers.append(block(self.in_planes, planes, stride))
-            self.in_planes = planes * block.expansion
-        return nn.Sequential(*layers)
 
     def SEM(self, in_vector):
         '''
@@ -173,6 +157,40 @@ class ResNet_SEM(nn.Module):
         msg, sem_hid = self.SEM(hid) 
         out = self.Bob(sem_hid)
         return msg, out
+
+class ResNet_VAE(ResNet):
+    def __init__(self, block, z_dim=10, **kwargs):
+        super(ResNet_VAE, self).__init__(**kwargs)
+        # ------ VAE part
+        self.z_dim = z_dim
+        self.linear_toz = nn.Linear(512*block.expansion, self.z_dim*2)
+        self.linear_toL = nn.Sequential(
+                nn.Linear(self.z_dim, self.num_classes)
+                )
+
+    def ds_forward(self, x):
+        out = F.relu(self.bn1(self.conv1(x)))
+        out = self.layer1(out)
+        out = self.layer2(out)
+        out = self.layer3(out)
+        out = self.layer4(out)
+        out = F.avg_pool2d(out, 4)
+        out = out.view(out.size(0), -1)
+        z = self.linear_toz(out)
+        out2 = self.linear_toL(z[:,:self.z_dim])
+        return z, out2
+
+    def forward(self, x):
+        # ----- 
+        out = F.relu(self.bn1(self.conv1(x)))
+        out = self.layer1(out)
+        out = self.layer2(out)
+        out = self.layer3(out)
+        out = self.layer4(out)
+        out = F.avg_pool2d(out, 4)
+        hid = out.view(out.size(0), -1)
+        out2 = self.linear_toz(hid)
+        return out2
 
 class MLP_ML(nn.Module):
   def __init__(self, L=4, V=10, in_dim=3072, hid_size=128, num_classes=38):
@@ -248,4 +266,7 @@ def ResNet18_ML(num_classes=1):
 
 def ResNet18_SEM(L=4, V=10, tau=1., num_classes=1):
     return ResNet_SEM(BasicBlock, [2, 2, 2, 2],num_classes=num_classes)
+
+def ResNet18_VAE(z_dim=10, num_classes=1):
+    return ResNet_VAE(BasicBlock, [2, 2, 2, 2],z_dim=z_dim, num_classes=num_classes)
 
