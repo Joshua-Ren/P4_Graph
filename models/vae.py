@@ -4,7 +4,7 @@ import torch.nn as nn
 import torchvision.transforms as T
 import torch.nn.functional as F
 from torch.autograd import Variable
-from resnet import ResNet_VAE
+from models.resnet import ResNet_VAE
 
 def reparametrize(mu, logvar):
     std = logvar.div(2).exp()
