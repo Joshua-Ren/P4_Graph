@@ -82,7 +82,7 @@ def main(args):
 
     # ========== Prepare save folder and wandb ==========
     run_name = wandb_init(proj_name=args.proj_name, run_name=args.run_name, config_args=args)
-    args.save_path = os.path.join('results','toy_example',run_name)
+    args.save_path = os.path.join('results','toy_betavae',run_name)
     if not os.path.exists(args.save_path):
         os.makedirs(args.save_path)
 
@@ -108,14 +108,14 @@ def main(args):
             wandb.log({'idx_epoch':i})
             wandb.log({'recon_loss':recon_loss.item()})
             if i%300==0:
-                images = wandb.Image(x_recon[:4].cpu().detach().transpose(1,2).transpose(0,2), 
+                images = wandb.Image(x_recon[0].cpu().detach().transpose(1,2).transpose(0,2), 
                         caption='epoch_'+str(i)+'_in_alpha_'+str(alpha))
                 wandb.log({"recon": images})
                 
         save_name = 'bvae_alpha_'+str(alpha)+'.pth'
         save_path = os.path.join(args.save_path, save_name)
         torch.save(net.state_dict(),save_path)
-
+        del full_loader
 if __name__ == '__main__':
     args = get_args_parser()
     args = args.parse_args()
