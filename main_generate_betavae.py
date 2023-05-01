@@ -107,6 +107,11 @@ def main(args):
             # ------ Report to wandb
             wandb.log({'idx_epoch':i})
             wandb.log({'recon_loss':recon_loss.item()})
+            if i%300==0:
+                images = wandb.Image(x_recon[:4].cpu().detach().transpose(1,2).transpose(0,2), 
+                        caption='epoch_'+str(i)+'_in_alpha_'+str(alpha))
+                wandb.log({"recon": images})
+                
         save_name = 'bvae_alpha_'+str(alpha)+'.pth'
         save_path = os.path.join(args.save_path, save_name)
         torch.save(net.state_dict(),save_path)
