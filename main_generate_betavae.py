@@ -118,6 +118,7 @@ def main(args):
     save_name = 'bvae_alpha_'+str(alpha)+'.pth'
     save_path = os.path.join(args.save_path, save_name)
     torch.save(net.state_dict(),save_path)
+    wandb.finish()
     #del full_loader
 if __name__ == '__main__':
     #ALPHA_TABLE = [0.01, 0.1]#[1., 0.3, 0.1, 0.03, 0.01, 0.001]

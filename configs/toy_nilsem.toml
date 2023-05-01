@@ -1,12 +1,12 @@
 # ====== Usuall default
-seed = 10086
+#seed = 10086
 proj_name = "P4_toy"
 
 # ======== Dataset and task related
-sup_ratio = 0.2
+#sup_ratio = 0.2
 batch_size = 128
 data_per_g = 1
-num_class = 2
+num_class = 1
 
 dis_dataset = "train"
 # ==== Model Structure ======
@@ -17,7 +17,7 @@ V=10
 # ======== Learning related
 init_strategy = "mile"
 generations = 10
-bob_adapt_ep = 0
+bob_adapt_ep = 2
 
 	# ---- Interaction
 int_lr = 1e-3
@@ -29,4 +29,4 @@ dis_loss = "cesample"
 
 copy_what = "best"
 
-run_name_seed = "milesem_sup0p2_k2"
+run_name_seed = "milesem_k1"
