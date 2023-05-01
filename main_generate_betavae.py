@@ -87,7 +87,7 @@ def main(args):
         os.makedirs(args.save_path)
 
     seed_net = BetaVAE_H(z_dim=10,nc=3)
-    
+    img_seed = None
     for alpha in ALPHA_TABLE:
         args.sup_ratio = alpha
         # ========== Prepare the loader and optimizer
@@ -97,6 +97,8 @@ def main(args):
         optimizer = optim.Adam(net.parameters(),lr=args.learning_rate)
         for i,(x,_,reg,idx) in enumerate(full_loader):
             x = x.float().to(args.device)
+            if img_seed is None:
+                img_seed = x[:8]
             x_recon, mu, logvar = net(x)
             recon_loss = reconstruction_loss(x, x_recon, args.recon_loss)
             total_kld, dim_wise_kld, mean_kld = kl_divergence(mu, logvar)
@@ -108,8 +110,8 @@ def main(args):
             wandb.log({'idx_epoch':i})
             wandb.log({'recon_loss':recon_loss.item()})
             if i%300==0:
-                images = wandb.Image(x_recon[0].cpu().detach().transpose(1,2).transpose(0,2), 
-                        caption='epoch_'+str(i)+'_in_alpha_'+str(alpha))
+                x_recon_seed, _, _ = net(img_seed)
+                images = wandb.Image(x_recon_seed.cpu().detach(), caption='epoch_'+str(i)+'_in_alpha_'+str(alpha))
                 wandb.log({"recon": images})
                 
         save_name = 'bvae_alpha_'+str(alpha)+'.pth'
