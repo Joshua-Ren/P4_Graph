@@ -93,6 +93,7 @@ def main(args):
     optimizer = optim.Adam(net.parameters(),lr=args.learning_rate)
     alpha = args.sup_ratio
     epoch_multi = int(1/alpha)
+    steps = 0
     for g in range(30*epoch_multi):
         for i,(x,_,reg,idx) in enumerate(full_loader):
             x = x.float().to(args.device)
@@ -106,15 +107,13 @@ def main(args):
             beta_vae_loss.backward()
             optimizer.step()
             # ------ Report to wandb
-            wandb.log({'idx_epoch':i})
+            wandb.log({'update_step':steps})
             wandb.log({'recon_loss':recon_loss.item()})
-            if i%600==0:
+            if steps%300==0:
                 x_recon_seed, _, _ = net(img_seed)
                 images = wandb.Image(x_recon_seed.cpu().detach(), caption='epoch_'+str(i)+'_in_alpha_'+str(alpha))
                 wandb.log({"recon": images})
-        x_recon_seed, _, _ = net(img_seed)
-        images = wandb.Image(x_recon_seed.cpu().detach(), caption='epoch_'+str(i)+'_in_alpha_'+str(alpha))
-        wandb.log({"recon": images})     
+            steps+=1 
 
     save_name = 'bvae_alpha_'+str(alpha)+'.pth'
     save_path = os.path.join(args.save_path, save_name)

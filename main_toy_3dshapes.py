@@ -78,7 +78,7 @@ def get_args_parser():
     parser.add_argument('--copy_what', type=str, default='best',
                         help='use the best or last epoch teacher in distillation')
     # ===== Wandb and saving results ====
-    parser.add_argument('--run_name',default='test',type=str)
+    parser.add_argument('--run_name_seed',default='test',type=str)
     parser.add_argument('--proj_name',default='P4_toy', type=str)    
     return parser
 
@@ -162,9 +162,14 @@ if __name__ == '__main__':
         config = toml.load(os.path.join("configs",args.config_file+".toml"))
         args = update_args(args, config)
     args.device = torch.device("cuda:" + str(args.device)) if torch.cuda.is_available() else torch.device("cpu")
-    main(args)
+    #main(args)
     
     # ==== Long experiments ====
     ALPHAS = [0.002, 0.02, 0.1, 0.2, 0.5, 0.8]
     SEEDS = [1024, 10086, 42, 1314]
-    
+    for seed in SEEDS:
+        for alpha in ALPHAS:
+            args.seed = seed
+            args.sup_ratio = alpha
+            args.run_name = args.run_name_seed + '_alpha_'+str(alpha) +'_seed_'+str(seed)
+            main(args)
