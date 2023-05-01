@@ -4,7 +4,7 @@ import torch.nn as nn
 import torchvision.transforms as T
 import torch.nn.functional as F
 from torch.autograd import Variable
-from models.resnet import ResNet_VAE
+from models.resnet import ResNet18_VAE
 
 def reparametrize(mu, logvar):
     std = logvar.div(2).exp()
@@ -36,7 +36,7 @@ class BetaVAE_H(nn.Module):
         super(BetaVAE_H, self).__init__()
         self.z_dim = z_dim
         self.nc = nc
-        self.encoder = ResNet_VAE(z_dim=self.z_dim)
+        self.encoder = ResNet18_VAE(z_dim=self.z_dim)
         self.decoder = nn.Sequential(
             nn.Linear(z_dim, 256),               # B, 256
             View((-1, 256, 1, 1)),               # B, 256,  1,  1
