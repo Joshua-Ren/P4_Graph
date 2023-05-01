@@ -78,6 +78,10 @@ def main(args):
     if args.seed==0:
         args.seed = np.random.randint(1,10086)
     rnd_seed(args.seed)
+    run_name = wandb_init(proj_name=args.proj_name, run_name=args.run_name, config_args=args)
+    args.save_path = os.path.join('results','toy_betavae',run_name)
+    if not os.path.exists(args.save_path):
+        os.makedirs(args.save_path)
 
     # ========== Prepare save folder and wandb ==========
     seed_net = BetaVAE_H(z_dim=10,nc=3)
@@ -87,7 +91,9 @@ def main(args):
     net = copy.deepcopy(seed_net)
     net.to(args.device)
     optimizer = optim.Adam(net.parameters(),lr=args.learning_rate)
-    for g in range(1):
+    alpha = args.sup_ratio
+    epoch_multi = int(1/alpha)
+    for g in range(30*epoch_multi):
         for i,(x,_,reg,idx) in enumerate(full_loader):
             x = x.float().to(args.device)
             if img_seed is None:
@@ -106,25 +112,17 @@ def main(args):
                 x_recon_seed, _, _ = net(img_seed)
                 images = wandb.Image(x_recon_seed.cpu().detach(), caption='epoch_'+str(i)+'_in_alpha_'+str(alpha))
                 wandb.log({"recon": images})
-    x_recon_seed, _, _ = net(img_seed)
-    images = wandb.Image(x_recon_seed.cpu().detach(), caption='epoch_'+str(i)+'_in_alpha_'+str(alpha))
-    wandb.log({"recon": images})     
+        x_recon_seed, _, _ = net(img_seed)
+        images = wandb.Image(x_recon_seed.cpu().detach(), caption='epoch_'+str(i)+'_in_alpha_'+str(alpha))
+        wandb.log({"recon": images})     
 
     save_name = 'bvae_alpha_'+str(alpha)+'.pth'
     save_path = os.path.join(args.save_path, save_name)
     torch.save(net.state_dict(),save_path)
     #del full_loader
 if __name__ == '__main__':
-    ALPHA_TABLE = [0.01, 0.1]#[1., 0.3, 0.1, 0.03, 0.01, 0.001]
+    #ALPHA_TABLE = [0.01, 0.1]#[1., 0.3, 0.1, 0.03, 0.01, 0.001]
     args = get_args_parser()
     args = args.parse_args()
     args.device = torch.device("cuda:" + str(args.device)) if torch.cuda.is_available() else torch.device("cpu")
-
-    run_name = wandb_init(proj_name=args.proj_name, run_name=args.run_name, config_args=args)
-    args.save_path = os.path.join('results','toy_betavae',run_name)
-    if not os.path.exists(args.save_path):
-        os.makedirs(args.save_path)
-
-    for alpha in ALPHA_TABLE:
-        args.sup_ratio = alpha
-        main(args)
+    main(args)

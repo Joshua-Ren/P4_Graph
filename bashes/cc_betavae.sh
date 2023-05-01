@@ -2,8 +2,8 @@
 #SBATCH --account=def-dsuth
 #SBATCH --gres=gpu:v100l:1              # Number of GPU(s) per node
 #SBATCH --cpus-per-task=8         # CPU cores/threads
-#SBATCH --mem=64000M               # memory per node
-#SBATCH --time=1-00:00            # time (DD-HH:MM)
+#SBATCH --mem=80000M               # memory per node
+#SBATCH --time=1-10:00            # time (DD-HH:MM)
 #SBATCH --output=./logs/stage1.txt 
 #SBATCH --job-name=toy
 
@@ -23,3 +23,4 @@ source /home/joshua52/projects/def-dsuth/joshua52/env_graph/bin/activate
 cd /home/joshua52/projects/def-dsuth/joshua52/P4_Graph
 
 srun python /home/joshua52/projects/def-dsuth/joshua52/P4_Graph/main_generate_betavae.py \
+--sup_ratio 0.001 --run_name beta_vae_pretrain_alpha0p001

@@ -99,7 +99,7 @@ def main(args):
     run_name = wandb_init(proj_name=args.proj_name, run_name=args.run_name, config_args=args)
     args.save_path = os.path.join('results','toy_example',run_name)
     if not os.path.exists(args.save_path):
-        os.makedirs(args.save_path)    
+        os.makedirs(args.save_path)
     # ========== Prepare the loader and optimizer
     train_loader, test_loader, unsup_loader = generate_3dshape_loaders(args)
     if args.dis_dataset=='train':
@@ -163,6 +163,8 @@ if __name__ == '__main__':
         args = update_args(args, config)
     args.device = torch.device("cuda:" + str(args.device)) if torch.cuda.is_available() else torch.device("cpu")
     main(args)
-    #train_loader, test_loader, unsup_loader = generate_3dshape_loaders(args)
-    #model1 = ResNet18_ML(num_classes=1)
-    #model2 = ResNet18_SEM(L=4, V=10, tau=1., num_classes=1)
+    
+    # ==== Long experiments ====
+    ALPHAS = [0.002, 0.02, 0.1, 0.2, 0.5, 0.8]
+    SEEDS = [1024, 10086, 42, 1314]
+    
