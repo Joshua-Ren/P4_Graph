@@ -83,6 +83,7 @@ class ResNet(nn.Module):
         super(ResNet, self).__init__()
         self.in_planes = 64
         self.num_classes=num_classes
+        self.expansion = block.expansion
         self.conv1 = nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=1, bias=False)
         self.bn1 = nn.BatchNorm2d(64)
         self.layer1 = self._make_layer(block, 64, num_blocks[0], stride=1)
@@ -116,13 +117,13 @@ class ResNet(nn.Module):
         return hid, pred
 
 class ResNet_SEM(ResNet):
-    def __init__(self, block, L=4, V=10, tau=1., **kwargs):
+    def __init__(self, L=4, V=10, tau=1., **kwargs):
         super(ResNet_SEM, self).__init__(**kwargs)
         # ------ SEM Part
         self.L = L
         self.V = V
         self.tau = tau
-        self.Wup = nn.Linear(512*block.expansion, self.L*self.V)    #Split the linear by Wup and Whead
+        self.Wup = nn.Linear(512*self.expansion, self.L*self.V)    #Split the linear by Wup and Whead
         #self.linear = nn.Linear(self.L*self.V, num_classes)
         self.Bob = nn.Sequential(
                 nn.Linear(self.L*self.V, self.num_classes)
@@ -159,11 +160,11 @@ class ResNet_SEM(ResNet):
         return msg, out
 
 class ResNet_VAE(ResNet):
-    def __init__(self, block, z_dim=10, **kwargs):
+    def __init__(self, z_dim=10, **kwargs):
         super(ResNet_VAE, self).__init__(**kwargs)
         # ------ VAE part
         self.z_dim = z_dim
-        self.linear_toz = nn.Linear(512*block.expansion, self.z_dim*2)
+        self.linear_toz = nn.Linear(512*self.expansion, self.z_dim*2)
         self.linear_toL = nn.Sequential(
                 nn.Linear(self.z_dim, self.num_classes)
                 )
@@ -262,11 +263,10 @@ class MLP_SEM(nn.Module):
     return msg, out
 
 def ResNet18_ML(num_classes=1):
-    return ResNet(BasicBlock, [2, 2, 2, 2], num_classes=num_classes)
+    return ResNet(block=BasicBlock, num_blocks=[2, 2, 2, 2], num_classes=num_classes)
 
 def ResNet18_SEM(L=4, V=10, tau=1., num_classes=1):
-    return ResNet_SEM(BasicBlock, [2, 2, 2, 2],num_classes=num_classes)
+    return ResNet_SEM(block=BasicBlock, num_blocks=[2, 2, 2, 2],L=L,V=V,tau=tau,num_classes=num_classes)
 
 def ResNet18_VAE(z_dim=10, num_classes=1):
-    return ResNet_VAE(BasicBlock, [2, 2, 2, 2],z_dim=z_dim, num_classes=num_classes)
-
+    return ResNet_VAE(block=BasicBlock, num_blocks=[2, 2, 2, 2], z_dim=z_dim, num_classes=num_classes)

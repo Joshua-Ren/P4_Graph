@@ -9,6 +9,7 @@ from enegine_toy_3dshapes import train_epoch, train_distill, evaluate
 from utils.general import update_args, wandb_init, get_init_net_toy, rnd_seed, AverageMeter, early_stop_meets
 from utils.nil_related import *
 from utils.toy_example import generate_3dshape_fullloader_vae
+from models.vae import BetaVAE_H
 
 def get_args_parser():
     # Training settings
@@ -90,25 +91,14 @@ def main(args):
         args.seed = np.random.randint(1,10086)
     rnd_seed(args.seed)
     # ========== Prepare the loader and optimizer
-    train_loader, test_loader, unsup_loader = generate_3dshape_fullloader_vae(args)
-    if args.dis_dataset=='train':
-        dis_loader = train_loader
-    elif args.dis_dataset=='test':
-        dis_loader = test_loader
-    elif args.dis_dataset=='unsup':
-        dis_loader = unsup_loader
-    for x,y,reg,idx in train_loader:
-        break
-    print(y)
+    
 
 if __name__ == '__main__':
     args = get_args_parser()
     args = args.parse_args()
-    if args.config_file is not None:
-        config = toml.load(os.path.join("configs",args.config_file+".toml"))
-        args = update_args(args, config)
     args.device = torch.device("cuda:" + str(args.device)) if torch.cuda.is_available() else torch.device("cpu")
     main(args)
+    seed_net = BetaVAE_H(z_dim=10,nc=3)
     #train_loader, test_loader, unsup_loader = generate_3dshape_loaders(args)
     #model1 = ResNet18_ML(num_classes=1)
     #model2 = ResNet18_SEM(L=4, V=10, tau=1., num_classes=1)
