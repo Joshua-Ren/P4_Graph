@@ -111,7 +111,7 @@ def main(args):
             wandb.log({'recon_loss':recon_loss.item()})
             if steps%300==0:
                 x_recon_seed, _, _ = net(img_seed)
-                images = wandb.Image(x_recon_seed.cpu().detach(), caption='epoch_'+str(i)+'_in_alpha_'+str(alpha))
+                images = wandb.Image(x_recon_seed.cpu().detach(), caption='epoch_'+str(steps)+'_in_alpha_'+str(alpha))
                 wandb.log({"recon": images})
             steps+=1 
 
