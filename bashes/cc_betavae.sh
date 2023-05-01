@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --account=def-dsuth
+#SBATCH --account=rrg-dsuth
 #SBATCH --gres=gpu:v100l:1              # Number of GPU(s) per node
 #SBATCH --cpus-per-task=8         # CPU cores/threads
 #SBATCH --mem=80000M               # memory per node
@@ -23,4 +23,4 @@ source /home/joshua52/projects/def-dsuth/joshua52/env_graph/bin/activate
 cd /home/joshua52/projects/def-dsuth/joshua52/P4_Graph
 
 srun python /home/joshua52/projects/def-dsuth/joshua52/P4_Graph/main_generate_betavae.py \
---sup_ratio 1 --run_name beta_vae_pretrain_alpha1
+--sup_ratio 0.5 --run_name beta_vae_pretrain_alpha0p5
