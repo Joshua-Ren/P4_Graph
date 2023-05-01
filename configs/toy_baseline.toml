@@ -19,4 +19,4 @@ int_lr = 1e-3
 int_epochs = 2000
 	# ---- Distillation
 
-run_name = "base_sup0p2_k2"
+run_name_seed = "base_sup0p2_k2"

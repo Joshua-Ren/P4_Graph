@@ -27,4 +27,4 @@ dis_loss = "mse"
 
 copy_what = "best"
 
-run_name = "nilonly_sup0p2_k2"
+run_name_seed = "nilonly_sup0p2_k2"

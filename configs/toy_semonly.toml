@@ -29,4 +29,4 @@ dis_loss = "cesample"
 
 copy_what = "best"
 
-run_name = "semonly_sup0p2_k2"
+run_name_seed = "semonly_sup0p2_k2"

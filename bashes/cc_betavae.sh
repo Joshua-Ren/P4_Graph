@@ -23,4 +23,4 @@ source /home/joshua52/projects/def-dsuth/joshua52/env_graph/bin/activate
 cd /home/joshua52/projects/def-dsuth/joshua52/P4_Graph
 
 srun python /home/joshua52/projects/def-dsuth/joshua52/P4_Graph/main_generate_betavae.py \
---sup_ratio 0.001 --run_name beta_vae_pretrain_alpha0p001
+--sup_ratio 1 --run_name beta_vae_pretrain_alpha1
