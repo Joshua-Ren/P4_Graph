@@ -26,7 +26,7 @@ def get_args_parser():
     parser.add_argument('--device', type=int, default=0,
                         help='which gpu to use if any (default: 0)')
     # ======== Dataset and task related
-    parser.add_argument('--dataset_name', default='mpi3d', type=str,
+    parser.add_argument('--dataset_name', default='dsprites', type=str,
                         help='3dshapes or dsprites, mpi3d')    
     parser.add_argument('--sup_ratio', default=0.2, type=float,
                         help='ratio of the training factors')
@@ -105,15 +105,18 @@ def findallfiles(BASE_PATH):
         for f in fs:
             fullname = os.path.join(root, f)
             yield fullname
-            
+     
 if __name__ == '__main__':
     args = get_args_parser()
     args = args.parse_args()
     args.device = torch.device("cuda:" + str(args.device)) if torch.cuda.is_available() else torch.device("cpu")
     train_loader, test_loader = get_dataloaders(args)
+    model = get_init_net_toy(args)
     for x,y,reg,idx in train_loader:
+        x = x.float().cuda()
         break
-    plt.imshow(x[0].transpose(1,2).transpose(0,2))
+    plt.imshow(x[0].cpu().detach().transpose(0,2))
+    msg,hid = model(x)
     """
     SOURCE_DIR = 'E:\\DATASET\\mpi3d_real\\real'
     TARGET_DIR = 'E:\\DATASET\\mpi3d_real\\select'

@@ -12,7 +12,8 @@ import torchvision.transforms as T
 import os
 
 PATH = '/home/joshua52/projects/def-dsuth/joshua52/P4_Graph/dataset/'
-#PATH = 'E:\\DATASET\\'
+if not os.path.exists(PATH):
+    PATH = 'E:\\DATASET\\'
 
 class My_toy_Dataset(Data.Dataset):
     def __init__(self, x, y, reg, transform=None,):
@@ -156,8 +157,9 @@ def generate_dsprites_loaders(args):
     reg_train, reg_test = regs[idx_train], regs[idx_test]
     label_train, label_test = np.delete(train_cls,[0,3],axis=1), np.delete(test_cls,[0,3],axis=1)
     
-    dataset_train = My_toy_Dataset(input_train, label_train, reg_train)
-    dataset_test = My_toy_Dataset(input_test, label_test, reg_test)
+    basic_T = T.Compose([T.ToTensor()])
+    dataset_train = My_toy_Dataset(input_train, label_train, reg_train, basic_T)
+    dataset_test = My_toy_Dataset(input_test, label_test, reg_test, basic_T)
     train_loader = Data.DataLoader(dataset_train, batch_size=args.batch_size, shuffle=True, drop_last = True, num_workers=2)
     test_loader = Data.DataLoader(dataset_test, batch_size=args.batch_size, shuffle=False, drop_last = True, num_workers=2)   
 
@@ -176,7 +178,8 @@ def generate_dsprites_fullloader_vae(args):
     images = dataset['imgs'][mask_sel]
     values = dataset['latents_values'][mask_sel]
     labels = dataset['latents_classes'][mask_sel]
-    dataset_all = My_toy_Dataset(images, labels, values)
+    basic_T = T.Compose([T.ToTensor()])
+    dataset_all = My_toy_Dataset(images, labels, values,basic_T)
     full_loader = Data.DataLoader(dataset_all, batch_size=args.batch_size, shuffle=True, drop_last = True, num_workers=2)
     return full_loader
 
