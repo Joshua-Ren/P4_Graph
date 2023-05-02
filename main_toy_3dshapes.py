@@ -71,7 +71,7 @@ def get_args_parser():
     parser.add_argument('--dis_loss', default='cesample', type=str,
                         help='the distillation loss: cesample, argmax, mse')
     parser.add_argument('--dis_dataset', default='train', type=str,
-                        help='the distillation loss: train, test, unsup')
+                        help='the distillation loss: train, test')
     parser.add_argument('--dis_tau', default=1, type=float,
                         help='tau used during cesample')
         # ---- Generate teacher
@@ -101,13 +101,11 @@ def main(args):
     if not os.path.exists(args.save_path):
         os.makedirs(args.save_path)
     # ========== Prepare the loader and optimizer
-    train_loader, test_loader, unsup_loader = generate_3dshape_loaders(args)
+    train_loader, test_loader = generate_3dshape_loaders(args)
     if args.dis_dataset=='train':
         dis_loader = train_loader
     elif args.dis_dataset=='test':
         dis_loader = test_loader
-    elif args.dis_dataset=='unsup':
-        dis_loader = unsup_loader
     
     for gen in range(args.generations):
         # =========== Step0: new agent

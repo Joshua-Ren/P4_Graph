@@ -69,66 +69,13 @@ def generate_3dshape_loaders(args):
     label_train, label_test  = oht_labels[idx_train], oht_labels[idx_test] 
     reg_train, reg_test  = reg_labels[idx_train], reg_labels[idx_test]
     
-    # ====== Make extra unsupervised samples if nessary
-    idx_unsup = tmp_img_idx*60+np.random.randint(0,60,size=(tmp_img_idx.shape[0],))   # Random select other features
-    idx_unsup = np.unique(np.sort(np.random.randint(0,480000,size=(8000,))))
-    #idx_unsup = get_unsup_samples(ratio=5000)
-    input_unsup, label_unsup, reg_unsup = images[idx_unsup], oht_labels[idx_unsup], reg_labels[idx_unsup]
-
     basic_T = T.Compose([T.ToTensor(), T.Resize([32,32])])
     dataset_train = My_toy_Dataset(input_train, label_train, reg_train, basic_T)
     dataset_test = My_toy_Dataset(input_test, label_test, reg_test, basic_T)
-    dataset_unsup = My_toy_Dataset(input_unsup, label_unsup, reg_unsup, basic_T)
     train_loader = Data.DataLoader(dataset_train, batch_size=args.batch_size, shuffle=True, drop_last = True, num_workers=2)
     test_loader = Data.DataLoader(dataset_test, batch_size=args.batch_size, shuffle=True, drop_last = True, num_workers=2)
-    unsup_loader = Data.DataLoader(dataset_unsup, batch_size=args.batch_size, shuffle=True, drop_last = True, num_workers=2)
     
-    return train_loader, test_loader, unsup_loader
-
-def generate_dsprites_loaders(args):
-    #_FACTORS_IN_ORDER = ['shape', 'scale', 'orientation', 'pos-x', 'pos-y']
-    #_NUM_VALUES_PER_FACTOR = {'shape': 3, 'scale': 6, 'orientation': 40, 'x': 10 (32), 'y': 10 (32)}
-    DATA_SIZE = 8000*args.data_per_g
-    dataset = h5py.File('/home/joshua52/projects/def-dsuth/joshua52/P4_Graph/dataset/3dshapes.h5', 'r')
-    #dataset = h5py.File('E:\\DATASET\\3dshapes.h5', 'r')
-    images = dataset['images']  # array shape [480000,64,64,3], uint8 in range(256)
-    labels = dataset['labels']  # array shape [480000,6], float64
-     
-    oht_labels = np.zeros((480000,4))
-    oht_labels[:,0] = np.array(labels[:,0]*10,dtype=int)
-    oht_labels[:,1] = np.array(labels[:,1]*10,dtype=int)
-    oht_labels[:,2] = np.array(labels[:,2]*10,dtype=int)
-    oht_labels[:,3] = np.array((labels[:,3]-0.75)*15,dtype=int)
-    reg_labels = get_reg_labels(oht_labels)
-    
-    tmp = np.random.binomial(n=1,p=args.sup_ratio,size=(1,8000))
-    mask_train = (tmp==1).squeeze()
-    mask_test = (tmp==0).squeeze()
-    tmp_img_idx = np.arange(0,8000,1)
-    
-    img_idx = tmp_img_idx*60+np.random.randint(0,60,size=(DATA_SIZE,))   # Random select other features
-    #img_idx = tmp_img_idx*60+33   # Fix the other two features
-    idx_train, idx_test  = img_idx[mask_train], img_idx[mask_test]
-    input_train, input_test  = images[idx_train], images[idx_test] 
-    label_train, label_test  = oht_labels[idx_train], oht_labels[idx_test] 
-    reg_train, reg_test  = reg_labels[idx_train], reg_labels[idx_test]
-    
-    # ====== Make extra unsupervised samples if nessary
-    idx_unsup = tmp_img_idx*60+np.random.randint(0,60,size=(tmp_img_idx.shape[0],))   # Random select other features
-    idx_unsup = np.unique(np.sort(np.random.randint(0,480000,size=(8000,))))
-    #idx_unsup = get_unsup_samples(ratio=5000)
-    input_unsup, label_unsup, reg_unsup = images[idx_unsup], oht_labels[idx_unsup], reg_labels[idx_unsup]
-
-    basic_T = T.Compose([T.ToTensor(), T.Resize([32,32])])
-    dataset_train = My_toy_Dataset(input_train, label_train, reg_train, basic_T)
-    dataset_test = My_toy_Dataset(input_test, label_test, reg_test, basic_T)
-    dataset_unsup = My_toy_Dataset(input_unsup, label_unsup, reg_unsup, basic_T)
-    train_loader = Data.DataLoader(dataset_train, batch_size=args.batch_size, shuffle=True, drop_last = True, num_workers=2)
-    test_loader = Data.DataLoader(dataset_test, batch_size=args.batch_size, shuffle=True, drop_last = True, num_workers=2)
-    unsup_loader = Data.DataLoader(dataset_unsup, batch_size=args.batch_size, shuffle=True, drop_last = True, num_workers=2)
-    
-    return train_loader, test_loader, unsup_loader
-
+    return train_loader, test_loader
 
 def generate_3dshape_fullloader_vae(args):
     #_FACTORS_IN_ORDER = ['floor_hue', 'wall_hue', 'object_hue', 'scale', 'shape', 'orientation']
@@ -156,6 +103,72 @@ def generate_3dshape_fullloader_vae(args):
     return all_loader
 
 
+# ============= dsprites ============
+
+def latent_to_index(latents):
+    latent_sizes = np.array([ 1,  3,  6, 40, 32, 32])
+    latent_bases = np.concatenate((latent_sizes[::-1].cumprod()[::-1][1:], np.array([1,])))
+    return np.dot(latents, latent_bases).astype(int)
+
+def gen_train_test_indexes(sup_ratio):
+    g0 = 0
+    index_all = []
+    for gg1 in range(3):
+        g1 = gg1
+        for gg2 in range(6):
+            g2 = gg2
+            g3 = 5#np.random.randint(0,40,(1,))[0]
+            for gg4 in range(10):
+                g4 = gg4*3
+                for gg5 in range(10):
+                    g5 = gg5*3
+                    tmp_idx = latent_to_index([g0,g1,g2,g3,g4,g5])
+                    index_all.append(tmp_idx)
+    index_all = np.array(index_all)
+    tmp = np.random.binomial(n=1,p=sup_ratio,size=(index_all.shape[0],))
+    mask_train = (tmp==1).squeeze()
+    mask_test = (tmp==0).squeeze()   
+    return index_all[mask_train], index_all[mask_test]
+
+def generate_dsprites_loaders(args):
+    #_FACTORS_IN_ORDER = ['shape', 'scale', 'orientation', 'pos-x', 'pos-y']
+    #_NUM_VALUES_PER_FACTOR = {'shape': 3, 'scale': 6, 'orientation': 40, 'x': 10 (32), 'y': 10 (32)}
+    
+    dataset = np.load('E:\\DATASET\\dsprites_ndarray_co1sh3sc6or40x32y32_64x64.npz',allow_pickle=True)
+    images = dataset['imgs']
+    values = dataset['latents_values']
+    labels = dataset['latents_classes']   
+    
+    idx_train, idx_test = gen_train_test_indexes(args.sup_ratio)
+    train_y, test_y = values[idx_train], values[idx_test]
+    train_y, test_y = np.delete(train_y,[0,3],axis=1), np.delete(test_y,[0,3],axis=1)
+    train_cls, test_cls = labels[idx_train], labels[idx_test]
+    train_cls[:,-2:], test_cls[:,-2:] = train_cls[:,-2:]/3, test_cls[:,-2:]/3
+    
+    input_train, input_test = images[idx_train], images[idx_test]
+    reg_train, reg_test = get_reg_labels(train_y,direct=False), get_reg_labels(test_y,direct=False)
+    label_train, label_test = np.delete(train_cls,[0,3],axis=1), np.delete(test_cls,[0,3],axis=1)
+    
+    dataset_train = My_toy_Dataset(input_train, label_train, reg_train)
+    dataset_test = My_toy_Dataset(input_test, label_test, reg_test)
+    train_loader = Data.DataLoader(dataset_train, batch_size=args.batch_size, shuffle=True, drop_last = True, num_workers=2)
+    test_loader = Data.DataLoader(dataset_test, batch_size=args.batch_size, shuffle=False, drop_last = True, num_workers=2)   
+
+    return train_loader, test_loader
+
+generate_3dshape_fullloader_vae
+
+def generate_dsprites_fullloader_vae(args):
+    #_FACTORS_IN_ORDER = ['shape', 'scale', 'orientation', 'pos-x', 'pos-y']
+    #_NUM_VALUES_PER_FACTOR = {'shape': 3, 'scale': 6, 'orientation': 40, 'x': 10 (32), 'y': 10 (32)}
+    
+    dataset = np.load('E:\\DATASET\\dsprites_ndarray_co1sh3sc6or40x32y32_64x64.npz',allow_pickle=True)
+    images = dataset['imgs']
+    values = dataset['latents_values']
+    labels = dataset['latents_classes']   
+    dataset_all = My_toy_Dataset(images, labels, values)
+    full_loader = Data.DataLoader(dataset_all, batch_size=args.batch_size, shuffle=True, drop_last = True, num_workers=2)
+    return full_loader
 
 '''
 def generate_small_3dshape_loaders(args):
