@@ -1,9 +1,9 @@
 # ====== Usuall default
-seed = 10086
+#seed = 10086
 proj_name = "P4_toy"
 
 # ======== Dataset and task related
-sup_ratio = 0.2
+#sup_ratio = 0.2
 batch_size = 128
 data_per_g = 1
 num_class = 2
@@ -29,4 +29,4 @@ dis_loss = "cesample"
 
 copy_what = "best"
 
-run_name_seed = "semonly_sup0p2_k2"
+run_name_seed = "semonly_k1"
