@@ -8,7 +8,7 @@ import toml
 from enegine_toy_3dshapes import train_epoch, train_distill, evaluate
 from utils.general import update_args, wandb_init, get_init_net_toy, rnd_seed, AverageMeter, early_stop_meets
 from utils.nil_related import *
-from utils.toy_example import generate_3dshape_fullloader_vae
+from utils.toy_example import generate_3dshape_fullloader_vae, generate_dsprites_fullloader_vae
 from models.vae import BetaVAE_H
 
 def get_args_parser():

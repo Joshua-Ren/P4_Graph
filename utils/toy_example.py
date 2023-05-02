@@ -9,6 +9,10 @@ import h5py
 import numpy as np
 import torch.utils.data as Data 
 import torchvision.transforms as T
+import os
+
+PATH = '/home/joshua52/projects/def-dsuth/joshua52/P4_Graph/dataset/'
+#PATH = 'E:\\DATASET\\'
 
 class My_toy_Dataset(Data.Dataset):
     def __init__(self, x, y, reg, transform=None,):
@@ -45,8 +49,8 @@ def generate_3dshape_loaders(args):
     #_FACTORS_IN_ORDER = ['floor_hue', 'wall_hue', 'object_hue', 'scale', 'shape', 'orientation']
     #_NUM_VALUES_PER_FACTOR = {'floor_hue': 10, 'wall_hue': 10, 'object_hue': 10, 'scale': 8, 'shape': 4, 'orientation': 15}
     DATA_SIZE = 8000*args.data_per_g
-    dataset = h5py.File('/home/joshua52/projects/def-dsuth/joshua52/P4_Graph/dataset/3dshapes.h5', 'r')
-    #dataset = h5py.File('E:\\DATASET\\3dshapes.h5', 'r')
+    file_path = os.path.join(PATH, '3dshapes.h5')
+    dataset = h5py.File(file_path, 'r')
     images = dataset['images']  # array shape [480000,64,64,3], uint8 in range(256)
     labels = dataset['labels']  # array shape [480000,6], float64
      
@@ -80,8 +84,8 @@ def generate_3dshape_loaders(args):
 def generate_3dshape_fullloader_vae(args):
     #_FACTORS_IN_ORDER = ['floor_hue', 'wall_hue', 'object_hue', 'scale', 'shape', 'orientation']
     #_NUM_VALUES_PER_FACTOR = {'floor_hue': 10, 'wall_hue': 10, 'object_hue': 10, 'scale': 8, 'shape': 4, 'orientation': 15}
-    dataset = h5py.File('/home/joshua52/projects/def-dsuth/joshua52/P4_Graph/dataset/3dshapes.h5', 'r')
-    #dataset = h5py.File('E:\\DATASET\\3dshapes.h5', 'r')
+    file_path = os.path.join(PATH, '3dshapes.h5')
+    dataset = h5py.File(file_path, 'r')
     images = dataset['images']  # array shape [480000,64,64,3], uint8 in range(256)
     labels = dataset['labels']  # array shape [480000,6], float64
      
@@ -110,7 +114,7 @@ def latent_to_index(latents):
     latent_bases = np.concatenate((latent_sizes[::-1].cumprod()[::-1][1:], np.array([1,])))
     return np.dot(latents, latent_bases).astype(int)
 
-def gen_train_test_indexes(sup_ratio):
+def gen_train_test_indexes_dsprites(sup_ratio):
     g0 = 0
     index_all = []
     for gg1 in range(3):
@@ -133,20 +137,23 @@ def gen_train_test_indexes(sup_ratio):
 def generate_dsprites_loaders(args):
     #_FACTORS_IN_ORDER = ['shape', 'scale', 'orientation', 'pos-x', 'pos-y']
     #_NUM_VALUES_PER_FACTOR = {'shape': 3, 'scale': 6, 'orientation': 40, 'x': 10 (32), 'y': 10 (32)}
-    
-    dataset = np.load('E:\\DATASET\\dsprites_ndarray_co1sh3sc6or40x32y32_64x64.npz',allow_pickle=True)
+    file_name = "dsprites_ndarray_co1sh3sc6or40x32y32_64x64.npz"
+    path = os.path.join(PATH, file_name)
+    dataset = np.load(path,allow_pickle=True)
     images = dataset['imgs']
     values = dataset['latents_values']
-    labels = dataset['latents_classes']   
+    labels = dataset['latents_classes']
+    tmp_value = np.delete(values,[0,3],axis=1)
+    regs = get_reg_labels(tmp_value)
     
-    idx_train, idx_test = gen_train_test_indexes(args.sup_ratio)
+    idx_train, idx_test = gen_train_test_indexes_dsprites(args.sup_ratio)
     train_y, test_y = values[idx_train], values[idx_test]
     train_y, test_y = np.delete(train_y,[0,3],axis=1), np.delete(test_y,[0,3],axis=1)
     train_cls, test_cls = labels[idx_train], labels[idx_test]
     train_cls[:,-2:], test_cls[:,-2:] = train_cls[:,-2:]/3, test_cls[:,-2:]/3
     
     input_train, input_test = images[idx_train], images[idx_test]
-    reg_train, reg_test = get_reg_labels(train_y,direct=False), get_reg_labels(test_y,direct=False)
+    reg_train, reg_test = regs[idx_train], regs[idx_test]
     label_train, label_test = np.delete(train_cls,[0,3],axis=1), np.delete(test_cls,[0,3],axis=1)
     
     dataset_train = My_toy_Dataset(input_train, label_train, reg_train)
@@ -156,19 +163,71 @@ def generate_dsprites_loaders(args):
 
     return train_loader, test_loader
 
-generate_3dshape_fullloader_vae
-
 def generate_dsprites_fullloader_vae(args):
     #_FACTORS_IN_ORDER = ['shape', 'scale', 'orientation', 'pos-x', 'pos-y']
     #_NUM_VALUES_PER_FACTOR = {'shape': 3, 'scale': 6, 'orientation': 40, 'x': 10 (32), 'y': 10 (32)}
+    file_name = "dsprites_ndarray_co1sh3sc6or40x32y32_64x64.npz"
+    path = os.path.join(PATH, file_name)
+    dataset = np.load(path,allow_pickle=True)
     
-    dataset = np.load('E:\\DATASET\\dsprites_ndarray_co1sh3sc6or40x32y32_64x64.npz',allow_pickle=True)
-    images = dataset['imgs']
-    values = dataset['latents_values']
-    labels = dataset['latents_classes']   
+    tmp = np.random.binomial(n=1,p=args.sup_ratio,size=(1,737280))
+    mask_sel = (tmp==1).squeeze()
+    
+    images = dataset['imgs'][mask_sel]
+    values = dataset['latents_values'][mask_sel]
+    labels = dataset['latents_classes'][mask_sel]
     dataset_all = My_toy_Dataset(images, labels, values)
     full_loader = Data.DataLoader(dataset_all, batch_size=args.batch_size, shuffle=True, drop_last = True, num_workers=2)
     return full_loader
+
+#================ MPI3D ================
+def generate_mpi3d_loaders(args):
+    #_FACTORS_IN_ORDER = ['shape', 'scale', 'orientation', 'pos-x', 'pos-y']
+    #_NUM_VALUES_PER_FACTOR = {'shape': 3, 'scale': 6, 'orientation': 40, 'x': 10 (32), 'y': 10 (32)}
+    file_name = "mpi3d.npz"
+    path = os.path.join(PATH, file_name)
+    dataset = np.load(path,allow_pickle=True)
+    images = dataset['images']
+    labels = dataset['labels']   
+    regs = get_reg_labels(labels)
+    
+    tmp = np.random.binomial(n=1,p=args.sup_ratio,size=(1,3600))
+    mask_train = (tmp==1).squeeze()
+    mask_test = (tmp==0).squeeze()
+    basic_T = T.Compose([T.ToTensor(), T.Resize([32,32])])
+    
+    input_train, input_test = images[mask_train], images[mask_test]
+    label_train, label_test = labels[mask_train], labels[mask_test]
+    reg_train, reg_test = regs[mask_train], regs[mask_test]
+    
+    dataset_train = My_toy_Dataset(input_train, label_train, reg_train,basic_T)
+    dataset_test = My_toy_Dataset(input_test, label_test, reg_test,basic_T)
+    train_loader = Data.DataLoader(dataset_train, batch_size=args.batch_size, shuffle=True, drop_last = True, num_workers=2)
+    test_loader = Data.DataLoader(dataset_test, batch_size=args.batch_size, shuffle=False, drop_last = True, num_workers=2)   
+
+    return train_loader, test_loader
+
+def generate_mpi3d_fullloader_vae(args):
+    pass
+
+def get_dataloaders(args):
+    if args.dataset_name=='3dshapes':
+        a, b = generate_3dshape_loaders(args)
+        return a, b
+    elif args.dataset_name=='dsprites':
+        a, b = generate_dsprites_loaders(args)
+        return a, b
+    elif args.dataset_name=='mpi3d':
+        a, b = generate_mpi3d_loaders(args)
+        return a, b
+    
+def get_vae_loader(args):
+    if args.dataset_name=='3dshapes':
+        return generate_3dshape_fullloader_vae(args)
+    elif args.dataset_name=='dsprites':
+        return generate_dsprites_fullloader_vae(args)
+    elif args.dataset_name=='mpi3d':
+        return generate_mpi3d_fullloader_vae(args)    
 
 '''
 def generate_small_3dshape_loaders(args):

@@ -14,7 +14,7 @@ import toml
 from enegine_toy_3dshapes import train_epoch, train_distill, evaluate
 from utils.general import update_args, wandb_init, get_init_net_toy, rnd_seed, AverageMeter, early_stop_meets
 from utils.nil_related import *
-from utils.toy_example import generate_3dshape_loaders
+from utils.toy_example import get_dataloaders
 
 def get_args_parser():
     # Training settings
@@ -29,7 +29,7 @@ def get_args_parser():
                         help='which gpu to use if any (default: 0)')
     # ======== Dataset and task related
     parser.add_argument('--dataset_name', default='3dshape', type=str,
-                        help='3dshapes or dsprite')    
+                        help='3dshapes or dsprite or mpi3d')    
     parser.add_argument('--sup_ratio', default=0.1, type=float,
                         help='ratio of the training factors')
     parser.add_argument('--batch_size', default=20, type=int,
@@ -101,7 +101,7 @@ def main(args):
     if not os.path.exists(args.save_path):
         os.makedirs(args.save_path)
     # ========== Prepare the loader and optimizer
-    train_loader, test_loader = generate_3dshape_loaders(args)
+    train_loader, test_loader = get_dataloaders(args)
     if args.dis_dataset=='train':
         dis_loader = train_loader
     elif args.dis_dataset=='test':

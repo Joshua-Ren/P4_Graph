@@ -8,8 +8,11 @@ import toml
 from enegine_toy_3dshapes import train_epoch, train_distill, evaluate
 from utils.general import update_args, wandb_init, get_init_net_toy, rnd_seed, AverageMeter, early_stop_meets
 from utils.nil_related import *
-from utils.toy_example import generate_3dshape_fullloader_vae
+from utils.toy_example import get_dataloaders
 from models.vae import BetaVAE_H
+import shutil
+from PIL import Image
+from matplotlib import pyplot as plt
 
 def get_args_parser():
     # Training settings
@@ -23,9 +26,9 @@ def get_args_parser():
     parser.add_argument('--device', type=int, default=0,
                         help='which gpu to use if any (default: 0)')
     # ======== Dataset and task related
-    parser.add_argument('--dataset_name', default='3dshape', type=str,
-                        help='3dshapes or dsprite')    
-    parser.add_argument('--sup_ratio', default=0.1, type=float,
+    parser.add_argument('--dataset_name', default='mpi3d', type=str,
+                        help='3dshapes or dsprites, mpi3d')    
+    parser.add_argument('--sup_ratio', default=0.2, type=float,
                         help='ratio of the training factors')
     parser.add_argument('--batch_size', default=20, type=int,
                         help='batch size of train and test set')
@@ -91,14 +94,78 @@ def main(args):
         args.seed = np.random.randint(1,10086)
     rnd_seed(args.seed)
     # ========== Prepare the loader and optimizer
-    
 
+def latent_to_index(latents):
+    latent_sizes = np.array([ 1,  6,  6, 2, 3, 3, 40, 40])
+    latent_bases = np.concatenate((latent_sizes[::-1].cumprod()[::-1][1:], np.array([1,])))
+    return np.dot(latents, latent_bases).astype(int)
+
+def findallfiles(BASE_PATH):
+    for root, ds, fs in os.walk(BASE_PATH):
+        for f in fs:
+            fullname = os.path.join(root, f)
+            yield fullname
+            
 if __name__ == '__main__':
     args = get_args_parser()
     args = args.parse_args()
     args.device = torch.device("cuda:" + str(args.device)) if torch.cuda.is_available() else torch.device("cpu")
-    main(args)
-    seed_net = BetaVAE_H(z_dim=10,nc=3)
-    #train_loader, test_loader, unsup_loader = generate_3dshape_loaders(args)
-    #model1 = ResNet18_ML(num_classes=1)
-    #model2 = ResNet18_SEM(L=4, V=10, tau=1., num_classes=1)
+    train_loader, test_loader = get_dataloaders(args)
+    for x,y,reg,idx in train_loader:
+        break
+    plt.imshow(x[0].transpose(1,2).transpose(0,2))
+    """
+    SOURCE_DIR = 'E:\\DATASET\\mpi3d_real\\real'
+    TARGET_DIR = 'E:\\DATASET\\mpi3d_real\\select'
+    g0 = 0
+    index_all = []
+    label_all = []
+    for gg1 in range(6):
+        g1 = gg1
+        for gg2 in range(6):
+            g2 = gg2
+            g3 = 1
+            g4 = 1
+            g5 = 0
+            for gg6 in range(10):
+                g6 = gg6*4
+                for gg7 in range(10):
+                    g7 = gg7*4
+                    tmp_idx = latent_to_index([g0,g1,g2,g3,g4,g5,g6,g7])
+                    index_all.append(tmp_idx)
+                    label_all.append(np.array([g1,g2,gg6,gg7]))
+    index_all = np.array(index_all)
+    label_all = np.array(label_all)
+    
+    image_all = []
+    for idx in range(index_all.shape[0]):
+    #for idx in range(2):    
+        tgt_idx = index_all[idx]
+        file_name = str(tgt_idx)+'.jpg'
+        file_path = os.path.join(TARGET_DIR, file_name)
+        img = Image.open(file_path)
+        imgage_numpy = np.asarray(img)
+        image_all.append(imgage_numpy)
+    image_all = np.array(image_all)
+    np.savez('E:\\DATASET\\mpi3d.npz', 
+             images=image_all, 
+             labels=label_all)
+
+    #npzfile = np.load('E:\\DATASET\\mpi3d.npz')
+    
+    
+    if False:
+        for idx in range(index_all.shape[0]):
+            print(idx)
+            tgt_idx = index_all[idx]
+            file_name = str(tgt_idx)+'.jpg'
+            source_path = os.path.join(SOURCE_DIR, file_name)
+            tgt_path = os.path.join(TARGET_DIR, file_name)
+            shutil.copy2(source_path, tgt_path)
+    """
+    
+        
+
+
+
+

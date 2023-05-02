@@ -1,6 +1,7 @@
 # ====== Usuall default
 #seed = 10086
 proj_name = "P4_toy"
+dataset_name = "mpi3d"
 
 # ======== Dataset and task related
 #sup_ratio = 0.2
@@ -29,4 +30,4 @@ dis_loss = "cesample"
 
 copy_what = "best"
 
-run_name_seed = "milesem_k1"
+run_name_seed = "mpi3d_milesem_k1"
