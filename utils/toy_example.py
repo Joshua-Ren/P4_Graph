@@ -95,7 +95,7 @@ def generate_3dshape_fullloader_vae(args):
     oht_labels[:,1] = np.array(labels[:,1]*10,dtype=int)
     oht_labels[:,2] = np.array(labels[:,2]*10,dtype=int)
     oht_labels[:,3] = np.array((labels[:,3]-0.75)*15,dtype=int)
-    reg_labels = get_reg_labels(oht_labels)
+    reg_labels = get_reg_labels(labels)
     
     tmp = np.random.binomial(n=1,p=args.sup_ratio,size=(1,480000))
     mask_sel = (tmp==1).squeeze()

@@ -15,7 +15,7 @@ import torch.nn as nn
 import pandas as pd
 import numpy as np
 from sklearn.linear_model import Lasso
-from sklearn.ensemble.forest import RandomForestRegressor
+from sklearn.ensemble import RandomForestRegressor
 from utils.hinton import hinton
 import matplotlib.pyplot as plt
 
@@ -81,7 +81,7 @@ class Metric_R:
         self.y_dim = 4
         self.z_dim = 10
         self.seed = args.seed
-        self.metric_dir = os.path.join('results/'+args.exp_name+'/metrics')
+        self.metric_dir = os.path.join('results/'+args.run_name+'/metrics')
         if not os.path.exists(self.metric_dir):
             os.makedirs(self.metric_dir)
         

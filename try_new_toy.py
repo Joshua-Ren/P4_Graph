@@ -8,11 +8,14 @@ import toml
 from enegine_toy_3dshapes import train_epoch, train_distill, evaluate
 from utils.general import update_args, wandb_init, get_init_net_toy, rnd_seed, AverageMeter, early_stop_meets
 from utils.nil_related import *
-from utils.toy_example import get_dataloaders
+from utils.toy_example import get_dataloaders, generate_3dshape_fullloader_vae
 from models.vae import BetaVAE_H
+from models.resnet import ResNet18_VAE
 import shutil
 from PIL import Image
 from matplotlib import pyplot as plt
+from utils.disentangle_metrics import Metric_topsim, Metric_R
+
 
 def get_args_parser():
     # Training settings
@@ -26,11 +29,11 @@ def get_args_parser():
     parser.add_argument('--device', type=int, default=0,
                         help='which gpu to use if any (default: 0)')
     # ======== Dataset and task related
-    parser.add_argument('--dataset_name', default='dsprites', type=str,
+    parser.add_argument('--dataset_name', default='3dshapes', type=str,
                         help='3dshapes or dsprites, mpi3d')    
     parser.add_argument('--sup_ratio', default=0.2, type=float,
                         help='ratio of the training factors')
-    parser.add_argument('--batch_size', default=20, type=int,
+    parser.add_argument('--batch_size', default=128, type=int,
                         help='batch size of train and test set')
     parser.add_argument('--num_class', default=1, type=int,
                         help='How many reg-tasks, 1~6')
@@ -39,7 +42,7 @@ def get_args_parser():
 
     
     # ======== Model structure
-    parser.add_argument('--model_structure', type=str, default='standard',
+    parser.add_argument('--model_structure', type=str, default='sem',
                         help='Standard or sem')
     parser.add_argument('--L', type=int, default=4,
                         help='No. word in SEM')
@@ -110,13 +113,27 @@ if __name__ == '__main__':
     args = get_args_parser()
     args = args.parse_args()
     args.device = torch.device("cuda:" + str(args.device)) if torch.cuda.is_available() else torch.device("cpu")
-    train_loader, test_loader = get_dataloaders(args)
+    #train_loader, test_loader = get_dataloaders(args)
+    train_loader = generate_3dshape_fullloader_vae(args)
     model = get_init_net_toy(args)
+    # -------- Load vae-pretrain
+    bvae_net = BetaVAE_H(z_dim=10,nc=3).cuda()
+    load_ckp = torch.load('E:\\P4_Graph\\results\\betavae\\beta_vae_pretrain_alpha1\\bvae_alpha_1.0.pth')
+    bvae_net.load_state_dict(load_ckp)
+    
+    encoder_bvae = copy.deepcopy(model)
+    
     for x,y,reg,idx in train_loader:
         x = x.float().cuda()
         break
     plt.imshow(x[0].cpu().detach().transpose(0,2))
-    msg,hid = model(x)
+    x_recon, mu, logvar = bvae_net(x)
+    msg, hid = model(x)
+    
+    
+    metric = Metric_R(args)
+    dist_orig, comp_orig, info_orig, R_orig = metric.dise_comp_info([mu.cpu().detach()],[y],'random_forest')
+    metric.hinton_fig([R_orig, R_orig], ['Base-Lasso','same'])
     """
     SOURCE_DIR = 'E:\\DATASET\\mpi3d_real\\real'
     TARGET_DIR = 'E:\\DATASET\\mpi3d_real\\select'
