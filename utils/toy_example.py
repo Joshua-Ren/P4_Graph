@@ -38,14 +38,15 @@ def get_reg_labels(args, oht_labels):
   reg_labels = []
   for i in range(PERM.shape[0]):
     if args.dataset_name=='dsprites':
-        VALUES = [3,6,10,10]
-        #AREA = np.random.randint(0,10,(4,1))
-        AREA = [0, 2, 0.5,1]
+        VALUES = [3,6,32,32]
+        #VALUES = [1,1,1,1]
+        AREA = np.random.randint(0,10,(4,1))
+        #AREA = [0, 2, 0.5,1]
     elif args.dataset_name=='3dshapes':
         VALUES = [10,10,10,8]
         AREA = np.random.randint(0,10,(4,1))
     elif args.dataset_name=='mpi3d':
-        VALUES = [6,6,10,10]
+        VALUES = [6,6,40,40]
         AREA = np.random.randint(0,10,(4,1))
     id1,id2,id3,id4 = 0,1,2,3 #PERM[i]
     #reg_label = oht_labels[:,id1]/10*AREA[0] + oht_labels[:,id2]/10*AREA[1] + oht_labels[:,id3]*oht_labels[:,id4]/100*AREA[2]
@@ -155,20 +156,16 @@ def generate_dsprites_loaders(args):
     path = os.path.join(PATH, file_name)
     dataset = np.load(path,allow_pickle=True)
     images = dataset['imgs']
-    values = dataset['latents_values']
+    #values = dataset['latents_values']
     labels = dataset['latents_classes']
-    tmp_value = np.delete(values,[0,3],axis=1)
-    regs = get_reg_labels(args, tmp_value)
+    tmp_label = np.delete(labels,[0,3],axis=1)
+    regs = get_reg_labels(args, tmp_label)
     
     idx_train, idx_test = gen_train_test_indexes_dsprites(args.sup_ratio)
-    train_y, test_y = values[idx_train], values[idx_test]
-    train_y, test_y = np.delete(train_y,[0,3],axis=1), np.delete(test_y,[0,3],axis=1)
-    train_cls, test_cls = labels[idx_train], labels[idx_test]
-    train_cls[:,-2:], test_cls[:,-2:] = train_cls[:,-2:]/3, test_cls[:,-2:]/3
     
     input_train, input_test = images[idx_train], images[idx_test]
     reg_train, reg_test = regs[idx_train], regs[idx_test]
-    label_train, label_test = np.delete(train_cls,[0,3],axis=1), np.delete(test_cls,[0,3],axis=1)
+    label_train, label_test = tmp_label[idx_train], tmp_label[idx_test]
     
     basic_T = T.Compose([T.ToTensor()])
     dataset_train = My_toy_Dataset(input_train, label_train, reg_train, basic_T)
