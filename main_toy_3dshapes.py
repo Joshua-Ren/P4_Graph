@@ -30,11 +30,11 @@ def get_args_parser():
     # ======== Dataset and task related
     parser.add_argument('--dataset_name', default='dsprites', type=str,
                         help='3dshapes or dsprites or mpi3d')    
-    parser.add_argument('--sup_ratio', default=0.1, type=float,
+    parser.add_argument('--sup_ratio', default=0.8, type=float,
                         help='ratio of the training factors')
-    parser.add_argument('--batch_size', default=20, type=int,
+    parser.add_argument('--batch_size', default=128, type=int,
                         help='batch size of train and test set')
-    parser.add_argument('--num_class', default=6, type=int,
+    parser.add_argument('--num_class', default=1, type=int,
                         help='How many reg-tasks, 1~6')
     parser.add_argument('--data_per_g', default=1, type=int,
                         help='how many samples for each G')

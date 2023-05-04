@@ -8,7 +8,17 @@ import torch
 import torch.nn as nn
 import torchvision.transforms as T
 import torch.nn.functional as F
+import torch.nn.init as init
 
+def kaiming_init(m):
+    if isinstance(m, (nn.Linear, nn.Conv2d)):
+        init.kaiming_normal(m.weight)
+        if m.bias is not None:
+            m.bias.data.fill_(0)
+    elif isinstance(m, (nn.BatchNorm1d, nn.BatchNorm2d)):
+        m.weight.data.fill_(1)
+        if m.bias is not None:
+            m.bias.data.fill_(0)
 
 
 class View(nn.Module):
@@ -257,6 +267,65 @@ class MLP_SEM(nn.Module):
 
   def forward(self, x):
     x = x.view(x.size(0),-1)
+    z = self.Alice(x)
+    msg, sem_hid = self.SEM(z)
+    out = self.Bob(sem_hid)
+    return msg, out
+
+class CNN_SEM(nn.Module):
+  def __init__(self, L=4, V=10, tau=1., hid_size=128, num_classes=6, sem_flag=True):
+    super(CNN_SEM, self).__init__()
+    self.sem_flag = sem_flag
+    self.num_classes = num_classes
+    self.hid_size = hid_size
+    self.Alice = nn.Sequential(
+              nn.Conv2d(1, 32, 4, 2, 1),          # B,  32, 32, 32
+              nn.ReLU(True),
+              nn.Conv2d(32, 32, 4, 2, 1),          # B,  32, 16, 16
+              nn.ReLU(True),
+              nn.Conv2d(32, 64, 4, 2, 1),          # B,  64,  8,  8
+              nn.ReLU(True),
+              nn.Conv2d(64, 64, 4, 2, 1),          # B,  64,  4,  4
+              nn.ReLU(True),
+              nn.Conv2d(64, 256, 4, 1),            # B, 256,  1,  1
+              nn.ReLU(True),
+              View((-1, 256*1*1)),                 # B, 256
+              nn.Linear(256, self.hid_size),             # B, z_dim*
+            )
+    self.L = L
+    self.V = V
+    self.tau = tau
+    self.Wup = nn.Sequential(
+              nn.Linear(self.hid_size, self.L*self.V)    #Split the linear by Wup and Whead
+            )
+
+    self.Bob = nn.Sequential(
+              nn.Linear(self.L*self.V, self.num_classes)
+            )
+    self.weight_init()
+
+  def weight_init(self):
+      for block in self._modules:
+          for m in self._modules[block]:
+              kaiming_init(m)
+  def SEM(self, in_vector):
+      '''
+          Piecewise softmax on a long 1*(L*V) vector
+          Use tau to control the softmax temperature
+          e.g., embd_size=300, L=30, V=10, as we have 30 words, each with 10 possible choices
+      '''
+      b_size = in_vector.shape[0]
+      w_invector = self.Wup(in_vector)    # N*512 --> N*40
+      w_invector = w_invector/self.tau
+      msg = w_invector.reshape(b_size, self.L, self.V)
+      if self.sem_flag:
+        p_theta = torch.nn.Softmax(-1)(msg).reshape(b_size, -1)   # reshaped prob-logits
+      else:
+        p_theta = msg.reshape(b_size, -1)
+      return msg, p_theta
+
+  def forward(self, x):
+    x = x.unsqueeze(1)
     z = self.Alice(x)
     msg, sem_hid = self.SEM(z)
     out = self.Bob(sem_hid)
