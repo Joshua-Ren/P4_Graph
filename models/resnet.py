@@ -203,36 +203,37 @@ class ResNet_VAE(ResNet):
         out2 = self.linear_toz(hid)
         return out2
 
-class MLP_ML(nn.Module):
-  def __init__(self, L=4, V=10, in_dim=3072, hid_size=128, num_classes=38):
-    super(MLP_ML, self).__init__()
-    self.in_dim = in_dim
-    self.L = L
-    self.V = V
-    self.num_classes = num_classes
-    self.hid_size = hid_size
-    self.Alice = nn.Sequential(
-              nn.Linear(self.in_dim, self.hid_size),
-              nn.ReLU(True),
-              nn.Linear(self.hid_size, self.hid_size),
-              nn.ReLU(True),
-              nn.Linear(self.hid_size, self.hid_size),
-              nn.ReLU(True),
-            )
-    self.Wup = nn.Linear(self.hid_size, self.L*self.V)
-    self.Bob = nn.Sequential(
-              nn.Linear(self.L*self.V, self.num_classes)
-            )
-  def forward(self, x):
-    x = x.view(x.size(0),-1)
-    z = self.Alice(x)
-    z = self.Wup(z)
-    out = self.Bob(z)
-    return z, out
+# class MLP_ML(nn.Module):
+#   def __init__(self, L=4, V=10, in_dim=3072, hid_size=128, num_classes=38):
+#     super(MLP_ML, self).__init__()
+#     self.in_dim = in_dim
+#     self.L = L
+#     self.V = V
+#     self.num_classes = num_classes
+#     self.hid_size = hid_size
+#     self.Alice = nn.Sequential(
+#               nn.Linear(self.in_dim, self.hid_size),
+#               nn.ReLU(True),
+#               nn.Linear(self.hid_size, self.hid_size),
+#               nn.ReLU(True),
+#               nn.Linear(self.hid_size, self.hid_size),
+#               nn.ReLU(True),
+#             )
+#     self.Wup = nn.Linear(self.hid_size, self.L*self.V)
+#     self.Bob = nn.Sequential(
+#               nn.Linear(self.L*self.V, self.num_classes)
+#             )
+#   def forward(self, x):
+#     x = x.view(x.size(0),-1)
+#     z = self.Alice(x)
+#     z = self.Wup(z)
+#     out = self.Bob(z)
+#     return z, out
 
 class MLP_SEM(nn.Module):
-  def __init__(self, L=4, V=10, tau=1., in_dim=3072, hid_size=128, num_classes=38):
+  def __init__(self, L=4, V=10, tau=1., in_dim=3072, hid_size=128, num_classes=1, sem_flag=True):
     super(MLP_SEM, self).__init__()
+    self.sem_flag = sem_flag
     self.in_dim = in_dim
     self.num_classes = num_classes
     self.hid_size = hid_size
@@ -262,7 +263,10 @@ class MLP_SEM(nn.Module):
       w_invector = self.Wup(in_vector)    # N*512 --> N*40
       w_invector = w_invector/self.tau
       msg = w_invector.reshape(b_size, self.L, self.V)
-      p_theta = torch.nn.Softmax(-1)(msg).reshape(b_size, -1)   # reshaped prob-logits
+      if self.sem_flag:
+        p_theta = torch.nn.Softmax(-1)(msg).reshape(b_size, -1)   # reshaped prob-logits
+      else:
+        p_theta = msg.reshape(b_size, -1)
       return msg, p_theta
 
   def forward(self, x):
@@ -273,7 +277,7 @@ class MLP_SEM(nn.Module):
     return msg, out
 
 class CNN_SEM(nn.Module):
-  def __init__(self, L=4, V=10, tau=1., hid_size=128, num_classes=6, sem_flag=True):
+  def __init__(self, L=4, V=10, tau=1., hid_size=128, num_classes=1, sem_flag=True):
     super(CNN_SEM, self).__init__()
     self.sem_flag = sem_flag
     self.num_classes = num_classes

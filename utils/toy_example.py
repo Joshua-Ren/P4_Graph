@@ -31,17 +31,26 @@ class My_toy_Dataset(Data.Dataset):
     def __len__(self):
         return self.y.shape[0]
 
-def get_reg_labels(oht_labels):
+def get_reg_labels(args, oht_labels):
   PERM = np.array([
       [1,2,3,4],[1,3,2,4],[1,4,2,3],[2,3,1,4],[2,4,1,3],[3,4,1,2]
       ])-1
+  if args.dataset_name=='dsprites':
+      VALUES = [3,6,10,10]
+      AREA = np.random.randint(0,10,(4,1))
+  elif args.dataset_name=='3dshapes':
+      VALUES = [10,10,10,8]
+      AREA = np.random.randint(0,10,(4,1))
+  elif args.dataset_name=='mpi3d':
+      VALUES = [6,6,10,10]
+      AREA = np.random.randint(0,10,(4,1))      
   reg_labels = []
   for i in range(PERM.shape[0]):
-    AREA = np.random.randint(0,10,(4,1))
     #AREA = [1, 2, 0.5]
+    AREA = np.random.randint(0,10,(4,1))
     id1,id2,id3,id4 = 0,1,2,3 #PERM[i]
     #reg_label = oht_labels[:,id1]/10*AREA[0] + oht_labels[:,id2]/10*AREA[1] + oht_labels[:,id3]*oht_labels[:,id4]/100*AREA[2]
-    reg_label = oht_labels[:,id1]/10*AREA[0] + oht_labels[:,id2]/10*AREA[1] + oht_labels[:,id3]/10*AREA[2] + oht_labels[:,id4]/8*AREA[3]
+    reg_label = oht_labels[:,id1]/VALUES[0]*AREA[0] + oht_labels[:,id2]/VALUES[1]*AREA[1] + oht_labels[:,id3]/VALUES[2]*AREA[2] + oht_labels[:,id4]/VALUES[3]*AREA[3]
     reg_label = (reg_label-reg_label.mean())/reg_label.std()
     reg_labels.append(reg_label)
   return np.array(reg_labels).transpose(1,0)
@@ -60,7 +69,7 @@ def generate_3dshape_loaders(args):
     oht_labels[:,1] = np.array(labels[:,1]*10,dtype=int)
     oht_labels[:,2] = np.array(labels[:,2]*10,dtype=int)
     oht_labels[:,3] = np.array((labels[:,3]-0.75)*15,dtype=int)
-    reg_labels = get_reg_labels(oht_labels)
+    reg_labels = get_reg_labels(args, oht_labels)
     
     tmp = np.random.binomial(n=1,p=args.sup_ratio,size=(1,8000))
     mask_train = (tmp==1).squeeze()
@@ -95,7 +104,7 @@ def generate_3dshape_fullloader_vae(args):
     oht_labels[:,1] = np.array(labels[:,1]*10,dtype=int)
     oht_labels[:,2] = np.array(labels[:,2]*10,dtype=int)
     oht_labels[:,3] = np.array((labels[:,3]-0.75)*15,dtype=int)
-    reg_labels = get_reg_labels(labels)
+    reg_labels = get_reg_labels(args, labels)
     
     tmp = np.random.binomial(n=1,p=args.sup_ratio,size=(1,480000))
     mask_sel = (tmp==1).squeeze()
@@ -150,7 +159,7 @@ def generate_dsprites_loaders(args):
     values = dataset['latents_values']
     labels = dataset['latents_classes']
     tmp_value = np.delete(values,[0,3],axis=1)
-    regs = get_reg_labels(tmp_value)
+    regs = get_reg_labels(args, tmp_value)
     
     idx_train, idx_test = gen_train_test_indexes_dsprites(args.sup_ratio)
     train_y, test_y = values[idx_train], values[idx_test]
@@ -197,7 +206,7 @@ def generate_mpi3d_loaders(args):
     dataset = np.load(path,allow_pickle=True)
     images = dataset['images']
     labels = dataset['labels']   
-    regs = get_reg_labels(labels)
+    regs = get_reg_labels(args, labels)
     
     tmp = np.random.binomial(n=1,p=args.sup_ratio,size=(1,3600))
     mask_train = (tmp==1).squeeze()

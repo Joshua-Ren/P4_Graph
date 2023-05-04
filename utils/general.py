@@ -8,7 +8,7 @@ import numpy as np
 import torch.backends.cudnn as cudnn
 sys.path.append("..")
 from models.gnn import *
-from models.resnet import ResNet18_ML, ResNet18_SEM, MLP_ML, MLP_SEM, CNN_SEM
+from models.resnet import ResNet18_ML, ResNet18_SEM, MLP_SEM, CNN_SEM
 
 def update_args(args, config):
     for k in config.keys():
@@ -74,18 +74,18 @@ def get_init_net(args, backbone_type=None, bottle_type=None):
 def get_init_net_toy(args):
     if args.dataset_name=='dsprites':
         if args.model_structure == 'standard' or args.model_structure == 'standardmlp':
-            model = CNN_SEM(L=args.L, V=args.V, tau=1., num_classes=args.num_class, sem_flag=False).to(args.device)
+            model = MLP_SEM(L=args.L, V=args.V, tau=1., num_classes=args.num_class, sem_flag=False).to(args.device)
         elif args.model_structure == 'sem' or args.model_structure == 'semmlp':
-            model = CNN_SEM(L=args.L, V=args.V, tau=1., num_classes=args.num_class, sem_flag=True).to(args.device)
+            model = MLP_SEM(L=args.L, V=args.V, tau=1., num_classes=args.num_class, sem_flag=True).to(args.device)
     else:
         if args.model_structure == 'standard':
             model = ResNet18_ML(num_classes=args.num_class).to(args.device)
         elif args.model_structure == 'sem':
             model = ResNet18_SEM(L=args.L, V=args.V, tau=1., num_classes=args.num_class).to(args.device)
         elif args.model_structure == 'standardmlp':
-            model = MLP_ML(in_dim=3072, L=args.L, V=args.V, num_classes=args.num_class).to(args.device)
+            model = MLP_SEM(in_dim=3072, L=args.L, V=args.V, num_classes=args.num_class, sem_flag=False).to(args.device)
         elif args.model_structure == 'semmlp':
-            model = MLP_SEM(in_dim=3072, L=args.L, V=args.V, tau=1., num_classes=args.num_class).to(args.device)
+            model = MLP_SEM(in_dim=3072, L=args.L, V=args.V, tau=1., num_classes=args.num_class, sem_flag=True).to(args.device)
     return model
     
 
