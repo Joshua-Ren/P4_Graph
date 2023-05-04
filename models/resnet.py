@@ -325,7 +325,6 @@ class CNN_SEM(nn.Module):
       return msg, p_theta
 
   def forward(self, x):
-    x = x.unsqueeze(1)
     z = self.Alice(x)
     msg, sem_hid = self.SEM(z)
     out = self.Bob(sem_hid)
