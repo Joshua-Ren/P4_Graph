@@ -34,7 +34,7 @@ def get_args_parser():
                         help='ratio of the training factors')
     parser.add_argument('--batch_size', default=20, type=int,
                         help='batch size of train and test set')
-    parser.add_argument('--num_class', default=1, type=int,
+    parser.add_argument('--num_class', default=6, type=int,
                         help='How many reg-tasks, 1~6')
     parser.add_argument('--data_per_g', default=1, type=int,
                         help='how many samples for each G')
