@@ -244,6 +244,8 @@ class MLP_SEM(nn.Module):
               nn.ReLU(True),
               nn.Linear(self.hid_size, self.hid_size),
               nn.ReLU(True),
+              nn.Linear(self.hid_size, self.hid_size),
+              nn.ReLU(True),
             )
     self.L = L
     self.V = V
