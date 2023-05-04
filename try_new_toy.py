@@ -33,7 +33,7 @@ def get_args_parser():
                         help='3dshapes or dsprites, mpi3d')    
     parser.add_argument('--sup_ratio', default=0.999, type=float,
                         help='ratio of the training factors')
-    parser.add_argument('--batch_size', default=512, type=int,
+    parser.add_argument('--batch_size', default=128, type=int,
                         help='batch size of train and test set')
     parser.add_argument('--num_class', default=1, type=int,
                         help='How many reg-tasks, 1~6')

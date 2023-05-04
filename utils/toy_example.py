@@ -35,20 +35,18 @@ def get_reg_labels(args, oht_labels):
   PERM = np.array([
       [1,2,3,4],[1,3,2,4],[1,4,2,3],[2,3,1,4],[2,4,1,3],[3,4,1,2]
       ])-1
-  if args.dataset_name=='dsprites':
-      VALUES = [3,6,10,10]
-      AREA = np.random.randint(0,10,(4,1))
-      AREA = [0, 2, 0.5,1]
-  elif args.dataset_name=='3dshapes':
-      VALUES = [10,10,10,8]
-      AREA = np.random.randint(0,10,(4,1))
-  elif args.dataset_name=='mpi3d':
-      VALUES = [6,6,10,10]
-      AREA = np.random.randint(0,10,(4,1))      
   reg_labels = []
   for i in range(PERM.shape[0]):
-    #AREA = [1, 2, 0.5]
-    #AREA = np.random.randint(0,10,(4,1))
+    if args.dataset_name=='dsprites':
+        VALUES = [3,6,10,10]
+        #AREA = np.random.randint(0,10,(4,1))
+        AREA = [0, 2, 0.5,1]
+    elif args.dataset_name=='3dshapes':
+        VALUES = [10,10,10,8]
+        AREA = np.random.randint(0,10,(4,1))
+    elif args.dataset_name=='mpi3d':
+        VALUES = [6,6,10,10]
+        AREA = np.random.randint(0,10,(4,1))
     id1,id2,id3,id4 = 0,1,2,3 #PERM[i]
     #reg_label = oht_labels[:,id1]/10*AREA[0] + oht_labels[:,id2]/10*AREA[1] + oht_labels[:,id3]*oht_labels[:,id4]/100*AREA[2]
     reg_label = oht_labels[:,id1]/VALUES[0]*AREA[0] + oht_labels[:,id2]/VALUES[1]*AREA[1] + oht_labels[:,id3]/VALUES[2]*AREA[2] + oht_labels[:,id4]/VALUES[3]*AREA[3]
@@ -175,7 +173,7 @@ def generate_dsprites_loaders(args):
     basic_T = T.Compose([T.ToTensor()])
     dataset_train = My_toy_Dataset(input_train, label_train, reg_train, basic_T)
     dataset_test = My_toy_Dataset(input_test, label_test, reg_test, basic_T)
-    train_loader = Data.DataLoader(dataset_train, batch_size=args.batch_size, shuffle=False, drop_last = True, num_workers=2)
+    train_loader = Data.DataLoader(dataset_train, batch_size=args.batch_size, shuffle=True, drop_last = True, num_workers=2)
     test_loader = Data.DataLoader(dataset_test, batch_size=args.batch_size, shuffle=False, drop_last = True, num_workers=2)   
 
     return train_loader, test_loader
