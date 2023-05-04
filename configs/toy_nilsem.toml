@@ -1,12 +1,13 @@
 # ====== Usuall default
-#seed = 10086
+#seed = 10086     #---- Not use this when sweeping
 proj_name = "P4_toy"
-dataset_name = "mpi3d"
+#dataset_name = "mpi3d"
+dataset_name = "dsprites"    #dsprites needs different hypers
 
 # ======== Dataset and task related
-#sup_ratio = 0.2
+#sup_ratio = 0.2   #---- Not use this when sweeping
 batch_size = 128
-data_per_g = 1
+#data_per_g = 5
 num_class = 1
 
 dis_dataset = "train"
@@ -21,13 +22,13 @@ generations = 10
 bob_adapt_ep = 2
 
 	# ---- Interaction
-int_lr = 1e-3
+int_lr = 2e-4    #1e-3
 int_epochs = 200
 	# ---- Distillation
-dis_lr = 1e-3
+dis_lr = 2e-4	 #1e-3
 dis_epochs = 20
 dis_loss = "cesample"
 
 copy_what = "best"
 
-run_name_seed = "mpi3d_milesem_k1"
+run_name_seed = "dsprites_milesem_k1"

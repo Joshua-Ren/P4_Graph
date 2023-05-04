@@ -49,7 +49,7 @@ def get_args_parser():
                         help='word size in SEM')    
     
     # ======== Learning related
-    parser.add_argument('--init_strategy', type=str, default='nil',
+    parser.add_argument('--init_strategy', type=str, default='mile',
                         help='How to generate new student, nil or mile')
     parser.add_argument('--generations', default=5, type=int,
                         help='how many generations we train')
