@@ -40,15 +40,15 @@ def get_reg_labels(args, oht_labels):
     if args.dataset_name=='dsprites':
         VALUES = [3,6,32,32]
         #VALUES = [1,1,1,1]
-        AREA = np.random.randint(0,10,(4,1))
-        #AREA = [0, 2, 0.5,1]
+        #AREA = np.random.randint(0,10,(4,1))
+        AREA = [0, 2, 0.5,1]
     elif args.dataset_name=='3dshapes':
         VALUES = [10,10,10,8]
         AREA = np.random.randint(0,10,(4,1))
     elif args.dataset_name=='mpi3d':
         VALUES = [6,6,40,40]
         AREA = np.random.randint(0,10,(4,1))
-    id1,id2,id3,id4 = 0,1,2,3 #PERM[i]
+    id1,id2,id3,id4 = PERM[i]
     #reg_label = oht_labels[:,id1]/10*AREA[0] + oht_labels[:,id2]/10*AREA[1] + oht_labels[:,id3]*oht_labels[:,id4]/100*AREA[2]
     reg_label = oht_labels[:,id1]/VALUES[0]*AREA[0] + oht_labels[:,id2]/VALUES[1]*AREA[1] + oht_labels[:,id3]/VALUES[2]*AREA[2] + oht_labels[:,id4]/VALUES[3]*AREA[3]
     reg_label = (reg_label-reg_label.mean())/reg_label.std()
