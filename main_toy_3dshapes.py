@@ -28,8 +28,8 @@ def get_args_parser():
     parser.add_argument('--device', type=int, default=0,
                         help='which gpu to use if any (default: 0)')
     # ======== Dataset and task related
-    parser.add_argument('--dataset_name', default='3dshape', type=str,
-                        help='3dshapes or dsprite or mpi3d')    
+    parser.add_argument('--dataset_name', default='dsprites', type=str,
+                        help='3dshapes or dsprites or mpi3d')    
     parser.add_argument('--sup_ratio', default=0.1, type=float,
                         help='ratio of the training factors')
     parser.add_argument('--batch_size', default=20, type=int,
@@ -164,8 +164,8 @@ if __name__ == '__main__':
     #main(args)
     
     # ==== Long experiments ====
-    ALPHAS = [0.8, 0.5, 0.2, 0.1, 0.02, 0.002]# [0.002, 0.02, 0.1, 0.2, 0.5, 0.8]
-    SEEDS = [1024, 10086, 42, 1314]
+    ALPHAS = [0.8, 0.5, 0.2, 0.1, 0.02]# [0.002, 0.02, 0.1, 0.2, 0.5, 0.8]
+    SEEDS = [1024, 10086, 42, 1314, 1988]
     for seed in SEEDS:
         for alpha in ALPHAS:
             args.seed = seed
