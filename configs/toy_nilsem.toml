@@ -23,10 +23,10 @@ bob_adapt_ep = 2
 
 	# ---- Interaction
 int_lr = 1e-3
-int_epochs = 200
+int_epochs = 500
 	# ---- Distillation
 dis_lr = 1e-3
-dis_epochs = 20
+dis_epochs = 50
 dis_loss = "cesample"
 
 copy_what = "best"
