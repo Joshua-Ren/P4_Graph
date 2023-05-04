@@ -76,8 +76,8 @@ def get_init_net_toy(args):
         if args.model_structure == 'standard' or args.model_structure == 'standardmlp':
             model = CNN_SEM(L=args.L, V=args.V, tau=1., num_classes=args.num_class, sem_flag=False).to(args.device)
         elif args.model_structure == 'sem' or args.model_structure == 'semmlp':
-            #model = CNN_SEM(L=args.L, V=args.V, tau=1., num_classes=args.num_class, sem_flag=True).to(args.device)
-            model = MLP_SEM(in_dim=4096, L=args.L, V=args.V, tau=1., num_classes=args.num_class, sem_flag=True).to(args.device)
+            model = CNN_SEM(L=args.L, V=args.V, tau=1., num_classes=args.num_class, sem_flag=True).to(args.device)
+            #model = MLP_SEM(in_dim=4096, L=args.L, V=args.V, tau=1., num_classes=args.num_class, sem_flag=True).to(args.device)
     else:
         if args.model_structure == 'standard':
             model = ResNet18_ML(num_classes=args.num_class).to(args.device)
@@ -118,8 +118,6 @@ def early_stop_meets(acc_list, best_acc, how_many=4):
         return True
     else:
         return False
-
-        
 
 class AverageMeter(object):
     """Computes and stores the average and current value"""
