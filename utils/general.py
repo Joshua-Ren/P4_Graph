@@ -74,9 +74,9 @@ def get_init_net(args, backbone_type=None, bottle_type=None):
 def get_init_net_toy(args):
     if args.dataset_name=='dsprites':
         if args.model_structure == 'standard' or args.model_structure == 'standardmlp':
-            model = MLP_SEM(in_dim=4096, L=args.L, V=args.V, tau=1., num_classes=args.num_class, sem_flag=False).to(args.device)
+            model = CNN_SEM(L=args.L, V=args.V, tau=1., num_classes=args.num_class, sem_flag=False).to(args.device)
         elif args.model_structure == 'sem' or args.model_structure == 'semmlp':
-            model = MLP_SEM(in_dim=4096, L=args.L, V=args.V, tau=1., num_classes=args.num_class, sem_flag=True).to(args.device)
+            model = CNN_SEM(L=args.L, V=args.V, tau=1., num_classes=args.num_class, sem_flag=True).to(args.device)
     else:
         if args.model_structure == 'standard':
             model = ResNet18_ML(num_classes=args.num_class).to(args.device)
