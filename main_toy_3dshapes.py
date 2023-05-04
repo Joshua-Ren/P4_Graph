@@ -32,7 +32,7 @@ def get_args_parser():
                         help='3dshapes or dsprites or mpi3d')    
     parser.add_argument('--sup_ratio', default=0.8, type=float,
                         help='ratio of the training factors')
-    parser.add_argument('--batch_size', default=128, type=int,
+    parser.add_argument('--batch_size', default=64, type=int,
                         help='batch size of train and test set')
     parser.add_argument('--num_class', default=1, type=int,
                         help='How many reg-tasks, 1~6')
@@ -41,7 +41,7 @@ def get_args_parser():
 
     
     # ======== Model structure
-    parser.add_argument('--model_structure', type=str, default='standard',
+    parser.add_argument('--model_structure', type=str, default='sem',
                         help='Standard or sem')
     parser.add_argument('--L', type=int, default=4,
                         help='No. word in SEM')
