@@ -29,11 +29,11 @@ def get_args_parser():
     parser.add_argument('--device', type=int, default=0,
                         help='which gpu to use if any (default: 0)')
     # ======== Dataset and task related
-    parser.add_argument('--dataset_name', default='3dshapes', type=str,
+    parser.add_argument('--dataset_name', default='dsprites', type=str,
                         help='3dshapes or dsprites, mpi3d')    
-    parser.add_argument('--sup_ratio', default=0.2, type=float,
+    parser.add_argument('--sup_ratio', default=0.999, type=float,
                         help='ratio of the training factors')
-    parser.add_argument('--batch_size', default=128, type=int,
+    parser.add_argument('--batch_size', default=512, type=int,
                         help='batch size of train and test set')
     parser.add_argument('--num_class', default=1, type=int,
                         help='How many reg-tasks, 1~6')
@@ -117,7 +117,13 @@ if __name__ == '__main__':
     args.sup_ratio=0.95
     train_loader, test_loader = get_dataloaders(args)
     
-    
+    f, ax = plt.subplots(10,10,figsize=(20, 20))
+    for i in range(10):
+        for j in range(10):
+            idx = i*10+j
+            ax[i][j].imshow(x[idx].transpose(0,2))
+            ax[i][j].set_title(y[idx])
+    plt.savefig('try.pdf')
     """
     train_loader = generate_3dshape_fullloader_vae(args)
     model = get_init_net_toy(args)

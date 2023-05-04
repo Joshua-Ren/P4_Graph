@@ -37,8 +37,8 @@ def get_reg_labels(args, oht_labels):
       ])-1
   if args.dataset_name=='dsprites':
       VALUES = [3,6,10,10]
-      #AREA = np.random.randint(0,10,(4,1))
-      AREA = [1, 2, 0.5,1]
+      AREA = np.random.randint(0,10,(4,1))
+      AREA = [0, 2, 0.5,1]
   elif args.dataset_name=='3dshapes':
       VALUES = [10,10,10,8]
       AREA = np.random.randint(0,10,(4,1))
@@ -175,7 +175,7 @@ def generate_dsprites_loaders(args):
     basic_T = T.Compose([T.ToTensor()])
     dataset_train = My_toy_Dataset(input_train, label_train, reg_train, basic_T)
     dataset_test = My_toy_Dataset(input_test, label_test, reg_test, basic_T)
-    train_loader = Data.DataLoader(dataset_train, batch_size=args.batch_size, shuffle=True, drop_last = True, num_workers=2)
+    train_loader = Data.DataLoader(dataset_train, batch_size=args.batch_size, shuffle=False, drop_last = True, num_workers=2)
     test_loader = Data.DataLoader(dataset_test, batch_size=args.batch_size, shuffle=False, drop_last = True, num_workers=2)   
 
     return train_loader, test_loader
