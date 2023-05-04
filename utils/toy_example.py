@@ -118,22 +118,27 @@ def latent_to_index(latents):
 def gen_train_test_indexes_dsprites(sup_ratio):
     g0 = 0
     index_all = []
+    train_index, test_index = [], []
     for gg1 in range(3):
         g1 = gg1
         for gg2 in range(6):
             g2 = gg2
-            g3 = 5#np.random.randint(0,40,(1,))[0]
-            for gg4 in range(10):
-                g4 = gg4*3
-                for gg5 in range(10):
-                    g5 = gg5*3
-                    tmp_idx = latent_to_index([g0,g1,g2,g3,g4,g5])
-                    index_all.append(tmp_idx)
-    index_all = np.array(index_all)
-    tmp = np.random.binomial(n=1,p=sup_ratio,size=(index_all.shape[0],))
-    mask_train = (tmp==1).squeeze()
-    mask_test = (tmp==0).squeeze()   
-    return index_all[mask_train], index_all[mask_test]
+            #g3 = 5#np.random.randint(0,40,(1,))[0]
+            for gg3 in range(5):
+                g3 = gg3
+                for gg4 in range(10):
+                    g4 = gg4*3
+                    for gg5 in range(10):
+                        g5 = gg5*3
+                        tmp_idx = latent_to_index([g0,g1,g2,g3,g4,g5])
+                        # ----- Decide to go train or test
+                        if np.random.binomial(n=1,p=sup_ratio,size=(1,)):
+                            train_index.append(tmp_idx)
+                        else:
+                            test_index.append(tmp_idx)
+    train_index = np.array(train_index)
+    test_index = np.array(test_index)
+    return train_index, test_index
 
 def generate_dsprites_loaders(args):
     #_FACTORS_IN_ORDER = ['shape', 'scale', 'orientation', 'pos-x', 'pos-y']

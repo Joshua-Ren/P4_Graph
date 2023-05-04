@@ -113,7 +113,12 @@ if __name__ == '__main__':
     args = get_args_parser()
     args = args.parse_args()
     args.device = torch.device("cuda:" + str(args.device)) if torch.cuda.is_available() else torch.device("cpu")
-    #train_loader, test_loader = get_dataloaders(args)
+    args.dataset_name='dsprites'
+    args.sup_ratio=0.95
+    train_loader, test_loader = get_dataloaders(args)
+    
+    
+    """
     train_loader = generate_3dshape_fullloader_vae(args)
     model = get_init_net_toy(args)
     # -------- Load vae-pretrain
@@ -134,7 +139,7 @@ if __name__ == '__main__':
     metric = Metric_R(args)
     dist_orig, comp_orig, info_orig, R_orig = metric.dise_comp_info([mu.cpu().detach()],[y],'random_forest')
     metric.hinton_fig([R_orig, R_orig], ['Base-Lasso','same'])
-    """
+    
     SOURCE_DIR = 'E:\\DATASET\\mpi3d_real\\real'
     TARGET_DIR = 'E:\\DATASET\\mpi3d_real\\select'
     g0 = 0
