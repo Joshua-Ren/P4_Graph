@@ -119,7 +119,10 @@ def main(args):
         else:
             student = get_init_net_toy(args)
         # ========= Distillation
-        optimizer_inter = optim.SGD(student.parameters(), lr=args.dis_lr, momentum=0.9, weight_decay=5e-4,nesterov=True)
+        if args.dataset_name=='dsprites':
+            optimizer_inter = optim.Adam(student.parameters(), lr=args.dis_lr,weight_decay=5e-4)
+        else:
+            optimizer_inter = optim.SGD(student.parameters(), lr=args.dis_lr, momentum=0.9, weight_decay=5e-4,nesterov=True)
         if gen>0:
             optimizer_dis = optim.SGD(student.parameters(), lr=args.int_lr, momentum=0.9, weight_decay=5e-4,nesterov=True)
             for i in range(args.dis_epochs):
