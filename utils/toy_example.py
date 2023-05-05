@@ -134,7 +134,7 @@ def gen_train_test_indexes_dsprites(sup_ratio):
             g2 = gg2
             #g3 = 5#np.random.randint(0,40,(1,))[0]
             for gg3 in range(5):
-                g3 = 0
+                g3 = np.random.randint(0,40,(1,))[0]
                 for gg4 in range(10):
                     g4 = gg4*3
                     for gg5 in range(10):
