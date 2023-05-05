@@ -40,8 +40,8 @@ def get_reg_labels(args, oht_labels):
     if args.dataset_name=='dsprites':
         VALUES = [3,6,32,32]
         #VALUES = [1,1,1,1]
-        AREA = np.random.randint(0,10,(4,1))
-        #AREA = [0, 2, 0.5,1]
+        #AREA = np.random.randint(0,10,(4,1))
+        AREA = [0, 2, 0.5,1]
     elif args.dataset_name=='3dshapes':
         VALUES = [10,10,10,8]
         AREA = np.random.randint(0,10,(4,1))
