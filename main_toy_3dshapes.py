@@ -119,26 +119,32 @@ def main(args):
         else:
             student = get_init_net_toy(args)
         # ========= Distillation
-        if args.dataset_name=='dsprites':
-            optimizer_inter = optim.Adam(student.parameters(), lr=args.dis_lr,weight_decay=5e-4)
-        else:
-            optimizer_inter = optim.SGD(student.parameters(), lr=args.dis_lr, momentum=0.9, weight_decay=5e-4,nesterov=True)
         if gen>0:
             optimizer_dis = optim.SGD(student.parameters(), lr=args.int_lr, momentum=0.9, weight_decay=5e-4,nesterov=True)
+            scheduler_dis = optim.lr_scheduler.CosineAnnealingLR(optimizer_dis,T_max=args.dis_epochs,eta_min=1e-5)
             for i in range(args.dis_epochs):
                 wandb.log({'idx_epoch':i})
                 dis_loss = train_distill(args, student, teacher, optimizer_dis, dis_loader)
+                scheduler_dis.step()
                 results['dis_loss'].append(dis_loss)
             old_teacher = copy.deepcopy(teacher)   
+        
         # ========= Interaction
         best_vloss = 10
             # --- Bob adaptation
         bob_optim = optim.SGD(student.Bob.parameters(), lr=args.dis_lr, momentum=0.9, weight_decay=5e-4,nesterov=True)
         for i in range(args.bob_adapt_ep):
             train_epoch(args, student, bob_optim, train_loader)
+            # --- Interaction
+        if args.dataset_name=='dsprites':
+            optimizer_inter = optim.Adam(student.parameters(), lr=args.dis_lr,weight_decay=5e-4)
+        else:
+            optimizer_inter = optim.SGD(student.parameters(), lr=args.dis_lr, momentum=0.9, weight_decay=5e-4,nesterov=True)
+        scheduler_inter = optim.lr_scheduler.CosineAnnealingLR(optimizer_inter,T_max=args.int_epochs,eta_min=1e-5)        
         for i in range(args.int_epochs):
             wandb.log({'idx_epoch':i})
             loss = train_epoch(args, student, optimizer_inter, train_loader)
+            scheduler_inter.step()
             if i%5==0 or i==args.int_epochs-1:
                 vloss = evaluate(args, student, test_loader)
                 results['tloss'].append(loss)
