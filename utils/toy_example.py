@@ -40,8 +40,8 @@ def get_reg_labels(args, oht_labels):
     if args.dataset_name=='dsprites':
         VALUES = [3,6,32,32]
         #VALUES = [1,1,1,1]
-        #AREA = np.random.randint(0,10,(4,1))
-        AREA = [0, 2, 0.5,1]
+        AREA = np.random.randint(0,10,(4,1))
+        #AREA = [0, 2, 0.5,1]
     elif args.dataset_name=='3dshapes':
         VALUES = [10,10,10,8]
         AREA = np.random.randint(0,10,(4,1))
@@ -134,7 +134,7 @@ def gen_train_test_indexes_dsprites(sup_ratio):
             g2 = gg2
             #g3 = 5#np.random.randint(0,40,(1,))[0]
             for gg3 in range(5):
-                g3 = gg3
+                g3 = 0
                 for gg4 in range(10):
                     g4 = gg4*3
                     for gg5 in range(10):
