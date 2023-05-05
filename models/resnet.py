@@ -286,14 +286,19 @@ class CNN_SEM(nn.Module):
     self.hid_size = hid_size
     self.Alice = nn.Sequential(
               nn.Conv2d(1, 32, 4, 2, 1),          # B,  32, 32, 32
+              nn.BatchNorm2d(32),
               nn.ReLU(True),
               nn.Conv2d(32, 32, 4, 2, 1),          # B,  32, 16, 16
+              nn.BatchNorm2d(32),
               nn.ReLU(True),
               nn.Conv2d(32, 64, 4, 2, 1),          # B,  64,  8,  8
+              nn.BatchNorm2d(64),
               nn.ReLU(True),
               nn.Conv2d(64, 64, 4, 2, 1),          # B,  64,  4,  4
+              nn.BatchNorm2d(64),
               nn.ReLU(True),
               nn.Conv2d(64, 256, 4, 1),            # B, 256,  1,  1
+              nn.BatchNorm2d(256),
               nn.ReLU(True),
               View((-1, 256*1*1)),                 # B, 256
               nn.Linear(256, self.hid_size),             # B, z_dim*
