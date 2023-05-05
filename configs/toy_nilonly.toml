@@ -1,7 +1,7 @@
 # ====== Usuall default
 #seed = 10086
 proj_name = "P4_toy"
-dataset_name = "mpi3d"
+dataset_name = "dsprites"
 
 # ======== Dataset and task related
 #sup_ratio = 0.2
@@ -14,13 +14,14 @@ model_structure = "sem"
 L=4
 V=10
 
+dis_dataset = "train"
 # ======== Learning related
 init_strategy = "mile"
 generations = 10
 
 	# ---- Interaction
 int_lr = 1e-3
-int_epochs = 200
+int_epochs = 500 #200   use 500 for dsprites
 	# ---- Distillation
 dis_lr = 1e-3
 dis_epochs = 50
@@ -28,4 +29,4 @@ dis_loss = "mse"
 
 copy_what = "best"
 
-run_name_seed = "mpi3d_nilonly_k1"
+run_name_seed = "dsprites_nilonly_k1"

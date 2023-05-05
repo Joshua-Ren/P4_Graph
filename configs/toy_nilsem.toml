@@ -2,7 +2,7 @@
 #seed = 10086     #---- Not use this when sweeping
 proj_name = "P4_toy"
 #dataset_name = "mpi3d"
-dataset_name = "dsprites"    #dsprites needs different hypers
+dataset_name = "dsprites"  
 
 # ======== Dataset and task related
 #sup_ratio = 0.2   #---- Not use this when sweeping
@@ -23,7 +23,7 @@ bob_adapt_ep = 2
 
 	# ---- Interaction
 int_lr = 1e-3
-int_epochs = 500
+int_epochs = 500 #200   use 500 for dsprites
 	# ---- Distillation
 dis_lr = 1e-3
 dis_epochs = 50
