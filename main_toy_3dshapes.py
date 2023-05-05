@@ -136,10 +136,11 @@ def main(args):
         for i in range(args.bob_adapt_ep):
             train_epoch(args, student, bob_optim, train_loader)
             # --- Interaction
-        if args.dataset_name=='dsprites':
-            optimizer_inter = optim.Adam(student.parameters(), lr=args.dis_lr,weight_decay=5e-4)
-        else:
-            optimizer_inter = optim.SGD(student.parameters(), lr=args.dis_lr, momentum=0.9, weight_decay=5e-4,nesterov=True)
+        # if args.dataset_name=='dsprites':
+        #     optimizer_inter = optim.Adam(student.parameters(), lr=args.dis_lr,weight_decay=5e-4)
+        # else:
+        #     pass
+        optimizer_inter = optim.SGD(student.parameters(), lr=args.dis_lr, momentum=0.9, weight_decay=5e-4,nesterov=True)
         scheduler_inter = optim.lr_scheduler.CosineAnnealingLR(optimizer_inter,T_max=args.int_epochs,eta_min=1e-5)        
         for i in range(args.int_epochs):
             wandb.log({'idx_epoch':i})
