@@ -1,0 +1,26 @@
+# ====== Usuall default
+#seed = 10086
+proj_name = "P4_report"
+drop_ratio = 0.5
+batch_size = 64
+dataset_name = "ogbg-molhiv"
+dataset_hardsplit = "hard"
+bottle_type = "sem_base"
+#bottle_type = "sem"
+# ==== Model Structure ======
+backbone_type = "gcn"
+head_type = "linar"
+emb_dim = 300
+num_layer = 5
+generations = 1
+L = 100
+V = 20
+
+	# ---- Interaction
+int_epoch = 200
+int_lr = 1e-3
+int_optim = "adamW"
+int_sched = true
+#save_model = true
+
+run_name = "hiv_gcn_baselineplus_hard"

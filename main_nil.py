@@ -36,6 +36,8 @@ def get_args_parser():
                         help='number of workers (default: 0)')
     parser.add_argument('--dataset_name', type=str, default="ogbg-molhiv",
                         help='dataset name (default: ogbg-molhiv/moltox21/molpcba/pcqm)')
+    parser.add_argument('--dataset_hardsplit', type=str, default="standard",
+                        help='type of hard split, can be standard, hard')    
     parser.add_argument('--dataset_ratio', type=float, default=1.,
                         help='The ratio of training samples, only for molpcba-one experiment')
     parser.add_argument('--dataset_forcetask', type=int, default=0,

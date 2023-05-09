@@ -2,6 +2,12 @@ from ogb.graphproppred import PygGraphPropPredDataset
 from torch_geometric.loader import DataLoader
 from ogb.lsc import PygPCQM4Mv2Dataset
 from ogb.utils import smiles2graph
+import os
+import numpy as np
+
+PATH = '/home/joshua52/projects/def-dsuth/joshua52/P4_Graph/dataset/'
+if not os.path.exists(PATH):
+    PATH = 'E:\\P4_Graph\\dataset'
 
 # possible datasets: (size,batch.num_nodes,y.shape)
 # molpcba(10949-763-128), molhiv(1029-852-1), molbace (38-1103-1), 
@@ -15,7 +21,7 @@ def build_dataset(args, force_name=None):
         dataset_name = args.dataset_name
     
     if dataset_name == 'pcqm':
-        dataset = PygPCQM4Mv2Dataset(root = './dataset/', smiles2graph = smiles2graph)
+        dataset = PygPCQM4Mv2Dataset(root = PATH, smiles2graph = smiles2graph)
         test_name = 'valid'
     else:
         dataset = PygGraphPropPredDataset(name = dataset_name)
@@ -33,8 +39,16 @@ def build_dataset(args, force_name=None):
         dataset.data.y = dataset.data.y[:,:args.dataset_forcetask]
     split_idx = dataset.get_idx_split()
     ### automatic evaluator. takes dataset name as input
-    ratio_idx = int(args.dataset_ratio*len(split_idx["train"]))
-    train_loader = DataLoader(dataset[split_idx["train"]][:ratio_idx], 
+    train_part = dataset[split_idx["train"]]
+    if args.dataset_ratio!=1.:
+        ratio_idx = int(args.dataset_ratio*len(split_idx["train"]))
+        train_part = dataset[split_idx["train"]][:ratio_idx]
+    if args.dataset_hardsplit=='hard':
+        file_name = args.dataset_name+'_hard.npy'
+        sel_index = np.load(os.path.join(PATH, file_name))
+        train_part = dataset[split_idx["train"][sel_index]]
+        
+    train_loader = DataLoader(train_part, 
                             batch_size=args.batch_size, shuffle=True, drop_last=True,
                             num_workers = args.num_workers)
     valid_loader = DataLoader(dataset[split_idx["valid"]], 

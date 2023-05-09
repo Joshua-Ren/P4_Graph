@@ -37,8 +37,10 @@ def get_args_parser():
                         help='input batch size for training (default: 64)')
     parser.add_argument('--num_workers', type=int, default=2,
                         help='number of workers (default: 0)')
-    parser.add_argument('--dataset_name', type=str, default="ogbg-molpcba",
+    parser.add_argument('--dataset_name', type=str, default="ogbg-molhiv",
                         help='dataset name (default: ogbg-molhiv/moltox21/molpcba)')
+    parser.add_argument('--dataset_hardsplit', type=str, default="standard",
+                        help='type of hard split, can be standard, hard')    
     parser.add_argument('--dataset_ratio', type=float, default=0.1,
                         help='The ratio of training samples')
     parser.add_argument('--dataset_forcetask', type=int, default=1,
@@ -115,14 +117,9 @@ if __name__ == '__main__':
     args = args.parse_args()
     args.device = torch.device("cuda:" + str(args.device)) if torch.cuda.is_available() else torch.device("cpu")
     
-    args.dataset_ratio=0.1
+    args.dataset_hardsplit='hard'
     loaders = build_dataset(args)
 
-
-    #teacher = get_init_net(args)
-    student = copy.deepcopy(teacher)
-    for step, batch in enumerate(loaders['test']):
-        batch
     
 '''    
     cnt = 0
