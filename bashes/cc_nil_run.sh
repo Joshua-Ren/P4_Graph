@@ -30,5 +30,5 @@ srun python /home/joshua52/projects/def-dsuth/joshua52/P4_Graph/main_nil.py \
 #srun python /home/joshua52/projects/def-dsuth/joshua52/P4_Graph/main_nil.py \
 #--config_file hiv_gcn_baselineplus_hard
 
-#srun python /home/joshua52/projects/def-dsuth/joshua52/P4_Graph/main_nil.py \
-#--config_file hiv_gcn_baseline_hard
+srun python /home/joshua52/projects/def-dsuth/joshua52/P4_Graph/main_nil.py \
+--config_file hiv_gcn_baseline_hard
