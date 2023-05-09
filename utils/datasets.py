@@ -44,7 +44,7 @@ def build_dataset(args, force_name=None):
         ratio_idx = int(args.dataset_ratio*len(split_idx["train"]))
         train_part = dataset[split_idx["train"]][:ratio_idx]
     if args.dataset_hardsplit=='hard':
-        file_name = args.dataset_name+'_hard.npy'
+        file_name = args.dataset_name+'_hard_0p8.npy'
         sel_index = np.load(os.path.join(PATH, file_name))
         train_part = dataset[split_idx["train"][sel_index]]
         
