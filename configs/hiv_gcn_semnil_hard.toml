@@ -23,10 +23,10 @@ init_strategy = "mile"
 	# ---- Distillation
 distill_data = "ogbg-molhiv"
 distill_set = "train"
-dis_steps = 100
+dis_steps = 4000
 dis_lr = 1e-4
 dis_tau = 1
-dis_optim = "adam"
+dis_optim = "sgd"
 dis_loss = "ce_sample"
 	# ---- Interaction
 int_epoch = 100
