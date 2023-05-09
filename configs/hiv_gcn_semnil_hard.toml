@@ -19,7 +19,7 @@ head_type = "linear"
 # ==== NIL related ====== 
 generations = 5
 	# ---- Init student
-init_strategy = "nil"
+init_strategy = "mile"
 	# ---- Distillation
 distill_data = "ogbg-molhiv"
 distill_set = "train"

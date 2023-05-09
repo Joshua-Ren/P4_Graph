@@ -4,11 +4,11 @@ proj_name = "P4_report"
 drop_ratio = 0.5
 batch_size = 64
 dataset_name = "ogbg-molhiv"
-#bottle_type = "sem_base"
-bottle_type = "sem"
+bottle_type = "sem_base"
+#bottle_type = "sem"
 # ==== Model Structure ======
 backbone_type = "gcn"
-head_type = "linear"
+head_type = "linar"
 emb_dim = 300
 num_layer = 5
 generations = 1
@@ -22,4 +22,4 @@ int_optim = "adamW"
 int_sched = true
 #save_model = true
 
-run_name = "hiv_gcn_sem"
+run_name = "hiv_gcn_baselineplus_hard"
