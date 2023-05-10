@@ -4,7 +4,7 @@ proj_name = "P4_report"
 drop_ratio = 0.5
 batch_size = 64
 dataset_name = "ogbg-molhiv"
-dataset_hardsplit = "hard_0p9"
+dataset_hardsplit = "hard_0p95"
 bottle_type = "sem"
 
 # ==== Model Structure ======
@@ -39,4 +39,4 @@ int_sched = true
 copy_what = "best"
 #save_model = false
 
-run_name = "hiv_gcn_semnil_hard0p9_sgd"
+run_name = "hiv_gcn_semnil_hard0p95_sgd"
