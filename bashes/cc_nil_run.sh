@@ -21,11 +21,12 @@ source /home/joshua52/projects/def-dsuth/joshua52/env_graph/bin/activate
 
 cd /home/joshua52/projects/def-dsuth/joshua52/P4_Graph
 
-srun python /home/joshua52/projects/def-dsuth/joshua52/P4_Graph/main_nil.py \
---config_file hiv_gcn_baseline_hard
 
 srun python /home/joshua52/projects/def-dsuth/joshua52/P4_Graph/main_nil.py \
 --config_file hiv_gcn_semnil_hard
+
+srun python /home/joshua52/projects/def-dsuth/joshua52/P4_Graph/main_nil.py \
+--config_file hiv_gcn_baseline_hard
 
 #srun python /home/joshua52/projects/def-dsuth/joshua52/P4_Graph/main_nil.py \
 #--config_file hiv_gcn_sem_hard

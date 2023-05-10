@@ -19,7 +19,7 @@ V = 20
 	# ---- Interaction
 int_epoch = 200
 int_lr = 1e-3
-int_optim = "adamW"
+int_optim = "adamw"
 int_sched = true
 #save_model = true
 
