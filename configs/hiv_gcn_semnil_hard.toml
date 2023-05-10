@@ -26,7 +26,7 @@ distill_set = "train"
 dis_steps = 1000
 dis_lr = 1e-4
 dis_tau = 1
-dis_optim = "adamwsab"
+dis_optim = "adamw"
 dis_loss = "ce_sample"
 	# ---- Interaction
 int_epoch = 100
