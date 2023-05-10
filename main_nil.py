@@ -80,7 +80,7 @@ def get_args_parser():
     parser.add_argument('--dis_lr', type=float, default=1e-3,
                         help='learning rate for student')   
     parser.add_argument('--dis_optim', type=str, default='adam',
-              help='optimizer used in distillation, sgd, adam or adamW')
+              help='optimizer used in distillation, sgd, adam or adamw')
     parser.add_argument('--dis_loss', type=str, default='ce_argmax',
               help='how the teacher generate the samples, ce_argmax, ce_sample, noisy_ce_sample, mse')
     parser.add_argument('--distill_data', type=str, default=None,
