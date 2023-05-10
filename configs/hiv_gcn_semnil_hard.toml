@@ -23,7 +23,7 @@ init_strategy = "mile"
 	# ---- Distillation
 distill_data = "ogbg-molhiv"
 distill_set = "train"
-dis_steps = 4000
+dis_steps = 1000
 dis_lr = 1e-4
 dis_tau = 1
 dis_optim = "adamW"
@@ -39,4 +39,4 @@ int_sched = true
 copy_what = "best"
 save_model = true
 
-run_name = "hiv_gcn_semnil_hard0p8"
+run_name = "hiv_gcn_semnil_hard0p95"

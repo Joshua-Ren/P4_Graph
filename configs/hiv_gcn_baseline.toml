@@ -20,4 +20,4 @@ int_optim = "adam"
 int_sched = true
 #save_model = true
 
-run_name = "hiv_gcn_baseline0p8"
+run_name = "hiv_gcn_baseline"
