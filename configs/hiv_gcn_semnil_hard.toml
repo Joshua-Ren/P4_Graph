@@ -12,8 +12,8 @@ bottle_type = "sem"
 backbone_type = "gcn"
 emb_dim = 300
 num_layer = 5
-L = 20
-V = 15
+L = 100
+V = 20
 head_type = "linear"
 
 # ==== NIL related ====== 
@@ -29,7 +29,7 @@ dis_tau = 1
 dis_optim = "adam"
 dis_loss = "ce_sample"
 	# ---- Interaction
-int_epoch = 200
+int_epoch = 100
 es_epochs = 5
 int_lr = 3e-4
 int_tau = 1
@@ -39,4 +39,4 @@ int_sched = true
 copy_what = "last"
 #save_model = false
 
-run_name = "hiv_gcn_semnil_hard0p98_last_nodrop"
+run_name = "hiv_gcn_semnil_hard0p98_L100V20"
