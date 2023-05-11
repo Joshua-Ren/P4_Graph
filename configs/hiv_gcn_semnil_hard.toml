@@ -36,7 +36,7 @@ int_tau = 1
 int_optim = "adam"
 int_sched = true
 	# ---- Generate teacher
-copy_what = "best"
+copy_what = "last"
 #save_model = false
 
-run_name = "hiv_gcn_semnil_hard0p98"
+run_name = "hiv_gcn_semnil_hard0p98_last"

@@ -156,9 +156,9 @@ def main(args):
         if args.dis_optim.lower()=='adam':
             optimizer_dis = optim.Adam(student.parameters(), lr=args.dis_lr)
         elif args.dis_optim.lower()=='adamw':
-            optimizer_dis = optim.AdamW(student.parameters(), lr=args.dis_lr, weight_decay=0.01)
+            optimizer_dis = optim.AdamW(student.parameters(), lr=args.dis_lr)
         elif args.dis_optim.lower()=='sgd':
-            optimizer_dis = optim.SGD(student.parameters(), momentum=0.9, lr=args.dis_lr, weight_decay=0.01)
+            optimizer_dis = optim.SGD(student.parameters(), momentum=0.9, lr=args.dis_lr)
         
         if args.int_optim.lower()=='adam':
             optimizer_int = optim.Adam(student.parameters(), lr=args.int_lr)
