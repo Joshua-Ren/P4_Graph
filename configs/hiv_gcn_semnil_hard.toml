@@ -29,7 +29,7 @@ dis_tau = 1
 dis_optim = "adam"
 dis_loss = "ce_sample"
 	# ---- Interaction
-int_epoch = 100
+int_epoch = 50
 es_epochs = 5
 int_lr = 1e-3
 int_tau = 1
