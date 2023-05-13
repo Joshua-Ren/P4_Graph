@@ -19,7 +19,7 @@ head_type = "linear"
 # ==== NIL related ====== 
 generations = 5
 	# ---- Init student
-init_strategy = "nil"
+init_strategy = "mile"
 	# ---- Distillation
 distill_data = "ogbg-molpcba"
 distill_set = "train"
@@ -39,4 +39,4 @@ int_sched = true
 copy_what = "best"
 #save_model = true
 
-run_name = "pcba_gcn_semnil_hard0p9_best"
+run_name = "pcba_gcn_semmile_hard0p9_best"
