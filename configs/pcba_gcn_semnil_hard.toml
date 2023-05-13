@@ -25,7 +25,7 @@ distill_data = "ogbg-molpcba"
 distill_set = "train"
 dis_steps = 20000
 dis_lr = 1e-3
-dis_tau = 1
+dis_tau = 0.2
 dis_optim = "adam"
 dis_loss = "ce_sample"
 	# ---- Interaction
@@ -39,4 +39,4 @@ int_sched = true
 copy_what = "best"
 #save_model = true
 
-run_name = "pcba_gcn_semmile_hard0p9_best_L30V10"
+run_name = "pcba_gcn_semmile_hard0p9_best_L30V10_tau0p2"
