@@ -17,13 +17,13 @@ V = 20
 head_type = "linear"
 
 # ==== NIL related ====== 
-generations = 5
+generations = 10
 	# ---- Init student
 init_strategy = "mile"
 	# ---- Distillation
 distill_data = "ogbg-molpcba"
 distill_set = "train"
-dis_steps = 2000
+dis_steps = 20000
 dis_lr = 1e-3
 dis_tau = 1
 dis_optim = "adam"
