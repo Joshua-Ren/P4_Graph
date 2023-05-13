@@ -12,8 +12,8 @@ bottle_type = "sem"
 backbone_type = "gcn"
 emb_dim = 300
 num_layer = 5
-L = 123
-V = 30
+L = 100
+V = 20
 head_type = "linear"
 
 # ==== NIL related ====== 
@@ -29,14 +29,14 @@ dis_tau = 1
 dis_optim = "adam"
 dis_loss = "ce_sample"
 	# ---- Interaction
-int_epoch = 200
+int_epoch = 50
 es_epochs = 5
 int_lr = 1e-3
 int_tau = 1
 int_optim = "adam"
 int_sched = true
 	# ---- Generate teacher
-copy_what = "last"
+copy_what = "best"
 #save_model = true
 
 run_name = "pcba_gcn_semnil_hard0p9"
