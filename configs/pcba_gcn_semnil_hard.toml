@@ -1,0 +1,42 @@
+# ====== Usuall default
+#seed = 10086
+proj_name = "P4_report"
+drop_ratio = 0.5
+batch_size = 256
+dataset_name = "ogbg-molpcba"
+dataset_hardsplit = "hard_0p98"
+bottle_type = "sem"
+
+# ==== Model Structure ======
+	# ----- Backbone and SEM
+backbone_type = "gcn"
+emb_dim = 300
+num_layer = 5
+L = 123
+V = 30
+head_type = "linear"
+
+# ==== NIL related ====== 
+generations = 5
+	# ---- Init student
+init_strategy = "nil"
+	# ---- Distillation
+distill_data = "ogbg-molpcba"
+distill_set = "train"
+dis_steps = 2000
+dis_lr = 1e-3
+dis_tau = 2
+dis_optim = "adam"
+dis_loss = "ce_sample"
+	# ---- Interaction
+int_epoch = 50
+es_epochs = 5
+int_lr = 1e-3
+int_tau = 0.85
+int_optim = "adamW"
+int_sched = false
+	# ---- Generate teacher
+copy_what = "last"
+#save_model = true
+
+run_name = "pcba_gcn_semnil_hard0p98"
