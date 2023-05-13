@@ -4,7 +4,7 @@ proj_name = "P4_report"
 drop_ratio = 0.5
 batch_size = 256
 dataset_name = "ogbg-molpcba"
-dataset_hardsplit = "hard_0p8"
+dataset_hardsplit = "hard_0p9"
 bottle_type = "sem"
 
 # ==== Model Structure ======
@@ -39,4 +39,4 @@ int_sched = true
 copy_what = "last"
 #save_model = true
 
-run_name = "pcba_gcn_semnil_hard0p8"
+run_name = "pcba_gcn_semnil_hard0p9"
