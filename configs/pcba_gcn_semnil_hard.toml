@@ -9,7 +9,7 @@ bottle_type = "sem"
 
 # ==== Model Structure ======
 	# ----- Backbone and SEM
-backbone_type = "gcn"
+backbone_type = "gin"
 emb_dim = 300
 num_layer = 5
 L = 100
@@ -39,4 +39,4 @@ int_sched = true
 copy_what = "best"
 #save_model = true
 
-run_name = "pcba_gcn_semmile_hard0p9_last"
+run_name = "pcba_gin_semmile_hard0p9_last"
