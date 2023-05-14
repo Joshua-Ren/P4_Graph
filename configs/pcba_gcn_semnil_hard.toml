@@ -25,7 +25,7 @@ distill_data = "ogbg-molpcba"
 distill_set = "train"
 dis_steps = 400
 dis_lr = 1e-3
-dis_tau = 0.2
+dis_tau = 4
 dis_optim = "adam"
 dis_loss = "ce_sample"
 	# ---- Interaction
