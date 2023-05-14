@@ -21,6 +21,4 @@ source /home/joshua52/projects/def-dsuth/joshua52/env_graph/bin/activate
 
 cd /home/joshua52/projects/def-dsuth/joshua52/P4_Graph
 
-wandb agent --count=5 joshuaren/P4_report/135gju6b
-
-
+wandb agent --count=5 joshuaren/P4_report/g5c442fg
