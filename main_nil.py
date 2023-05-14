@@ -193,7 +193,7 @@ def main(args):
             best_vroc, best_v_ep, best_testroc, vacc_list = 0, 0, 0, []
         
         if gen > 0:
-            for i in range(5):
+            for i in range(2):
                 train_task(args, student, task_loaders['train'], optimizer_int_bob)
 
         for epoch in range(args.int_epoch):
