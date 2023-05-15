@@ -4,11 +4,11 @@ proj_name = "P4_report"
 drop_ratio = 0.5
 batch_size = 256
 dataset_name = "ogbg-molpcba"
-dataset_hardsplit = "hard_0p9"
+dataset_hardsplit = "hard_0p5"
 bottle_type = "std"
 
 # ==== Model Structure ======
-backbone_type = "gin"
+backbone_type = "gcn"
 emb_dim = 300
 num_layer = 5
 generations = 1
@@ -21,4 +21,4 @@ int_optim = "adam"
 int_sched = true
 save_model = true
 
-run_name = "pcba_gin_baseline_hard0p9"
+run_name = "pcba_gcn_baseline_hard0p5"
