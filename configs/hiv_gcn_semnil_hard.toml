@@ -9,7 +9,7 @@ bottle_type = "sem"
 
 # ==== Model Structure ======
 	# ----- Backbone and SEM
-backbone_type = "gcn"
+backbone_type = "gin"
 emb_dim = 300
 num_layer = 5
 L = 45
@@ -39,4 +39,4 @@ int_sched = true
 copy_what = "best"
 #save_model = false
 
-run_name = "hiv_gcn_semnil_hard0p5"
+run_name = "hiv_gin_semnil_hard0p5"
