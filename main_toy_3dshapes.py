@@ -15,6 +15,7 @@ from enegine_toy_3dshapes import train_epoch, train_distill, evaluate
 from utils.general import update_args, wandb_init, get_init_net_toy, rnd_seed, AverageMeter, early_stop_meets
 from utils.nil_related import *
 from utils.toy_example import get_dataloaders
+import tqdm
 
 def get_args_parser():
     # Training settings
@@ -23,18 +24,18 @@ def get_args_parser():
     parser.add_argument('--config_file', type=str, default=None,
                         help='the name of the toml configuration file')
     parser.add_argument('--seed', default=0, type=int)
-    parser.add_argument('--WD_ID',default='joshuaren', type=str,
+    parser.add_argument('--WD_ID',default='lavoiems', type=str,
                         help='W&D ID, joshuaren or joshua_shawn')
     parser.add_argument('--device', type=int, default=0,
                         help='which gpu to use if any (default: 0)')
     # ======== Dataset and task related
-    parser.add_argument('--dataset_name', default='dsprites', type=str,
-                        help='3dshapes or dsprites or mpi3d')    
+    parser.add_argument('--dataset_name', default='celeba', type=str,
+                        help='3dshapes or dsprites or mpi3d or celeba')    
     parser.add_argument('--sup_ratio', default=0.5, type=float,
                         help='ratio of the training factors')
     parser.add_argument('--batch_size', default=128, type=int,
                         help='batch size of train and test set')
-    parser.add_argument('--num_class', default=1, type=int,
+    parser.add_argument('--num_class', default=40, type=int,
                         help='How many reg-tasks, 1~6')
     parser.add_argument('--data_per_g', default=1, type=int,
                         help='how many samples for each G')
@@ -79,7 +80,7 @@ def get_args_parser():
                         help='use the best or last epoch teacher in distillation')
     # ===== Wandb and saving results ====
     parser.add_argument('--run_name_seed',default='test',type=str)
-    parser.add_argument('--proj_name',default='P4_toy', type=str)    
+    parser.add_argument('--proj_name',default='P4_toy', type=str)
     return parser
 
 def main(args):
@@ -107,6 +108,7 @@ def main(args):
     elif args.dis_dataset=='test':
         dis_loader = test_loader
     
+    print('Start training generation')
     for gen in range(args.generations):
         # =========== Step0: new agent
         if args.init_strategy == 'nil':
@@ -128,12 +130,15 @@ def main(args):
                 scheduler_dis.step()
                 results['dis_loss'].append(dis_loss)
             old_teacher = copy.deepcopy(teacher)   
+
+        vloss = evaluate(args, student, test_loader)
         
         # ========= Interaction
         best_vloss = 10
             # --- Bob adaptation
         bob_optim = optim.SGD(student.Bob.parameters(), lr=args.dis_lr, momentum=0.9, weight_decay=5e-4,nesterov=True)
-        for i in range(args.bob_adapt_ep):
+        print('Training bob')
+        for i in tqdm.tqdm(range(args.bob_adapt_ep)):
             train_epoch(args, student, bob_optim, train_loader)
             # --- Interaction
         # if args.dataset_name=='dsprites':
@@ -142,7 +147,8 @@ def main(args):
         #     pass
         optimizer_inter = optim.SGD(student.parameters(), lr=args.dis_lr, momentum=0.9, weight_decay=5e-4,nesterov=True)
         scheduler_inter = optim.lr_scheduler.CosineAnnealingLR(optimizer_inter,T_max=args.int_epochs,eta_min=1e-5)        
-        for i in range(args.int_epochs):
+        print('training int epochs')
+        for i in tqdm.tqdm(range(args.int_epochs)):
             wandb.log({'idx_epoch':i})
             loss = train_epoch(args, student, optimizer_inter, train_loader)
             scheduler_inter.step()
@@ -150,6 +156,7 @@ def main(args):
                 vloss = evaluate(args, student, test_loader)
                 results['tloss'].append(loss)
                 results['vloss'].append(vloss)
+                print(results)
                 wandb.log({'train_loss':loss})
                 wandb.log({'test_loss':vloss})
                 if vloss < best_vloss:

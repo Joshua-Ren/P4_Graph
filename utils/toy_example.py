@@ -9,6 +9,8 @@ import h5py
 import numpy as np
 import torch.utils.data as Data 
 import torchvision.transforms as T
+import torchvision
+import torch
 import os
 
 PATH = '/home/joshua52/projects/def-dsuth/joshua52/P4_Graph/dataset/'
@@ -220,6 +222,19 @@ def generate_mpi3d_loaders(args):
 
     return train_loader, test_loader
 
+
+def generate_celeba_loader(args):
+    transform = T.Compose([T.Resize([32,32]), T.ToTensor(), T.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])])
+    train_dataset = torchvision.datasets.CelebA('/network/datasets/celeba.var/celeba_torchvision', split='train', transform=transform, download=True)
+    val_dataset = torchvision.datasets.CelebA('/network/datasets/celeba.var/celeba_torchvision', split='valid', transform=transform, download=True)
+
+    indices = torch.randperm(len(train_dataset))[:int(len(train_dataset) * 0.1)]
+    train_dataset = Data.Subset(train_dataset, indices)
+
+    train_loader = Data.DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, drop_last=True, num_workers=2)
+    val_loader = Data.DataLoader(val_dataset, batch_size=args.batch_size, shuffle=True, drop_last=True, num_workers=2)
+    return train_loader, val_loader
+
 def generate_mpi3d_fullloader_vae(args):
     pass
 
@@ -233,7 +248,10 @@ def get_dataloaders(args):
     elif args.dataset_name=='mpi3d':
         a, b = generate_mpi3d_loaders(args)
         return a, b
-    
+    elif args.dataset_name == 'celeba':
+        a, b = generate_celeba_loader(args)
+        return a, b
+
 def get_vae_loader(args):
     if args.dataset_name=='3dshapes':
         return generate_3dshape_fullloader_vae(args)

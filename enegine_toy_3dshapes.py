@@ -15,10 +15,11 @@ from tqdm import tqdm
 from utils.datasets import build_dataset
 from utils.general import wandb_init, get_init_net, rnd_seed
 from utils.nil_related import *
-from ogb.graphproppred import Evaluator
+# from ogb.graphproppred import Evaluator
 import torch.optim as optim
 from torch.nn.functional import cosine_similarity
 from utils.general import AverageMeter
+import tqdm
 
 cls_criterion = torch.nn.BCEWithLogitsLoss()
 Ce = torch.nn.CrossEntropyLoss()
@@ -27,13 +28,11 @@ Mse = torch.nn.MSELoss()
 def train_epoch(args, model, optimizer, data_loader):
     losses = AverageMeter()
     model.train()     
-    for i,(x,y,reg,idx) in enumerate(data_loader):
-        reg = reg[:,:args.num_class]
-        x, reg = x.float().cuda(), reg.float().cuda()
-        #reg = reg.unsqueeze(1)
+    for i,(x,y) in enumerate(tqdm.tqdm(data_loader)):
+        x, y = x.float().cuda(), y.float().cuda()
         msg_all, h_all = model(x)
         optimizer.zero_grad()
-        loss = nn.MSELoss(reduction='mean')(h_all,reg)
+        loss = nn.BCEWithLogitsLoss()(h_all,y)
         loss.backward()
         optimizer.step()
         losses.update(loss.data.item(), y.size(0))
@@ -44,7 +43,7 @@ def train_distill(args, student, teacher, optimizer, dataloader):
     losses = AverageMeter()
     teacher.eval()
     student.train()
-    for i,(x,_,reg,idx) in enumerate(dataloader):
+    for i,(x,_) in enumerate(dataloader):
         x = x.float().cuda()
         msg_stud, _ = student(x)
         msg_teach, _ = teacher(x)   
@@ -76,26 +75,12 @@ def evaluate(args, model, dataloader):
     losses = AverageMeter()
     model.eval()
     with torch.no_grad(): 
-        for i,(x,y,reg,idx) in enumerate(dataloader):
-            reg = reg[:,:args.num_class]
-            x, reg = x.float().cuda(), reg.float().cuda()
-            #reg = reg.unsqueeze(1)
+        for i,(x,y) in enumerate(dataloader):
+            x, y = x.float().cuda(), y.cuda()
             msg_all, h_all = model(x)
-            loss = nn.MSELoss(reduction='mean')(h_all,reg)
+            # loss = nn.MSELoss(reduction='mean')(h_all,y)
+            loss = ((h_all > 0.5).long() == y).sum()  / (h_all.shape[0]*h_all.shape[1])
             #wandb.log({'Test_loss':loss.data.item()})
-            losses.update(loss.data.item(), reg.size(0))
+            losses.update(loss.data.item(), y.size(0)*y.size(1))
         return losses.avg
-
-
-
-
-
-
-
-
-
-
-
-
-
 

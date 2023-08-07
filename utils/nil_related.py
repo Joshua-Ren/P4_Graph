@@ -1,8 +1,8 @@
 import torch
 import copy
 import numpy as np
-from torch_geometric.utils.dropout import dropout_adj
-from torch_geometric.transforms import Compose
+# from torch_geometric.utils.dropout import dropout_adj
+# from torch_geometric.transforms import Compose
 from scipy import stats
 from torch.distributions import Categorical
 import torch.nn.functional as F

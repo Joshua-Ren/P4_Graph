@@ -1,7 +1,7 @@
-from ogb.graphproppred import PygGraphPropPredDataset
-from torch_geometric.loader import DataLoader
-from ogb.lsc import PygPCQM4Mv2Dataset
-from ogb.utils import smiles2graph
+# from ogb.graphproppred import PygGraphPropPredDataset
+# from torch_geometric.loader import DataLoader
+# from ogb.lsc import PygPCQM4Mv2Dataset
+# from ogb.utils import smiles2graph
 import os
 import numpy as np
 
