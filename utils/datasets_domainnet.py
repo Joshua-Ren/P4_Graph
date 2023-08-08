@@ -16,7 +16,7 @@ import numpy as np
 import random
 
 #DATA_PATH = "E:\\P2_better_v0\\data\\domain_sysgen"
-DATA_PATH = ""
+DATA_PATH = "/home/joshua52/projects/def-dsuth/joshua52/P4_Graph/dataset/domain_sysgen/domain_sysgen"
 traindir = os.path.join(DATA_PATH, 'train')
 valdir = os.path.join(DATA_PATH, 'test')
 
