@@ -9,12 +9,12 @@ import toml
 from enegine_domainnet import train_epoch, train_distill, evaluate
 from utils.general import update_args, wandb_init, get_init_net_domnet, rnd_seed, AverageMeter, early_stop_meets
 from utils.nil_related import *
-from utils.datasets_domainnet import label_mapping, get_dataloaders
+from utils.datasets_domainnet import generate_celeba_loader
 
 def get_args_parser():
     # Training settings
     # ======= Usually default settings
-    parser = argparse.ArgumentParser(description='DomainNet')
+    parser = argparse.ArgumentParser(description='DomainNet_celeba')
     parser.add_argument('--config_file', type=str, default=None,
                         help='the name of the toml configuration file')
     parser.add_argument('--seed', default=0, type=int)
@@ -134,18 +134,17 @@ if __name__ == '__main__':
     """
     args.model_structure="sem"
     main(args)
-    
+    """
     args.model_structure="sem"
     model = get_init_net_domnet(args)
-    train_l, val_l = get_dataloaders(args)
+    train_l, val_l = generate_celeba_loader(args)
     from utils.datasets_domainnet import label_mapping
     for i,(x,y) in enumerate(train_l):
         x = x.cuda()
-        y1, y2 = label_mapping(y)
-        y1, y2 = y1.cuda(), y2.cuda()
+        y = y.cuda()
         break
-    msg, h_all = model(x)
-    """
+    #msg, h_all = model(x)
+    
     
     
     

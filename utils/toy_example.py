@@ -242,6 +242,9 @@ def get_vae_loader(args):
     elif args.dataset_name=='mpi3d':
         return generate_mpi3d_fullloader_vae(args)    
 
+
+
+
 '''
 def generate_small_3dshape_loaders(args):
     #_FACTORS_IN_ORDER = ['floor_hue', 'wall_hue', 'object_hue', 'scale', 'shape', 'orientation']

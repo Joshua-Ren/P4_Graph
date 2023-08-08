@@ -15,10 +15,41 @@ import pandas as pd
 import numpy as np
 import random
 
-#DATA_PATH = "E:\\P2_better_v0\\data\\domain_sysgen"
-DATA_PATH = "/home/joshua52/projects/def-dsuth/joshua52/P4_Graph/dataset/domain_sysgen/domain_sysgen"
+DATA_PATH = "E:\\DATASET"
+#DATA_PATH = "/home/joshua52/projects/def-dsuth/joshua52/P4_Graph/dataset/domain_sysgen/domain_sysgen"
 traindir = os.path.join(DATA_PATH, 'train')
 valdir = os.path.join(DATA_PATH, 'test')
+
+def get_std_transform(figsize=224):
+    """
+        For CIFAR10/100, STL, Domain Net or other small dataset, use this
+    """
+    train_T=T.Compose([
+                    T.Resize([figsize,figsize]),
+                    T.RandomCrop(figsize, padding=int(figsize/8)),#*0.2)),
+                    T.RandomHorizontalFlip(),
+                    T.ToTensor(),
+                    T.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
+                    ])
+    val_T =T.Compose([
+                    T.Resize([figsize,figsize]),
+                    T.ToTensor(),
+                    T.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
+                    ])
+    return train_T, val_T
+
+
+def generate_celeba_loader(args):
+    train_T, val_T = get_std_transform()
+    train_dataset = datasets.CelebA(DATA_PATH, split='train', transform=train_T, download=True)
+    val_dataset = datasets.CelebA(DATA_PATH, split='valid', transform=val_T, download=True)
+    #train_dataset = val_dataset
+    indices = torch.randperm(len(train_dataset))[:int(len(train_dataset) * 0.1)]
+    train_dataset = Data.Subset(train_dataset, indices)
+
+    train_loader = Data.DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, drop_last=True, num_workers=2)
+    val_loader = Data.DataLoader(val_dataset, batch_size=args.batch_size, shuffle=True, drop_last=True, num_workers=2)
+    return train_loader, val_loader
 
 """
 rand_index = list(np.arange(0,200,1))
@@ -37,6 +68,16 @@ for i in range(200):
     LABEL_MAPPINGS[i].append(G2)
 """
 
+
+
+def generate_domainnet_loader(args): 
+    train_T, val_T = get_std_transform(figsize=224)
+    train_dataset = datasets.ImageFolder(traindir, transform=train_T)
+    valid_dataset = datasets.ImageFolder(valdir, transform=val_T)
+    train_loader = DataLoader(train_dataset, shuffle=True, batch_size=args.batch_size, pin_memory=True, drop_last=True)
+    valid_loader = DataLoader(valid_dataset, shuffle=False, batch_size=args.batch_size, pin_memory=True, drop_last=True)
+    return train_loader, valid_loader
+
 def label_mapping(y):
     bsize = y.shape[0]
     y1 = torch.zeros_like(y)
@@ -47,31 +88,6 @@ def label_mapping(y):
         y2[i] = LABEL_MAPPINGS[idx][1]
     return y1, y2
 
-def get_dataloaders(args):
-    def get_std_transform(figsize=224):
-        """
-            For CIFAR10/100, STL, Domain Net or other small dataset, use this
-        """
-        train_T=T.Compose([
-                        T.Resize([figsize,figsize]),
-                        T.RandomCrop(figsize, padding=int(figsize/8)),#*0.2)),
-                        T.RandomHorizontalFlip(),
-                        T.ToTensor(),
-                        T.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
-                        ])
-        val_T =T.Compose([
-                        T.Resize([figsize,figsize]),
-                        T.ToTensor(),
-                        T.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
-                        ])
-        return train_T, val_T
-    
-    train_T, val_T = get_std_transform(figsize=224)
-    train_dataset = datasets.ImageFolder(traindir, transform=train_T)
-    valid_dataset = datasets.ImageFolder(valdir, transform=val_T)
-    train_loader = DataLoader(train_dataset, shuffle=True, batch_size=args.batch_size, pin_memory=True, drop_last=True)
-    valid_loader = DataLoader(valid_dataset, shuffle=False, batch_size=args.batch_size, pin_memory=True, drop_last=True)
-    return train_loader, valid_loader
 
 LABEL_MAPPINGS = {0: [185, 0],
  1: [9, 0],

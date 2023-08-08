@@ -10,10 +10,9 @@ import torchvision.models as models
 import torch.nn.functional as F
 
 class ResNet_SEM_ML(nn.Module):
-    def __init__(self, L=4, V=10, num_classes=203, tau=1., sem_flag=True):
+    def __init__(self, L=4, V=10, num_classes=40, tau=1., sem_flag=True):
         super(ResNet_SEM_ML, self).__init__()
         # ------ SEM Part
-        self.L = L
         self.V = V
         self.tau = tau
         self.sem_flag = sem_flag
@@ -49,7 +48,7 @@ class ResNet_SEM_ML(nn.Module):
         return msg, out
         
 if __name__ == '__main__':
-    model = ResNet_SEM_ML(L=10, V=40, tau=1., num_classes=203, sem_flag=True)
+    model = ResNet_SEM_ML(L=10, V=40, tau=1., num_classes=40, sem_flag=True)
 
 
 
