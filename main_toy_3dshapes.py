@@ -175,7 +175,7 @@ if __name__ == '__main__':
     
     # ==== Long experiments ====
     ALPHAS = [0.8, 0.5, 0.2, 0.1, 0.02]# [0.002, 0.02, 0.1, 0.2, 0.5, 0.8]
-    SEEDS = [1023, 10086, 42, 1314, 1988]
+    SEEDS = [1024, 10086, 42, 1314, 1988, 14843]
     for seed in SEEDS:
         for alpha in ALPHAS:
             args.seed = seed
