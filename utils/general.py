@@ -92,9 +92,9 @@ def get_init_net_toy(args):
     
 def get_init_net_domnet(args):
     if args.model_structure == 'standard':
-        model = ResNet_SEM_ML(L=args.L, V=args.V, tau=1., num_classes=203, sem_flag=False).to(args.device)
+        model = ResNet_SEM_ML(L=args.L, V=args.V, tau=1., num_classes=args.num_class, sem_flag=False).to(args.device)
     elif args.model_structure == 'sem':
-        model = ResNet_SEM_ML(L=args.L, V=args.V, tau=1., num_classes=203, sem_flag=True).to(args.device)
+        model = ResNet_SEM_ML(L=args.L, V=args.V, tau=1., num_classes=args.num_class, sem_flag=True).to(args.device)
     return model
 
 # ============== General functions =======================

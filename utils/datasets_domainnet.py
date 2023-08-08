@@ -6,7 +6,7 @@ y: 0-87, sketch
 """
 
 import torch
-import torch.utils.data as Data 
+import torch.utils.data as Data
 from torch.utils.data import DataLoader
 from torchvision import datasets
 import torchvision.transforms as T
@@ -16,7 +16,7 @@ import numpy as np
 import random
 
 DATA_PATH = "E:\\DATASET"
-#DATA_PATH = "/home/joshua52/projects/def-dsuth/joshua52/P4_Graph/dataset/domain_sysgen/domain_sysgen"
+DATA_PATH = "/home/joshua52/scratch/dataset"
 traindir = os.path.join(DATA_PATH, 'train')
 valdir = os.path.join(DATA_PATH, 'test')
 
@@ -41,8 +41,8 @@ def get_std_transform(figsize=224):
 
 def generate_celeba_loader(args):
     train_T, val_T = get_std_transform()
-    train_dataset = datasets.CelebA(DATA_PATH, split='train', transform=train_T, download=True)
-    val_dataset = datasets.CelebA(DATA_PATH, split='valid', transform=val_T, download=True)
+    train_dataset = datasets.CelebA(DATA_PATH, split='train', transform=train_T, download=False)
+    val_dataset = datasets.CelebA(DATA_PATH, split='valid', transform=val_T, download=False)
     #train_dataset = val_dataset
     indices = torch.randperm(len(train_dataset))[:int(len(train_dataset) * 0.1)]
     train_dataset = Data.Subset(train_dataset, indices)

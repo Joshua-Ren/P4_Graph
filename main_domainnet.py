@@ -25,7 +25,8 @@ def get_args_parser():
     # ======== Dataset and task related
     parser.add_argument('--batch_size', default=33, type=int,
                         help='batch size of train and test set')
-    
+    parser.add_argument('--num_class', default=40, type=int,
+                        help='40 for celeba, 203 for domainnet')    
     # ======== Model structure
     parser.add_argument('--model_structure', type=str, default='sem',
                         help='Standard or sem')
@@ -37,18 +38,18 @@ def get_args_parser():
     # ======== Learning related
     parser.add_argument('--init_strategy', type=str, default='mile',
                         help='How to generate new student, nil or mile')
-    parser.add_argument('--generations', default=5, type=int,
+    parser.add_argument('--generations', default=2, type=int,
                         help='how many generations we train')
 
         # ---- Interaction
     parser.add_argument('--int_lr', default=1e-3, type=float,
                         help='learning rate used in interaction')  
-    parser.add_argument('--int_epochs', default=5, type=int,
+    parser.add_argument('--int_epochs', default=2, type=int,
                         help='how many epochs we interact')
         # ---- Distillation
     parser.add_argument('--dis_lr', default=1e-3, type=float,
                         help='learning rate used in distillation')      
-    parser.add_argument('--dis_epochs', default=5, type=int,
+    parser.add_argument('--dis_epochs', default=2, type=int,
                         help='how many epochs we distill')
     parser.add_argument('--dis_loss', default='cesample', type=str,
                         help='the distillation loss: cesample, argmax, mse')
@@ -80,7 +81,7 @@ def main(args):
     if not os.path.exists(args.save_path):
         os.makedirs(args.save_path)
     # ========== Prepare the loader and optimizer
-    train_loader, test_loader = get_dataloaders(args)
+    train_loader, test_loader = generate_celeba_loader(args)
     
     for gen in range(args.generations):
         # =========== Step0: new agent
@@ -110,14 +111,13 @@ def main(args):
         for i in range(args.int_epochs):
             loss = train_epoch(args, student, optimizer_inter, train_loader)
             scheduler_inter.step()    
-            vacc1, vacc2 = evaluate(args, student, test_loader)
-            wandb.log({'Valid_acc1':vacc1})
-            wandb.log({'Valid_acc2':vacc2})
-            if vacc1 > best_vacc:
-                best_vacc = vacc1
+            vacc = evaluate(args, student, test_loader)
+            wandb.log({'Valid_acc':vacc})
+            if vacc > best_vacc:
+                best_vacc = vacc
                 if args.copy_what=='best':
                     teacher = copy.deepcopy(student)
-        wandb.log({'Best_vacc1':best_vacc})
+        wandb.log({'Best_vacc':best_vacc})
         if args.copy_what=='last':
             teacher = copy.deepcopy(student)
     wandb.finish()
@@ -131,8 +131,8 @@ if __name__ == '__main__':
         args = update_args(args, config)
         
 
-    """
-    args.model_structure="sem"
+    
+    #args.model_structure="sem"
     main(args)
     """
     args.model_structure="sem"
@@ -141,10 +141,12 @@ if __name__ == '__main__':
     from utils.datasets_domainnet import label_mapping
     for i,(x,y) in enumerate(train_l):
         x = x.cuda()
-        y = y.cuda()
+        y = y.float().cuda()
         break
-    #msg, h_all = model(x)
-    
+    msg, h_all = model(x)
+    Bce = torch.nn.BCELoss()
+    Sig = torch.nn.Sigmoid()
+    """
     
     
     

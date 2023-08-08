@@ -13,6 +13,7 @@ class ResNet_SEM_ML(nn.Module):
     def __init__(self, L=4, V=10, num_classes=40, tau=1., sem_flag=True):
         super(ResNet_SEM_ML, self).__init__()
         # ------ SEM Part
+        self.L = L
         self.V = V
         self.tau = tau
         self.sem_flag = sem_flag
