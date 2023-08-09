@@ -7,8 +7,8 @@ batch_size = 256
 
 # ==== Model Structure ======
 model_structure = "sem"
-L = 20
-V = 100
+L = 40
+V = 20
 # ======== Learning related
 generations = 10
 init_strategy = "mile"
@@ -20,4 +20,4 @@ int_epochs = 50
 dis_lr = 1e-4
 dis_epochs = 5
 
-run_name = "mile_celeba"
+run_name = "mile_celeba_L40V20"
