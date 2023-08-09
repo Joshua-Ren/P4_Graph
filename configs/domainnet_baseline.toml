@@ -3,7 +3,7 @@
 proj_name = "P4_DomNet"
 
 # ======== Dataset and task related
-batch_size = 256
+batch_size = 64
 
 # ==== Model Structure ======
 model_structure = "standard"
