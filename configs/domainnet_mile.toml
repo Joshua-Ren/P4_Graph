@@ -3,21 +3,21 @@
 proj_name = "P4_DomNet"
 
 # ======== Dataset and task related
-batch_size = 256
+batch_size = 128
 
 # ==== Model Structure ======
 model_structure = "sem"
 L = 60
 V = 5
 # ======== Learning related
-generations = 100
+generations = 20
 init_strategy = "mile"
 
 	# ---- Interaction
 int_lr = 1e-3
-int_epochs = 2
+int_epochs = 50
 	# ---- Distillation
 dis_lr = 1e-4
-dis_epochs = 1
+dis_epochs = 5
 
-run_name = "Res18_mile_celeba_L60V5_dis1int1"
+run_name = "Res18_mile_celeba_L60V5"
