@@ -48,7 +48,7 @@ def generate_celeba_loader(args):
     train_dataset = Data.Subset(train_dataset, indices)
 
     train_loader = Data.DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, drop_last=True, num_workers=2)
-    val_loader = Data.DataLoader(val_dataset, batch_size=args.batch_size, shuffle=True, drop_last=True, num_workers=2)
+    val_loader = Data.DataLoader(val_dataset, batch_size=args.batch_size, shuffle=False, drop_last=True, num_workers=2)
     return train_loader, val_loader
 
 """
@@ -67,8 +67,6 @@ for i in range(200):
     LABEL_MAPPINGS[i].append(G1)
     LABEL_MAPPINGS[i].append(G2)
 """
-
-
 
 def generate_domainnet_loader(args): 
     train_T, val_T = get_std_transform(figsize=224)
