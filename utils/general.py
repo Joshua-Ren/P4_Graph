@@ -7,8 +7,8 @@ import random
 import numpy as np
 import torch.backends.cudnn as cudnn
 sys.path.append("..")
-from models.gnn import *
-from models.resnet import ResNet18_ML, ResNet18_SEM, MLP_SEM, CNN_SEM
+#from models.gnn import *
+#from models.resnet import ResNet18_ML, ResNet18_SEM, MLP_SEM, CNN_SEM
 from models.ptresnet import ResNet_SEM_ML
 
 def update_args(args, config):

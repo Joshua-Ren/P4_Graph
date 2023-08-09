@@ -12,16 +12,15 @@ import torch.nn.functional as F
 import torch.nn as nn
 import torchvision
 from tqdm import tqdm
-from utils.datasets import build_dataset
 from utils.general import wandb_init, get_init_net, rnd_seed
-from utils.nil_related import *
-from ogb.graphproppred import Evaluator
+#from utils.nil_related import *
+#from ogb.graphproppred import Evaluator
 import torch.optim as optim
 from torch.nn.functional import cosine_similarity
 from utils.general import AverageMeter
-from utils.datasets_domainnet import label_mapping
+#from utils.datasets_domainnet import label_mapping
 
-cls_criterion = torch.nn.BCEWithLogitsLoss()
+Bce_log = torch.nn.BCEWithLogitsLoss()
 Ce = torch.nn.CrossEntropyLoss()
 Mse = torch.nn.MSELoss()
 Bce = torch.nn.BCELoss()
