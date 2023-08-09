@@ -3,7 +3,7 @@
 proj_name = "P4_DomNet"
 
 # ======== Dataset and task related
-batch_size = 64
+batch_size = 128
 
 # ==== Model Structure ======
 model_structure = "sem"
@@ -15,9 +15,9 @@ init_strategy = "mile"
 
 	# ---- Interaction
 int_lr = 1e-3
-int_epochs = 50
+int_epochs = 1
 	# ---- Distillation
 dis_lr = 1e-4
-dis_epochs = 5
+dis_epochs = 1
 
 run_name = "mile_celeba_L60V5"
