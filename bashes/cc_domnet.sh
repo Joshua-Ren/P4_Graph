@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --account=def-dsuth
-#SBATCH --gres=gpu:1              # Number of GPU(s) per node
+#SBATCH --gres=gpu:v100l:1              # Number of GPU(s) per node
 #SBATCH --cpus-per-task=8         # CPU cores/threads
 #SBATCH --mem=64000M               # memory per node
 #SBATCH --time=1-00:00            # time (DD-HH:MM)
