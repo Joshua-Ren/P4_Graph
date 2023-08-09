@@ -109,6 +109,7 @@ def main(args):
         #optimizer_inter = optim.Adam(student.parameters(), lr=args.int_lr, weight_decay=5e-4)
         scheduler_inter = optim.lr_scheduler.CosineAnnealingLR(optimizer_inter,T_max=args.int_epochs,eta_min=1e-5)        
         for i in range(args.int_epochs):
+            wandb.log({'Train_Epoch':i})
             loss = train_epoch(args, student, optimizer_inter, train_loader)
             scheduler_inter.step()    
             vacc = evaluate(args, student, test_loader)
@@ -130,8 +131,6 @@ if __name__ == '__main__':
         config = toml.load(os.path.join("configs",args.config_file+".toml"))
         args = update_args(args, config)
         
-
-    
     #args.model_structure="sem"
     main(args)
     """

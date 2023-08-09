@@ -6,7 +6,7 @@ proj_name = "P4_DomNet"
 batch_size = 256
 
 # ==== Model Structure ======
-model_structure = "standard"
+model_structure = "sem"
 L = 20
 V = 100
 # ======== Learning related
@@ -14,7 +14,7 @@ generations = 1
 
 	# ---- Interaction
 int_lr = 1e-3
-int_epochs = 2000
+int_epochs = 500
 	# ---- Distillation
 
-run_name = "baseline_celeba"
+run_name = "sem_celeba"
