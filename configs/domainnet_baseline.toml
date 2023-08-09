@@ -14,7 +14,7 @@ generations = 1
 
 	# ---- Interaction
 int_lr = 1e-3
-int_epochs = 500
+int_epochs = 200
 	# ---- Distillation
 
-run_name = "baseline_celeba"
+run_name = "Res18_baseline_celeba"
