@@ -3,7 +3,7 @@
 proj_name = "P4_DomNet"
 
 # ======== Dataset and task related
-batch_size = 128
+batch_size = 256
 
 # ==== Model Structure ======
 model_structure = "sem"
@@ -20,4 +20,4 @@ int_epochs = 1
 dis_lr = 1e-4
 dis_epochs = 1
 
-run_name = "mile_celeba_L60V5"
+run_name = "Res18_mile_celeba_L60V5"

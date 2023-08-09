@@ -22,7 +22,7 @@ class ResNet_SEM_ML(nn.Module):
                     nn.Linear(self.L*self.V, 256),
                     nn.ReLU(),
                     nn.Linear(256, num_classes))
-        self.model = models.resnet34(pretrained=True)
+        self.model = models.resnet18(pretrained=True)
         self.model.fc = self.Wup
         
     def SEM(self, in_vector):
