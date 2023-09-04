@@ -24,7 +24,7 @@ class ResNet_SEM_ML(nn.Module):
                     nn.Linear(256, num_classes)
                     )
         if pretrain_flag:
-            self.model = models.resnet18(weights="IMAGENET_V1")
+            self.model = models.resnet18(pretrained=True)
         else:
             self.model = models.resnet18()
         self.model.fc = self.Wup
