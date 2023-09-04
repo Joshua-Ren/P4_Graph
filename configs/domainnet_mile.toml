@@ -1,23 +1,25 @@
 # ====== Usuall default
 #seed = 10086
-proj_name = "P4_DomNet"
+proj_name = "P4_DomNet_new"
 
 # ======== Dataset and task related
 batch_size = 128
 
 # ==== Model Structure ======
+model_pretrain = "no"
 model_structure = "sem"
 L = 60
 V = 5
 # ======== Learning related
-generations = 15
+generations = 10
 init_strategy = "mile"
 
 	# ---- Interaction
 int_lr = 1e-3
-int_epochs = 100
+int_epochs = 40
 	# ---- Distillation
+dis_loss = "cesample"
 dis_lr = 1e-4
 dis_epochs = 5
 
-run_name = "Res18_mile_celeba_L60V5_dis5int100"
+run_name = "mile_L60V5_nopt"

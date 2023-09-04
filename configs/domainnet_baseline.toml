@@ -1,14 +1,15 @@
 # ====== Usuall default
 #seed = 10086
-proj_name = "P4_DomNet"
+proj_name = "P4_DomNet_new"
 
 # ======== Dataset and task related
-batch_size = 64
+batch_size = 128
 
 # ==== Model Structure ======
+model_pretrain = "no"
 model_structure = "standard"
-L = 20
-V = 100
+L = 60
+V = 5
 # ======== Learning related
 generations = 1
 
@@ -17,4 +18,4 @@ int_lr = 1e-3
 int_epochs = 200
 	# ---- Distillation
 
-run_name = "Res18_baseline_celeba"
+run_name = "baseline_nopt"

@@ -6,10 +6,10 @@ import copy
 import random
 import torch.optim as optim
 import toml
-from enegine_domainnet import train_epoch, train_distill, evaluate
+from enegine_domainnet_celeba import train_epoch, train_distill, evaluate
 from utils.general import update_args, wandb_init, get_init_net_domnet, rnd_seed, AverageMeter, early_stop_meets
 from utils.nil_related import *
-from utils.datasets_domainnet import generate_celeba_loader
+from utils.datasets_domainnet_celeba import generate_celeba_loader
 
 def get_args_parser():
     # Training settings
@@ -28,6 +28,8 @@ def get_args_parser():
     parser.add_argument('--num_class', default=40, type=int,
                         help='40 for celeba, 203 for domainnet')    
     # ======== Model structure
+    parser.add_argument('--model_pretrain', type=str, default="no",
+                        help='no, official or ...')
     parser.add_argument('--model_structure', type=str, default='sem',
                         help='Standard or sem')
     parser.add_argument('--L', type=int, default=20,
@@ -60,7 +62,7 @@ def get_args_parser():
                         help='use the best or last epoch teacher in distillation')
     # ===== Wandb and saving results ====
     parser.add_argument('--run_name',default='mile',type=str)
-    parser.add_argument('--proj_name',default='P4_DomNet', type=str)    
+    parser.add_argument('--proj_name',default='P4_DomNet_new', type=str)    
     return parser
 
 def main(args):
@@ -77,7 +79,7 @@ def main(args):
     rnd_seed(args.seed)
     # ========== Prepare save folder and wandb ==========
     run_name = wandb_init(proj_name=args.proj_name, run_name=args.run_name, config_args=args)
-    args.save_path = os.path.join('results','DomainNet',run_name)
+    args.save_path = os.path.join('results','celeba',run_name)
     if not os.path.exists(args.save_path):
         os.makedirs(args.save_path)
     # ========== Prepare the loader and optimizer
@@ -105,8 +107,8 @@ def main(args):
         
         # ========= Interaction
         best_vacc = 0
-        #optimizer_inter = optim.SGD(student.parameters(), lr=args.int_lr, momentum=0.9, weight_decay=5e-4,nesterov=True)
-        optimizer_inter = optim.Adam(student.parameters(), lr=args.int_lr, weight_decay=5e-4)
+        optimizer_inter = optim.SGD(student.parameters(), lr=args.int_lr, momentum=0.9, weight_decay=5e-4,nesterov=True)
+        #optimizer_inter = optim.Adam(student.parameters(), lr=args.int_lr, weight_decay=5e-4)
         scheduler_inter = optim.lr_scheduler.CosineAnnealingLR(optimizer_inter,T_max=args.int_epochs,eta_min=1e-5)        
         for i in range(args.int_epochs):
             wandb.log({'Train_Epoch':i})

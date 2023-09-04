@@ -1,11 +1,12 @@
 # ====== Usuall default
 #seed = 10086
-proj_name = "P4_DomNet"
+proj_name = "P4_DomNet_new"
 
 # ======== Dataset and task related
 batch_size = 64
 
 # ==== Model Structure ======
+model_pretrain = "no"
 model_structure = "sem"
 L = 20
 V = 100

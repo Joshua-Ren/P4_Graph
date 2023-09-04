@@ -55,10 +55,10 @@ def train_distill(args, student, teacher, optimizer, dataloader):
         teach_logits, _ = teacher(x)   
         stud_logits, _ = student(x)
         optimizer.zero_grad()
-        if args.dis_loss=='cesample':
+        if args.dis_loss=='argmax':
             teach_label = teach_logits.argmax(-1)
             loss = Ce(stud_logits.reshape(-1,args.V),teach_label.reshape(-1,))
-        elif args.dis_loss=='argmax':
+        elif args.dis_loss=='cesample':
             sampler = torch.distributions.categorical.Categorical(nn.Softmax(-1)(teach_logits))
             teach_label = sampler.sample().long()
             loss = Ce(stud_logits.reshape(-1,args.V),teach_label.reshape(-1,))

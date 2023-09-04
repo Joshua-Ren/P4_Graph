@@ -16,25 +16,25 @@ import numpy as np
 import random
 
 DATA_PATH = "E:\\DATASET"
-DATA_PATH = "/home/joshua52/scratch/dataset"
+#DATA_PATH = "/home/joshua52/scratch/dataset"
 traindir = os.path.join(DATA_PATH, 'train')
 valdir = os.path.join(DATA_PATH, 'test')
 
-def get_std_transform(figsize=224):
+def get_std_transform(figsize=256, cropsize=224):
     """
         For CIFAR10/100, STL, Domain Net or other small dataset, use this
     """
     train_T=T.Compose([
                     T.Resize([figsize,figsize]),
-                    T.RandomCrop(figsize, padding=int(figsize/8)),#*0.2)),
+                    T.RandomCrop(cropsize),
                     T.RandomHorizontalFlip(),
                     T.ToTensor(),
-                    T.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
+                    T.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
                     ])
     val_T =T.Compose([
-                    T.Resize([figsize,figsize]),
+                    T.Resize([cropsize,cropsize]),
                     T.ToTensor(),
-                    T.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
+                    T.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
                     ])
     return train_T, val_T
 
@@ -44,7 +44,8 @@ def generate_celeba_loader(args):
     train_dataset = datasets.CelebA(DATA_PATH, split='train', transform=train_T, download=False)
     val_dataset = datasets.CelebA(DATA_PATH, split='valid', transform=val_T, download=False)
     #train_dataset = val_dataset
-    indices = torch.randperm(len(train_dataset))[:int(len(train_dataset) * 0.1)]
+    #indices = torch.randperm(len(train_dataset))[:int(len(train_dataset) * 0.5)]
+    indices = torch.tensor(np.arange(0,len(train_dataset), 4))   # Downsample the dataset
     train_dataset = Data.Subset(train_dataset, indices)
 
     train_loader = Data.DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, drop_last=True, num_workers=2)

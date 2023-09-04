@@ -10,7 +10,7 @@ import torchvision.models as models
 import torch.nn.functional as F
 
 class ResNet_SEM_ML(nn.Module):
-    def __init__(self, L=4, V=10, num_classes=40, tau=1., sem_flag=True):
+    def __init__(self, L=4, V=10, num_classes=40, tau=1., sem_flag=True, pretrain_flag=True):
         super(ResNet_SEM_ML, self).__init__()
         # ------ SEM Part
         self.L = L
@@ -21,8 +21,9 @@ class ResNet_SEM_ML(nn.Module):
         self.Bob = nn.Sequential(
                     nn.Linear(self.L*self.V, 256),
                     nn.ReLU(),
-                    nn.Linear(256, num_classes))
-        self.model = models.resnet18(pretrained=True)
+                    nn.Linear(256, num_classes)
+                    )
+        self.model = models.resnet18(pretrained=pretrain_flag)
         self.model.fc = self.Wup
         
     def SEM(self, in_vector):
@@ -32,7 +33,7 @@ class ResNet_SEM_ML(nn.Module):
             e.g., embd_size=300, L=30, V=10, as we have 30 words, each with 10 possible choices
         '''
         b_size = in_vector.shape[0]
-        #w_invector = self.Wup(in_vector)    # N*512 --> N*40
+        #w_invector = self.Wup(in_vector)    # N*512 --> N*40, directly change model.fc in __init__
         w_invector = in_vector    
         w_invector = w_invector/self.tau
         msg = w_invector.reshape(b_size, self.L, self.V)
