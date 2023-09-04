@@ -6,7 +6,7 @@ proj_name = "P4_DomNet_new"
 batch_size = 128
 
 # ==== Model Structure ======
-model_pretrain = "no"
+model_pretrain = "yes"
 model_structure = "standard"
 L = 60
 V = 5
