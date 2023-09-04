@@ -16,7 +16,7 @@ import numpy as np
 import random
 
 DATA_PATH = "E:\\DATASET"
-#DATA_PATH = "/home/joshua52/scratch/dataset"
+DATA_PATH = "/home/joshua52/scratch/dataset"
 traindir = os.path.join(DATA_PATH, 'train')
 valdir = os.path.join(DATA_PATH, 'test')
 
