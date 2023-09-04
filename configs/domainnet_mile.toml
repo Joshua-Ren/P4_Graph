@@ -22,4 +22,4 @@ dis_loss = "cesample"
 dis_lr = 1e-4
 dis_epochs = 5
 
-run_name = "mile_L60V5_nopt"
+run_name = "mile_L60V5_wpt"
