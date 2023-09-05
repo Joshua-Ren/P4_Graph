@@ -19,7 +19,7 @@ int_lr = 1e-3
 int_epochs = 40
 	# ---- Distillation
 dis_loss = "cesample"
-dis_lr = 1e-4
-dis_epochs = 5
+dis_lr = 3e-4
+dis_epochs = 20
 
 run_name = "mile_L60V5_wpt_adam"
