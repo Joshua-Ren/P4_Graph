@@ -19,9 +19,10 @@ class ResNet_SEM_ML(nn.Module):
         self.sem_flag = sem_flag
         self.Wup = nn.Linear(512, self.L*self.V, bias=False)    #Split the linear by Wup and Whead        
         self.Bob = nn.Sequential(
-                    nn.Linear(self.L*self.V, 256),
-                    nn.ReLU(),
-                    nn.Linear(256, num_classes)
+                    nn.Linear(self.L*self.V, num_classes)
+                    #nn.Linear(self.L*self.V, 256),
+                    #nn.ReLU(),
+                    #nn.Linear(256, num_classes)
                     )
         if pretrain_flag:
             self.model = models.resnet18(pretrained=True)
