@@ -31,7 +31,7 @@ def train_epoch(args, model, optimizer, data_loader):
     model.train()     
     acc = AverageMeter()
     for i,(x,y) in enumerate(data_loader):
-        x, y = x.float().cuda(), y.float().cuda()
+        x, y = x.float().cuda(), y[:args.num_class].float().cuda()
         msg_all, h_all = model(x)
         optimizer.zero_grad()
         loss = Bce(Sig(h_all),y)
@@ -78,7 +78,7 @@ def evaluate(args, model, dataloader):
     model.eval()
     with torch.no_grad():
         for i,(x,y) in enumerate(dataloader):
-            x, y = x.float().cuda(), y.float().cuda()
+            x, y = x.float().cuda(), y[:args.num_class].float().cuda()
             msg_all, h_all = model(x)
             pred = (Sig(h_all)>0.5)==(y>0.5)
             tmp_acc = pred.sum()/(y.shape[0]*y.shape[1])
