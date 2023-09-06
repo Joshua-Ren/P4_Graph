@@ -23,8 +23,8 @@ source /home/joshua52/projects/def-dsuth/joshua52/env_graph/bin/activate
 cd /home/joshua52/projects/def-dsuth/joshua52/P4_Graph
 
 
-#srun python /home/joshua52/projects/def-dsuth/joshua52/P4_Graph/main_domainnet_celeba.py \
-#--config_file domainnet_baseline
+srun python /home/joshua52/projects/def-dsuth/joshua52/P4_Graph/main_domainnet_celeba.py \
+--config_file domainnet_baseline
 
 srun python /home/joshua52/projects/def-dsuth/joshua52/P4_Graph/main_domainnet_celeba.py \
 --config_file domainnet_mile

@@ -16,10 +16,10 @@ init_strategy = "mile"
 
 	# ---- Interaction
 int_lr = 1e-3
-int_epochs = 40
+int_epochs = 50
 	# ---- Distillation
 dis_loss = "cesample"
 dis_lr = 3e-4
-dis_epochs = 5
+dis_epochs = 20
 
 run_name = "mile_L50V2_wpt_10cls"
