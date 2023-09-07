@@ -12,7 +12,7 @@ L = 50
 V = 4
 # ======== Learning related
 generations = 10
-init_strategy = "mile"
+init_strategy = "nil"
 
 	# ---- Interaction
 int_lr = 1e-3
@@ -22,4 +22,4 @@ dis_loss = "cesample"
 dis_lr = 3e-4
 dis_epochs = 20
 
-run_name = "mile_L50V4_wpt_10cls"
+run_name = "nil_L50V4_wpt_10cls"
