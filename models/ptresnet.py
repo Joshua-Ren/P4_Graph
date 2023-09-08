@@ -27,7 +27,7 @@ class ResNet_SEM_ML(nn.Module):
         if pretrain_flag:
             self.model = models.resnet18(pretrained=True)
         else:
-            self.model = models.resnet18(pretrained=False)
+            self.model = models.resnet18()
         self.model.fc = self.Wup
         
     def SEM(self, in_vector):
