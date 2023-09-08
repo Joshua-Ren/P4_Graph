@@ -11,15 +11,15 @@ model_structure = "sem"
 L = 50
 V = 4
 # ======== Learning related
-generations = 20
+generations = 10
 init_strategy = "mile"
 
 	# ---- Interaction
-int_lr = 1e-3
-int_epochs = 20
+int_lr = 3e-3
+int_epochs = 50
 	# ---- Distillation
 dis_loss = "cesample"
 dis_lr = 3e-4
 dis_epochs = 2
 
-run_name = "mile_int20dis2_L50V4_wpt_10cls_sgd"
+run_name = "mile_int20dis2_L50V4_wpt_10cls_adam"
