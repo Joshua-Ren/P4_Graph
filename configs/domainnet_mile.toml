@@ -6,7 +6,7 @@ proj_name = "P4_DomNet_new"
 batch_size = 128
 num_class = 10
 # ==== Model Structure ======
-model_pretrain = "yes"
+model_pretrain = "no"
 model_structure = "sem"
 L = 50
 V = 4
@@ -22,4 +22,4 @@ dis_loss = "cesample"
 dis_lr = 3e-4
 dis_epochs = 2
 
-run_name = "mile_int70dis2_L50V4_wpt_10cls_adam"
+run_name = "mile_int70dis2_L50V4_nopt_10cls_adam"
