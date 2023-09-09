@@ -107,8 +107,8 @@ def main(args):
         
         # ========= Interaction
         best_vacc = 0
-        #optimizer_inter = optim.SGD(student.parameters(), lr=args.int_lr, momentum=0.9, weight_decay=5e-4,nesterov=True)
-        optimizer_inter = optim.Adam(student.parameters(), lr=args.int_lr, weight_decay=5e-4)
+        optimizer_inter = optim.SGD(student.parameters(), lr=args.int_lr, momentum=0.9, weight_decay=5e-4,nesterov=True)
+        #optimizer_inter = optim.Adam(student.parameters(), lr=args.int_lr, weight_decay=5e-4)
         scheduler_inter = optim.lr_scheduler.CosineAnnealingLR(optimizer_inter,T_max=args.int_epochs,eta_min=1e-5)        
         for i in range(args.int_epochs):
             wandb.log({'Train_Epoch':i})
