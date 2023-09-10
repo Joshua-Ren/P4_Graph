@@ -6,7 +6,7 @@ proj_name = "P4_DomNet_new"
 batch_size = 128
 num_class = 10
 # ==== Model Structure ======
-model_pretrain = "yes"
+model_pretrain = "no"
 model_structure = "standard"
 L = 50
 V = 4
@@ -15,7 +15,7 @@ generations = 1
 
 	# ---- Interaction
 int_lr = 3e-3
-int_epochs = 300
+int_epochs = 200
 	# ---- Distillation
 
-run_name = "baseline_wpt_10cls_sgd"
+run_name = "baseline_nopt_10cls_sgd"
