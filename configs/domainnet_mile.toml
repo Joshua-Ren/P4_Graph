@@ -18,8 +18,8 @@ init_strategy = "mile"
 int_lr = 3e-3
 int_epochs = 50
 	# ---- Distillation
-dis_loss = "argmax"
+dis_loss = "mse"
 dis_lr = 3e-3
 dis_epochs = 10
 
-run_name = "mile_int50dis10_L50V4_wpt_10cls_sgd_argmax"
+run_name = "mile_int50dis10_L50V4_wpt_10cls_sgd_mse"
