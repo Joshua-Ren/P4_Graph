@@ -52,8 +52,8 @@ def train_distill(args, student, teacher, optimizer, dataloader):
     student.train()
     for i,(x,_) in enumerate(dataloader):
         x = x.float().cuda()
-        teach_logits, _ = teacher(x)   
-        stud_logits, _ = student(x)
+        teach_logits, teach_hid = teacher(x)   
+        stud_logits, stud_hid = student(x)
         optimizer.zero_grad()
         if args.dis_loss=='argmax':
             teach_label = teach_logits.argmax(-1)
@@ -64,6 +64,10 @@ def train_distill(args, student, teacher, optimizer, dataloader):
             loss = Ce(stud_logits.reshape(-1,args.V),teach_label.reshape(-1,))
         elif args.dis_loss=='mse':
             loss = Mse(stud_logits, teach_logits)
+        elif args.dis_loss=='direct_label_sample':
+            sampler = torch.distributions.categorical.Categorical(Sig(teach_hid))
+            teach_label = sampler.sample().long()
+            loss = Bce(stud_hid,teach_label)
         else:
             print('dis_loss must be cesample, argmax, or mse')
             return

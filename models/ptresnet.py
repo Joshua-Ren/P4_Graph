@@ -52,7 +52,22 @@ class ResNet_SEM_ML(nn.Module):
         msg, sem_hid = self.SEM(hid)
         out = self.Bob(sem_hid)
         return msg, out
-        
+
+class ResNet_multilabel(nn.Module):
+    def __init__(self,num_classes=40, pretrain_flag=True):
+        super(ResNet_multilabel, self).__init__()
+        # ------ SEM Part
+        self.head = nn.Linear(512, num_classes)    #Split the linear by Wup and Whead        
+        if pretrain_flag:
+            self.model = models.resnet18(pretrained=True)
+        else:
+            self.model = models.resnet18()
+        self.model.fc = self.head
+
+    def forward(self, x):
+        hid = self.model(x)
+        return hid, hid
+
 if __name__ == '__main__':
     model = ResNet_SEM_ML(L=10, V=40, tau=1., num_classes=40, sem_flag=True)
 

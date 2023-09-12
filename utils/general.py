@@ -7,9 +7,9 @@ import random
 import numpy as np
 import torch.backends.cudnn as cudnn
 sys.path.append("..")
-#from models.gnn import *
-#from models.resnet import ResNet18_ML, ResNet18_SEM, MLP_SEM, CNN_SEM
-from models.ptresnet import ResNet_SEM_ML
+from models.gnn import *
+from models.resnet import ResNet18_ML, ResNet18_SEM, MLP_SEM, CNN_SEM
+from models.ptresnet import ResNet_SEM_ML, ResNet_multilabel
 
 def update_args(args, config):
     for k in config.keys():
@@ -99,6 +99,8 @@ def get_init_net_domnet(args):
         model = ResNet_SEM_ML(L=args.L, V=args.V, tau=1., num_classes=args.num_class, sem_flag=False, pretrain_flag=pt_flag).to(args.device)
     elif args.model_structure == 'sem':
         model = ResNet_SEM_ML(L=args.L, V=args.V, tau=1., num_classes=args.num_class, sem_flag=True, pretrain_flag=pt_flag).to(args.device)
+    elif args.model_structure == "direct":
+        model = ResNet_multilabel(num_classes=args.num_class, pretrain_flag=pt_flag).to(args.device)
     return model
 
 # ============== General functions =======================

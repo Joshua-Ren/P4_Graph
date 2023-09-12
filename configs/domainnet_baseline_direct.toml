@@ -1,0 +1,19 @@
+# ====== Usuall default
+#seed = 10086
+proj_name = "P4_DomNet_directlabel"
+
+# ======== Dataset and task related
+batch_size = 128
+num_class = 10
+# ==== Model Structure ======
+model_pretrain = "yes"
+model_structure = "direct"
+# ======== Learning related
+generations = 1
+
+	# ---- Interaction
+int_lr = 3e-3
+int_epochs = 200
+	# ---- Distillation
+
+run_name = "baseline_wpt_10cls_sgd"

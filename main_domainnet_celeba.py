@@ -132,7 +132,8 @@ if __name__ == '__main__':
     if args.config_file is not None:
         config = toml.load(os.path.join("configs",args.config_file+".toml"))
         args = update_args(args, config)
-        
+    if args.model_structure=="direct":
+        args.dis_loss='direct_label_sample'
     #args.model_structure="sem"
     main(args)
     """
