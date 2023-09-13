@@ -97,6 +97,8 @@ def main(args):
         else:
             student = get_init_net_domnet(args)
         
+        teacher = copy.deepcopy(student)
+
         # ========= Distillation
         if gen>0:
             optimizer_dis = optim.SGD(student.parameters(), lr=args.dis_lr, momentum=0.9, weight_decay=5e-4,nesterov=True)
