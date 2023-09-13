@@ -46,7 +46,7 @@ def get_args_parser():
         # ---- Interaction
     parser.add_argument('--int_lr', default=1e-3, type=float,
                         help='learning rate used in interaction')  
-    parser.add_argument('--int_epochs', default=2, type=int,
+    parser.add_argument('--int_epochs', default=0, type=int,
                         help='how many epochs we interact')
         # ---- Distillation
     parser.add_argument('--dis_lr', default=1e-4, type=float,
@@ -96,6 +96,7 @@ def main(args):
                 student = get_init_net_domnet(args)
         else:
             student = get_init_net_domnet(args)
+        
         # ========= Distillation
         if gen>0:
             optimizer_dis = optim.SGD(student.parameters(), lr=args.dis_lr, momentum=0.9, weight_decay=5e-4,nesterov=True)

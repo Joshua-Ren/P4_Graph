@@ -66,8 +66,8 @@ def train_distill(args, student, teacher, optimizer, dataloader):
         elif args.dis_loss=='mse':
             loss = Mse(stud_logits, teach_logits)
         elif args.dis_loss=='direct_label_sample':
-            sampler = torch.distributions.categorical.Categorical(Sig(teach_hid))
-            teach_label = sampler.sample().long()
+            sampler = torch.distributions.bernoulli.Bernoulli(Sig(teach_hid))
+            teach_label = sampler.sample().float()
             loss = Bce(stud_hid,teach_label)
         else:
             print('dis_loss must be cesample, argmax, or mse')
