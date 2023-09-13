@@ -20,10 +20,10 @@ from torch.nn.functional import cosine_similarity
 from utils.general import AverageMeter
 #from utils.datasets_domainnet import label_mapping
 
-Bce_log = torch.nn.BCEWithLogitsLoss()
+Bce_logi = torch.nn.BCEWithLogitsLoss()
 Ce = torch.nn.CrossEntropyLoss()
 Mse = torch.nn.MSELoss()
-Bce = torch.nn.BCEWithLogitsLoss ()
+Bce = torch.nn.BCELoss ()
 Sig = torch.nn.Sigmoid()
 
 def train_epoch(args, model, optimizer, data_loader):
@@ -34,7 +34,7 @@ def train_epoch(args, model, optimizer, data_loader):
         x, y = x.float().cuda(), y[:, :args.num_class].float().cuda()
         msg_all, h_all = model(x)
         optimizer.zero_grad()
-        loss = Bce(Sig(h_all),y)
+        loss = Bce_logi(h_all,y)
         loss.backward()
         optimizer.step()
         losses.update(loss.data.item(), y.size(0))
@@ -68,7 +68,7 @@ def train_distill(args, student, teacher, optimizer, dataloader):
         elif args.dis_loss=='direct_label_sample':
             sampler = torch.distributions.bernoulli.Bernoulli(Sig(teach_hid))
             teach_label = sampler.sample().float()
-            loss = Bce(stud_hid,teach_label)
+            loss = Bce_logi(stud_hid,teach_label)
         else:
             print('dis_loss must be cesample, argmax, or mse')
             return
