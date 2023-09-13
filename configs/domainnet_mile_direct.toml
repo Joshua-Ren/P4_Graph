@@ -13,7 +13,7 @@ generations = 10
 init_strategy = "mile"
 
 	# ---- Interaction
-int_lr = 3e-3
+int_lr = 5e-3
 int_epochs = 50
 	# ---- Distillation
 dis_loss = "cesample"
