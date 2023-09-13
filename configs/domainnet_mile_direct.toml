@@ -14,10 +14,10 @@ init_strategy = "mile"
 
 	# ---- Interaction
 int_lr = 3e-3
-int_epochs = 0
+int_epochs = 50
 	# ---- Distillation
 dis_loss = "cesample"
 dis_lr = 3e-3
-dis_epochs = 2
+dis_epochs = 10
 
 run_name = "mile_int50dis10_wpt_10cls_sgd"

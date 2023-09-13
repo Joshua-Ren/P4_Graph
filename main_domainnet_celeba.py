@@ -23,7 +23,7 @@ def get_args_parser():
     parser.add_argument('--device', type=int, default=0,
                         help='which gpu to use if any (default: 0)')
     # ======== Dataset and task related
-    parser.add_argument('--batch_size', default=256, type=int,
+    parser.add_argument('--batch_size', default=32, type=int,
                         help='batch size of train and test set')
     parser.add_argument('--num_class', default=40, type=int,
                         help='40 for celeba, 203 for domainnet')    
@@ -97,8 +97,7 @@ def main(args):
         else:
             student = get_init_net_domnet(args)
         
-        teacher = copy.deepcopy(student)
-
+        #teacher = copy.deepcopy(student)
         # ========= Distillation
         if gen>0:
             optimizer_dis = optim.SGD(student.parameters(), lr=args.dis_lr, momentum=0.9, weight_decay=5e-4,nesterov=True)

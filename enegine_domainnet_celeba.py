@@ -23,7 +23,7 @@ from utils.general import AverageMeter
 Bce_log = torch.nn.BCEWithLogitsLoss()
 Ce = torch.nn.CrossEntropyLoss()
 Mse = torch.nn.MSELoss()
-Bce = torch.nn.BCELoss()
+Bce = torch.nn.BCEWithLogitsLoss ()
 Sig = torch.nn.Sigmoid()
 
 def train_epoch(args, model, optimizer, data_loader):
@@ -67,7 +67,7 @@ def train_distill(args, student, teacher, optimizer, dataloader):
             loss = Mse(stud_logits, teach_logits)
         elif args.dis_loss=='direct_label_sample':
             sampler = torch.distributions.bernoulli.Bernoulli(Sig(teach_hid))
-            teach_label = sampler.sample().int().float()
+            teach_label = sampler.sample().float()
             loss = Bce(stud_hid,teach_label)
         else:
             print('dis_loss must be cesample, argmax, or mse')
