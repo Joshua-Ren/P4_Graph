@@ -40,6 +40,7 @@ def train_epoch(args, model, optimizer, data_loader):
         losses.update(loss.data.item(), y.size(0))
         wandb.log({'Inter_loss':loss.data.item()})
         
+        #print(loss.data.item())
         pred = (Sig(h_all)>0.5)==(y>0.5)
         tmp_acc = pred.sum()/(y.shape[0]*y.shape[1])
         acc.update(tmp_acc.item())

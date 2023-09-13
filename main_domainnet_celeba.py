@@ -28,10 +28,10 @@ def get_args_parser():
     parser.add_argument('--num_class', default=40, type=int,
                         help='40 for celeba, 203 for domainnet')    
     # ======== Model structure
-    parser.add_argument('--model_pretrain', type=str, default="no",
+    parser.add_argument('--model_pretrain', type=str, default="yes",
                         help='no, official or ...')
-    parser.add_argument('--model_structure', type=str, default='sem',
-                        help='Standard or sem')
+    parser.add_argument('--model_structure', type=str, default='direct',
+                        help='Standard or sem or direct')
     parser.add_argument('--L', type=int, default=20,
                         help='No. word in SEM')
     parser.add_argument('--V', type=int, default=100,
@@ -46,12 +46,12 @@ def get_args_parser():
         # ---- Interaction
     parser.add_argument('--int_lr', default=1e-3, type=float,
                         help='learning rate used in interaction')  
-    parser.add_argument('--int_epochs', default=50, type=int,
+    parser.add_argument('--int_epochs', default=2, type=int,
                         help='how many epochs we interact')
         # ---- Distillation
     parser.add_argument('--dis_lr', default=1e-4, type=float,
                         help='learning rate used in distillation')      
-    parser.add_argument('--dis_epochs', default=10, type=int,
+    parser.add_argument('--dis_epochs', default=2, type=int,
                         help='how many epochs we distill')
     parser.add_argument('--dis_loss', default='cesample', type=str,
                         help='the distillation loss: cesample, argmax, mse')
@@ -61,8 +61,8 @@ def get_args_parser():
     parser.add_argument('--copy_what', type=str, default='best',
                         help='use the best or last epoch teacher in distillation')
     # ===== Wandb and saving results ====
-    parser.add_argument('--run_name',default='mile',type=str)
-    parser.add_argument('--proj_name',default='P4_DomNet_new', type=str)    
+    parser.add_argument('--run_name',default='test',type=str)
+    parser.add_argument('--proj_name',default='P4_DomNet_directlabel', type=str)    
     return parser
 
 def main(args):
