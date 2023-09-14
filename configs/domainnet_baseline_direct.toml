@@ -16,4 +16,4 @@ int_lr = 3e-3
 int_epochs = 200
 	# ---- Distillation
 
-run_name = "baseline_wpt_10cls_sgd"
+run_name = "baseline_wpt_10cls_adam"
