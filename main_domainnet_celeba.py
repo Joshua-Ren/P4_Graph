@@ -100,7 +100,8 @@ def main(args):
         #teacher = copy.deepcopy(student)
         # ========= Distillation
         if gen>0:
-            optimizer_dis = optim.SGD(student.parameters(), lr=args.dis_lr, momentum=0.9, weight_decay=5e-4,nesterov=True)
+            #optimizer_dis = optim.SGD(student.parameters(), lr=args.dis_lr, momentum=0.9, weight_decay=5e-4,nesterov=True)
+            optimizer_dis = optim.Adam(student.parameters(), lr=args.dis_lr, weight_decay=5e-4)
             scheduler_dis = optim.lr_scheduler.CosineAnnealingLR(optimizer_dis,T_max=args.dis_epochs,eta_min=1e-5)
             for i in range(args.dis_epochs):
                 dis_loss = train_distill(args, student, teacher, optimizer_dis, train_loader)
@@ -109,8 +110,8 @@ def main(args):
         
         # ========= Interaction
         best_vacc = 0
-        optimizer_inter = optim.SGD(student.parameters(), lr=args.int_lr, momentum=0.9, weight_decay=5e-4,nesterov=True)
-        #optimizer_inter = optim.Adam(student.parameters(), lr=args.int_lr, weight_decay=5e-4)
+        #optimizer_inter = optim.SGD(student.parameters(), lr=args.int_lr, momentum=0.9, weight_decay=5e-4,nesterov=True)
+        optimizer_inter = optim.Adam(student.parameters(), lr=args.int_lr, weight_decay=5e-4)
         scheduler_inter = optim.lr_scheduler.CosineAnnealingLR(optimizer_inter,T_max=args.int_epochs,eta_min=1e-5)        
         for i in range(args.int_epochs):
             wandb.log({'Train_Epoch':i})
