@@ -27,8 +27,9 @@ cd /home/joshua52/projects/def-dsuth/joshua52/P4_Graph
 #--config_file domainnet_baseline
 
 srun python /home/joshua52/projects/def-dsuth/joshua52/P4_Graph/main_domainnet_celeba.py \
-#--config_file domainnet_mile
 --config_file domainnet_only
+#--config_file domainnet_mile
+
 
 #srun python /home/joshua52/projects/def-dsuth/joshua52/P4_Graph/main_domainnet_celeba.py \
 #--config_file domainnet_mile
